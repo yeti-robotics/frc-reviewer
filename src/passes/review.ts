@@ -8,7 +8,19 @@ import { generateJson } from '../generateJson.js'
 export const IssueSchema = z.object({
   file: z.string().describe('Relative path to the file containing the issue'),
   line: z.number().int().positive().describe('Line number in the new file where the issue occurs'),
-  severity: z.enum(['critical', 'warning', 'suggestion']),
+  severity: z
+    .string()
+    .transform((v): 'critical' | 'warning' | 'suggestion' => {
+      const map: Record<string, 'critical' | 'warning' | 'suggestion'> = {
+        error: 'critical',
+        critical: 'critical',
+        warning: 'warning',
+        suggestion: 'suggestion',
+        info: 'suggestion',
+        note: 'suggestion',
+      }
+      return map[v] ?? 'warning'
+    }),
   skill: z.string().describe('Name of the skill/rule this issue relates to'),
   reasoning: z.string().describe('Chain-of-thought explanation before stating the message'),
   message: z.string().describe('Human-readable comment to post as a GitHub review comment'),
@@ -78,7 +90,8 @@ Review the code above against the FRC skills and rules. For each real issue foun
 
 Only report issues that are clearly present in the changed code. Do not invent issues.
 
-Respond with ONLY a JSON object (no markdown, no explanation):
+Respond with ONLY a JSON object (no markdown, no explanation).
+severity must be exactly one of: "critical", "warning", or "suggestion".
 {"issues":[{"file":"...","line":1,"severity":"warning","skill":"...","reasoning":"...","message":"..."}]}`,
   })
 

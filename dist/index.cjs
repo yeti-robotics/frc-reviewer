@@ -52002,11 +52002,17 @@ Respond with ONLY a JSON object matching this structure (no markdown, no explana
 const IssueSchema = objectType({
 	file: stringType().describe("Relative path to the file containing the issue"),
 	line: numberType().int().positive().describe("Line number in the new file where the issue occurs"),
-	severity: enumType([
-		"critical",
-		"warning",
-		"suggestion"
-	]),
+	severity: stringType().transform((v) => {
+		const map = {
+			error: "critical",
+			critical: "critical",
+			warning: "warning",
+			suggestion: "suggestion",
+			info: "suggestion",
+			note: "suggestion"
+		};
+		return map[v] ?? "warning";
+	}),
 	skill: stringType().describe("Name of the skill/rule this issue relates to"),
 	reasoning: stringType().describe("Chain-of-thought explanation before stating the message"),
 	message: stringType().describe("Human-readable comment to post as a GitHub review comment")
@@ -52052,7 +52058,8 @@ Review the code above against the FRC skills and rules. For each real issue foun
 
 Only report issues that are clearly present in the changed code. Do not invent issues.
 
-Respond with ONLY a JSON object (no markdown, no explanation):
+Respond with ONLY a JSON object (no markdown, no explanation).
+severity must be exactly one of: "critical", "warning", or "suggestion".
 {"issues":[{"file":"...","line":1,"severity":"warning","skill":"...","reasoning":"...","message":"..."}]}`
 	});
 	return result.issues;

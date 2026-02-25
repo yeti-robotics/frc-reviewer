@@ -1,6 +1,6 @@
 import { generateText } from 'ai'
 import type { LanguageModel, CallSettings, Prompt } from 'ai'
-import type { ZodType } from 'zod'
+import type { ZodType, ZodTypeDef } from 'zod'
 
 /**
  * Calls generateText and parses the response as JSON, validated against the given Zod schema.
@@ -9,7 +9,7 @@ import type { ZodType } from 'zod'
  */
 export async function generateJson<T>(
   model: LanguageModel,
-  schema: ZodType<T>,
+  schema: ZodType<T, ZodTypeDef, unknown>,
   options: CallSettings & Prompt,
 ): Promise<T> {
   const result = await generateText({ model, ...options })
