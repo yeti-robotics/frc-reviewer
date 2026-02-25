@@ -11,7 +11,7 @@ import {
   type InlineComment,
 } from './github/comments.js'
 import { loadSkills } from './skills/loader.js'
-import { matchSkills } from './skills/matcher.js'
+import { selectSkills, resolveReferences } from './skills/selector.js'
 import { summarizePR } from './passes/summarize.js'
 import { reviewPR } from './passes/review.js'
 import { verifyIssues } from './passes/verify.js'
@@ -72,16 +72,19 @@ export async function runPipeline(inputs: ActionInputs): Promise<void> {
     return
   }
 
-  // 2. Load and match skills
+  // 2. Load all skills
   const allSkills = await loadSkills(skillsPath)
-  const filenames = filesToReview.map((f) => f.filename)
-  const relevantSkills = matchSkills(allSkills, filenames)
-  core.info(`Using ${relevantSkills.length} relevant skills`)
 
   // 3. Pass 1: Summarize (use fast model if provided)
   const summarizeModel = getProvider(gateway, apiKey, fastModel ?? model)
   core.info('Pass 1: Summarizing PR...')
   const summary = await summarizePR(summarizeModel, filesToReview)
+
+  // Select relevant skills based on PR summary and skill descriptions,
+  // then ask the model which reference files each skill needs
+  const selectedSkills = await selectSkills(summarizeModel, summary, allSkills)
+  const relevantSkills = await resolveReferences(summarizeModel, summary, selectedSkills)
+  core.info(`Using ${relevantSkills.length} relevant skills`)
 
   // 4. Load full content for architecturally significant files
   const significantFiles = summary.files.filter((f) => f.architecturallySignificant)

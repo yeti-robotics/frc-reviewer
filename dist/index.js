@@ -223,7 +223,7 @@ var require_proxy = __commonJS({ "node_modules/.pnpm/@actions+http-client@2.2.3/
 		})();
 		if (proxyVar) try {
 			return new DecodedURL(proxyVar);
-		} catch (_a$4) {
+		} catch (_a$3) {
 			if (!proxyVar.startsWith("http://") && !proxyVar.startsWith("https://")) return new DecodedURL(`http://${proxyVar}`);
 		}
 		else return void 0;
@@ -910,10 +910,10 @@ var require_util$6 = __commonJS({ "node_modules/.pnpm/undici@5.29.0/node_modules
 			if (url.origin != null && typeof url.origin !== "string") throw new InvalidArgumentError$23("Invalid URL origin: the origin must be a string or null/undefined.");
 			const port = url.port != null ? url.port : url.protocol === "https:" ? 443 : 80;
 			let origin = url.origin != null ? url.origin : `${url.protocol}//${url.hostname}:${port}`;
-			let path$6 = url.path != null ? url.path : `${url.pathname || ""}${url.search || ""}`;
+			let path$5 = url.path != null ? url.path : `${url.pathname || ""}${url.search || ""}`;
 			if (origin.endsWith("/")) origin = origin.substring(0, origin.length - 1);
-			if (path$6 && !path$6.startsWith("/")) path$6 = `/${path$6}`;
-			url = new URL(origin + path$6);
+			if (path$5 && !path$5.startsWith("/")) path$5 = `/${path$5}`;
+			url = new URL(origin + path$5);
 		}
 		return url;
 	}
@@ -1115,13 +1115,13 @@ var require_util$6 = __commonJS({ "node_modules/.pnpm/undici@5.29.0/node_modules
 		else if (nodeUtil.toUSVString) return nodeUtil.toUSVString(val);
 		return `${val}`;
 	}
-	function parseRangeHeader$1(range$1) {
-		if (range$1 == null || range$1 === "") return {
+	function parseRangeHeader$1(range) {
+		if (range == null || range === "") return {
 			start: 0,
 			end: null,
 			size: null
 		};
-		const m = range$1 ? range$1.match(/^bytes (\d+)-(\d+)\/(\d+)?$/) : null;
+		const m = range ? range.match(/^bytes (\d+)-(\d+)\/(\d+)?$/) : null;
 		return m ? {
 			start: parseInt(m[1]),
 			end: m[2] ? parseInt(m[2]) : null,
@@ -2210,8 +2210,8 @@ var require_parseParams = __commonJS({ "node_modules/.pnpm/@fastify+busboy@2.1.1
 		"%fF": "ÿ",
 		"%FF": "ÿ"
 	};
-	function encodedReplacer(match$1) {
-		return EncodedLookup[match$1];
+	function encodedReplacer(match) {
+		return EncodedLookup[match];
 	}
 	const STATE_KEY = 0;
 	const STATE_VALUE = 1;
@@ -2283,15 +2283,15 @@ var require_parseParams = __commonJS({ "node_modules/.pnpm/@fastify+busboy@2.1.1
 //#endregion
 //#region node_modules/.pnpm/@fastify+busboy@2.1.1/node_modules/@fastify/busboy/lib/utils/basename.js
 var require_basename = __commonJS({ "node_modules/.pnpm/@fastify+busboy@2.1.1/node_modules/@fastify/busboy/lib/utils/basename.js"(exports, module) {
-	module.exports = function basename$1(path$6) {
-		if (typeof path$6 !== "string") return "";
-		for (var i$1 = path$6.length - 1; i$1 >= 0; --i$1) switch (path$6.charCodeAt(i$1)) {
+	module.exports = function basename$1(path$5) {
+		if (typeof path$5 !== "string") return "";
+		for (var i$1 = path$5.length - 1; i$1 >= 0; --i$1) switch (path$5.charCodeAt(i$1)) {
 			case 47:
 			case 92:
-				path$6 = path$6.slice(i$1 + 1);
-				return path$6 === ".." || path$6 === "." ? "" : path$6;
+				path$5 = path$5.slice(i$1 + 1);
+				return path$5 === ".." || path$5 === "." ? "" : path$5;
 		}
-		return path$6 === ".." || path$6 === "." ? "" : path$6;
+		return path$5 === ".." || path$5 === "." ? "" : path$5;
 	};
 } });
 
@@ -3762,7 +3762,7 @@ var require_symbols$3 = __commonJS({ "node_modules/.pnpm/undici@5.29.0/node_modu
 //#endregion
 //#region node_modules/.pnpm/undici@5.29.0/node_modules/undici/lib/fetch/webidl.js
 var require_webidl = __commonJS({ "node_modules/.pnpm/undici@5.29.0/node_modules/undici/lib/fetch/webidl.js"(exports, module) {
-	const { types: types$5 } = require("util");
+	const { types: types$4 } = require("util");
 	const { hasOwn: hasOwn$1, toUSVString: toUSVString$3 } = require_util$5();
 	/** @type {import('../../types/webidl').Webidl} */
 	const webidl$14 = {};
@@ -3890,7 +3890,7 @@ var require_webidl = __commonJS({ "node_modules/.pnpm/undici@5.29.0/node_modules
 				message: `Value of type ${webidl$14.util.Type(O)} is not an Object.`
 			});
 			const result = {};
-			if (!types$5.isProxy(O)) {
+			if (!types$4.isProxy(O)) {
 				const keys$1 = Object.keys(O);
 				for (const key of keys$1) {
 					const typedKey = keyConverter(key);
@@ -3993,44 +3993,44 @@ var require_webidl = __commonJS({ "node_modules/.pnpm/undici@5.29.0/node_modules
 		return x;
 	};
 	webidl$14.converters.ArrayBuffer = function(V, opts = {}) {
-		if (webidl$14.util.Type(V) !== "Object" || !types$5.isAnyArrayBuffer(V)) throw webidl$14.errors.conversionFailed({
+		if (webidl$14.util.Type(V) !== "Object" || !types$4.isAnyArrayBuffer(V)) throw webidl$14.errors.conversionFailed({
 			prefix: `${V}`,
 			argument: `${V}`,
 			types: ["ArrayBuffer"]
 		});
-		if (opts.allowShared === false && types$5.isSharedArrayBuffer(V)) throw webidl$14.errors.exception({
+		if (opts.allowShared === false && types$4.isSharedArrayBuffer(V)) throw webidl$14.errors.exception({
 			header: "ArrayBuffer",
 			message: "SharedArrayBuffer is not allowed."
 		});
 		return V;
 	};
 	webidl$14.converters.TypedArray = function(V, T, opts = {}) {
-		if (webidl$14.util.Type(V) !== "Object" || !types$5.isTypedArray(V) || V.constructor.name !== T.name) throw webidl$14.errors.conversionFailed({
+		if (webidl$14.util.Type(V) !== "Object" || !types$4.isTypedArray(V) || V.constructor.name !== T.name) throw webidl$14.errors.conversionFailed({
 			prefix: `${T.name}`,
 			argument: `${V}`,
 			types: [T.name]
 		});
-		if (opts.allowShared === false && types$5.isSharedArrayBuffer(V.buffer)) throw webidl$14.errors.exception({
+		if (opts.allowShared === false && types$4.isSharedArrayBuffer(V.buffer)) throw webidl$14.errors.exception({
 			header: "ArrayBuffer",
 			message: "SharedArrayBuffer is not allowed."
 		});
 		return V;
 	};
 	webidl$14.converters.DataView = function(V, opts = {}) {
-		if (webidl$14.util.Type(V) !== "Object" || !types$5.isDataView(V)) throw webidl$14.errors.exception({
+		if (webidl$14.util.Type(V) !== "Object" || !types$4.isDataView(V)) throw webidl$14.errors.exception({
 			header: "DataView",
 			message: "Object is not a DataView."
 		});
-		if (opts.allowShared === false && types$5.isSharedArrayBuffer(V.buffer)) throw webidl$14.errors.exception({
+		if (opts.allowShared === false && types$4.isSharedArrayBuffer(V.buffer)) throw webidl$14.errors.exception({
 			header: "ArrayBuffer",
 			message: "SharedArrayBuffer is not allowed."
 		});
 		return V;
 	};
 	webidl$14.converters.BufferSource = function(V, opts = {}) {
-		if (types$5.isAnyArrayBuffer(V)) return webidl$14.converters.ArrayBuffer(V, opts);
-		if (types$5.isTypedArray(V)) return webidl$14.converters.TypedArray(V, V.constructor);
-		if (types$5.isDataView(V)) return webidl$14.converters.DataView(V, opts);
+		if (types$4.isAnyArrayBuffer(V)) return webidl$14.converters.ArrayBuffer(V, opts);
+		if (types$4.isTypedArray(V)) return webidl$14.converters.TypedArray(V, V.constructor);
+		if (types$4.isDataView(V)) return webidl$14.converters.DataView(V, opts);
 		throw new TypeError(`Could not convert ${V} to a BufferSource.`);
 	};
 	webidl$14.converters["sequence<ByteString>"] = webidl$14.sequenceConverter(webidl$14.converters.ByteString);
@@ -4299,7 +4299,7 @@ var require_dataURL = __commonJS({ "node_modules/.pnpm/undici@5.29.0/node_module
 //#region node_modules/.pnpm/undici@5.29.0/node_modules/undici/lib/fetch/file.js
 var require_file = __commonJS({ "node_modules/.pnpm/undici@5.29.0/node_modules/undici/lib/fetch/file.js"(exports, module) {
 	const { Blob: Blob$4, File: NativeFile$2 } = require("buffer");
-	const { types: types$4 } = require("util");
+	const { types: types$3 } = require("util");
 	const { kState: kState$9 } = require_symbols$3();
 	const { isBlobLike: isBlobLike$5 } = require_util$5();
 	const { webidl: webidl$13 } = require_webidl();
@@ -4406,7 +4406,7 @@ var require_file = __commonJS({ "node_modules/.pnpm/undici@5.29.0/node_modules/u
 	webidl$13.converters.BlobPart = function(V, opts) {
 		if (webidl$13.util.Type(V) === "Object") {
 			if (isBlobLike$5(V)) return webidl$13.converters.Blob(V, { strict: false });
-			if (ArrayBuffer.isView(V) || types$4.isAnyArrayBuffer(V)) return webidl$13.converters.BufferSource(V, opts);
+			if (ArrayBuffer.isView(V) || types$3.isAnyArrayBuffer(V)) return webidl$13.converters.BufferSource(V, opts);
 		}
 		return webidl$13.converters.USVString(V, opts);
 	};
@@ -4447,7 +4447,7 @@ var require_file = __commonJS({ "node_modules/.pnpm/undici@5.29.0/node_modules/u
 			let s = element;
 			if (options.endings === "native") s = convertLineEndingsNative(s);
 			bytes.push(encoder.encode(s));
-		} else if (types$4.isAnyArrayBuffer(element) || types$4.isTypedArray(element)) if (!element.buffer) bytes.push(new Uint8Array(element));
+		} else if (types$3.isAnyArrayBuffer(element) || types$3.isTypedArray(element)) if (!element.buffer) bytes.push(new Uint8Array(element));
 		else bytes.push(new Uint8Array(element.buffer, element.byteOffset, element.byteLength));
 		else if (isBlobLike$5(element)) bytes.push(element);
 		return bytes;
@@ -4662,18 +4662,18 @@ var require_body = __commonJS({ "node_modules/.pnpm/undici@5.29.0/node_modules/u
 			const boundary = `----formdata-undici-0${`${random(1e11)}`.padStart(11, "0")}`;
 			const prefix = `--${boundary}\r\nContent-Disposition: form-data`;
 			/*! formdata-polyfill. MIT License. Jimmy Wärting <https://jimmy.warting.se/opensource> */
-			const escape$1 = (str) => str.replace(/\n/g, "%0A").replace(/\r/g, "%0D").replace(/"/g, "%22");
+			const escape = (str) => str.replace(/\n/g, "%0A").replace(/\r/g, "%0D").replace(/"/g, "%22");
 			const normalizeLinefeeds = (value) => value.replace(/\r?\n|\r/g, "\r\n");
 			const blobParts = [];
 			const rn = new Uint8Array([13, 10]);
 			length = 0;
 			let hasUnknownSizeValue = false;
 			for (const [name$2, value] of object$1) if (typeof value === "string") {
-				const chunk$1 = textEncoder$1.encode(prefix + `; name="${escape$1(normalizeLinefeeds(name$2))}"\r\n\r\n${normalizeLinefeeds(value)}\r\n`);
+				const chunk$1 = textEncoder$1.encode(prefix + `; name="${escape(normalizeLinefeeds(name$2))}"\r\n\r\n${normalizeLinefeeds(value)}\r\n`);
 				blobParts.push(chunk$1);
 				length += chunk$1.byteLength;
 			} else {
-				const chunk$1 = textEncoder$1.encode(`${prefix}; name="${escape$1(normalizeLinefeeds(name$2))}"` + (value.name ? `; filename="${escape$1(value.name)}"` : "") + `\r
+				const chunk$1 = textEncoder$1.encode(`${prefix}; name="${escape(normalizeLinefeeds(name$2))}"` + (value.name ? `; filename="${escape(value.name)}"` : "") + `\r
 Content-Type: ${value.type || "application/octet-stream"}\r\n\r\n`);
 				blobParts.push(chunk$1, value, rn);
 				if (typeof value.size === "number") length += chunk$1.byteLength + value.size + rn.byteLength;
@@ -4970,10 +4970,10 @@ var require_request$1 = __commonJS({ "node_modules/.pnpm/undici@5.29.0/node_modu
 		channels$3.error = { hasSubscribers: false };
 	}
 	var Request$4 = class Request$4 {
-		constructor(origin, { path: path$6, method, body, headers, query, idempotent, blocking, upgrade: upgrade$1, headersTimeout, bodyTimeout, reset, throwOnError, expectContinue }, handler$2) {
-			if (typeof path$6 !== "string") throw new InvalidArgumentError$22("path must be a string");
-			else if (path$6[0] !== "/" && !(path$6.startsWith("http://") || path$6.startsWith("https://")) && method !== "CONNECT") throw new InvalidArgumentError$22("path must be an absolute URL or start with a slash");
-			else if (invalidPathRegex.exec(path$6) !== null) throw new InvalidArgumentError$22("invalid request path");
+		constructor(origin, { path: path$5, method, body, headers, query, idempotent, blocking, upgrade: upgrade$1, headersTimeout, bodyTimeout, reset, throwOnError, expectContinue }, handler$2) {
+			if (typeof path$5 !== "string") throw new InvalidArgumentError$22("path must be a string");
+			else if (path$5[0] !== "/" && !(path$5.startsWith("http://") || path$5.startsWith("https://")) && method !== "CONNECT") throw new InvalidArgumentError$22("path must be an absolute URL or start with a slash");
+			else if (invalidPathRegex.exec(path$5) !== null) throw new InvalidArgumentError$22("invalid request path");
 			if (typeof method !== "string") throw new InvalidArgumentError$22("method must be a string");
 			else if (tokenRegExp.exec(method) === null) throw new InvalidArgumentError$22("invalid request method");
 			if (upgrade$1 && typeof upgrade$1 !== "string") throw new InvalidArgumentError$22("upgrade must be a string");
@@ -5010,7 +5010,7 @@ var require_request$1 = __commonJS({ "node_modules/.pnpm/undici@5.29.0/node_modu
 			this.completed = false;
 			this.aborted = false;
 			this.upgrade = upgrade$1 || null;
-			this.path = query ? util$16.buildURL(path$6, query) : path$6;
+			this.path = query ? util$16.buildURL(path$5, query) : path$5;
 			this.origin = origin;
 			this.idempotent = idempotent == null ? method === "HEAD" || method === "GET" : idempotent;
 			this.blocking = blocking == null ? false : blocking;
@@ -5908,9 +5908,9 @@ var require_RedirectHandler = __commonJS({ "node_modules/.pnpm/undici@5.29.0/nod
 			if (this.opts.origin) this.history.push(new URL(this.opts.path, this.opts.origin));
 			if (!this.location) return this.handler.onHeaders(statusCode, headers, resume$1, statusText);
 			const { origin, pathname, search } = util$14.parseURL(new URL(this.location, this.opts.origin && new URL(this.opts.path, this.opts.origin)));
-			const path$6 = search ? `${pathname}${search}` : pathname;
+			const path$5 = search ? `${pathname}${search}` : pathname;
 			this.opts.headers = cleanRequestHeaders(this.opts.headers, statusCode === 303, this.opts.origin !== origin);
-			this.opts.path = path$6;
+			this.opts.path = path$5;
 			this.opts.origin = origin;
 			this.opts.maxRedirections = 0;
 			this.opts.query = null;
@@ -6852,7 +6852,7 @@ var require_client = __commonJS({ "node_modules/.pnpm/undici@5.29.0/node_modules
 			writeH2(client, client[kHTTP2Session], request$3);
 			return;
 		}
-		const { body, method, path: path$6, host, upgrade: upgrade$1, headers, blocking, reset } = request$3;
+		const { body, method, path: path$5, host, upgrade: upgrade$1, headers, blocking, reset } = request$3;
 		const expectsPayload = method === "PUT" || method === "POST" || method === "PATCH";
 		if (body && typeof body.read === "function") body.read(0);
 		const bodyLength$1 = util$13.bodyLength(body);
@@ -6882,7 +6882,7 @@ var require_client = __commonJS({ "node_modules/.pnpm/undici@5.29.0/node_modules
 		if (reset != null) socket[kReset] = reset;
 		if (client[kMaxRequests] && socket[kCounter]++ >= client[kMaxRequests]) socket[kReset] = true;
 		if (blocking) socket[kBlocking] = true;
-		let header = `${method} ${path$6} HTTP/1.1\r\n`;
+		let header = `${method} ${path$5} HTTP/1.1\r\n`;
 		if (typeof host === "string") header += `host: ${host}\r\n`;
 		else header += client[kHostHeader];
 		if (upgrade$1) header += `connection: upgrade\r\nupgrade: ${upgrade$1}\r\n`;
@@ -6951,7 +6951,7 @@ var require_client = __commonJS({ "node_modules/.pnpm/undici@5.29.0/node_modules
 		return true;
 	}
 	function writeH2(client, session, request$3) {
-		const { body, method, path: path$6, host, upgrade: upgrade$1, expectContinue, signal, headers: reqHeaders } = request$3;
+		const { body, method, path: path$5, host, upgrade: upgrade$1, expectContinue, signal, headers: reqHeaders } = request$3;
 		let headers;
 		if (typeof reqHeaders === "string") headers = Request$3[kHTTP2CopyHeaders](reqHeaders.trim());
 		else headers = reqHeaders;
@@ -6992,7 +6992,7 @@ var require_client = __commonJS({ "node_modules/.pnpm/undici@5.29.0/node_modules
 			});
 			return true;
 		}
-		headers[HTTP2_HEADER_PATH] = path$6;
+		headers[HTTP2_HEADER_PATH] = path$5;
 		headers[HTTP2_HEADER_SCHEME] = "https";
 		const expectsPayload = method === "PUT" || method === "POST" || method === "PATCH";
 		if (body && typeof body.read === "function") body.read(0);
@@ -8762,10 +8762,10 @@ var require_mock_utils = __commonJS({ "node_modules/.pnpm/undici@5.29.0/node_mod
 	const { buildURL: buildURL$1, nop } = require_util$6();
 	const { STATUS_CODES: STATUS_CODES$1 } = require("http");
 	const { types: { isPromise } } = require("util");
-	function matchValue$1(match$1, value) {
-		if (typeof match$1 === "string") return match$1 === value;
-		if (match$1 instanceof RegExp) return match$1.test(value);
-		if (typeof match$1 === "function") return match$1(value) === true;
+	function matchValue$1(match, value) {
+		if (typeof match === "string") return match === value;
+		if (match instanceof RegExp) return match.test(value);
+		if (typeof match === "function") return match(value) === true;
 		return false;
 	}
 	function lowerCaseEntries(headers) {
@@ -8804,16 +8804,16 @@ var require_mock_utils = __commonJS({ "node_modules/.pnpm/undici@5.29.0/node_mod
 		}
 		return true;
 	}
-	function safeUrl(path$6) {
-		if (typeof path$6 !== "string") return path$6;
-		const pathSegments = path$6.split("?");
-		if (pathSegments.length !== 2) return path$6;
+	function safeUrl(path$5) {
+		if (typeof path$5 !== "string") return path$5;
+		const pathSegments = path$5.split("?");
+		if (pathSegments.length !== 2) return path$5;
 		const qp = new URLSearchParams(pathSegments.pop());
 		qp.sort();
 		return [...pathSegments, qp.toString()].join("?");
 	}
-	function matchKey(mockDispatch$1, { path: path$6, method, body, headers }) {
-		const pathMatch = matchValue$1(mockDispatch$1.path, path$6);
+	function matchKey(mockDispatch$1, { path: path$5, method, body, headers }) {
+		const pathMatch = matchValue$1(mockDispatch$1.path, path$5);
 		const methodMatch = matchValue$1(mockDispatch$1.method, method);
 		const bodyMatch = typeof mockDispatch$1.body !== "undefined" ? matchValue$1(mockDispatch$1.body, body) : true;
 		const headersMatch = matchHeaders(mockDispatch$1, headers);
@@ -8827,7 +8827,7 @@ var require_mock_utils = __commonJS({ "node_modules/.pnpm/undici@5.29.0/node_mod
 	function getMockDispatch(mockDispatches, key) {
 		const basePath = key.query ? buildURL$1(key.path, key.query) : key.path;
 		const resolvedPath = typeof basePath === "string" ? safeUrl(basePath) : basePath;
-		let matchedMockDispatches = mockDispatches.filter(({ consumed }) => !consumed).filter(({ path: path$6 }) => matchValue$1(safeUrl(path$6), resolvedPath));
+		let matchedMockDispatches = mockDispatches.filter(({ consumed }) => !consumed).filter(({ path: path$5 }) => matchValue$1(safeUrl(path$5), resolvedPath));
 		if (matchedMockDispatches.length === 0) throw new MockNotMatchedError(`Mock dispatch not matched for path '${resolvedPath}'`);
 		matchedMockDispatches = matchedMockDispatches.filter(({ method }) => matchValue$1(method, key.method));
 		if (matchedMockDispatches.length === 0) throw new MockNotMatchedError(`Mock dispatch not matched for method '${key.method}'`);
@@ -8865,9 +8865,9 @@ var require_mock_utils = __commonJS({ "node_modules/.pnpm/undici@5.29.0/node_mod
 		if (index !== -1) mockDispatches.splice(index, 1);
 	}
 	function buildKey$1(opts) {
-		const { path: path$6, method, body, headers, query } = opts;
+		const { path: path$5, method, body, headers, query } = opts;
 		return {
-			path: path$6,
+			path: path$5,
 			method,
 			body,
 			headers,
@@ -9266,10 +9266,10 @@ var require_pending_interceptors_formatter = __commonJS({ "node_modules/.pnpm/un
 			});
 		}
 		format(pendingInterceptors) {
-			const withPrettyHeaders = pendingInterceptors.map(({ method, path: path$6, data: { statusCode }, persist, times, timesInvoked, origin }) => ({
+			const withPrettyHeaders = pendingInterceptors.map(({ method, path: path$5, data: { statusCode }, persist, times, timesInvoked, origin }) => ({
 				Method: method,
 				Origin: origin,
-				Path: path$6,
+				Path: path$5,
 				"Status code": statusCode,
 				Persistent: persist ? "✅" : "❌",
 				Invocations: timesInvoked,
@@ -9680,9 +9680,9 @@ var require_RetryHandler = __commonJS({ "node_modules/.pnpm/undici@5.29.0/node_m
 			}
 			if (this.end == null) {
 				if (statusCode === 206) {
-					const range$1 = parseRangeHeader(headers["content-range"]);
-					if (range$1 == null) return this.handler.onHeaders(statusCode, rawHeaders, resume$1, statusMessage);
-					const { start, size, end = size } = range$1;
+					const range = parseRangeHeader(headers["content-range"]);
+					if (range == null) return this.handler.onHeaders(statusCode, rawHeaders, resume$1, statusMessage);
+					const { start, size, end = size } = range;
 					assert$7(start != null && Number.isFinite(start) && this.start !== start, "content-range mismatch");
 					assert$7(Number.isFinite(start));
 					assert$7(end != null && Number.isFinite(end) && this.end !== end, "invalid content-length");
@@ -10128,7 +10128,7 @@ var require_response = __commonJS({ "node_modules/.pnpm/undici@5.29.0/node_modul
 	const { URLSerializer: URLSerializer$3 } = require_dataURL();
 	const { kHeadersList: kHeadersList$4, kConstruct: kConstruct$3 } = require_symbols$4();
 	const assert$5 = require("assert");
-	const { types: types$3 } = require("util");
+	const { types: types$2 } = require("util");
 	const ReadableStream$2 = globalThis.ReadableStream || require("stream/web").ReadableStream;
 	const textEncoder = new TextEncoder("utf-8");
 	var Response$3 = class Response$3 {
@@ -10377,7 +10377,7 @@ var require_response = __commonJS({ "node_modules/.pnpm/undici@5.29.0/node_modul
 	webidl$9.converters.XMLHttpRequestBodyInit = function(V) {
 		if (typeof V === "string") return webidl$9.converters.USVString(V);
 		if (isBlobLike$2(V)) return webidl$9.converters.Blob(V, { strict: false });
-		if (types$3.isArrayBuffer(V) || types$3.isTypedArray(V) || types$3.isDataView(V)) return webidl$9.converters.BufferSource(V);
+		if (types$2.isArrayBuffer(V) || types$2.isTypedArray(V) || types$2.isDataView(V)) return webidl$9.converters.BufferSource(V);
 		if (util$3.isFormDataLike(V)) return webidl$9.converters.FormData(V, { strict: false });
 		if (V instanceof URLSearchParams) return webidl$9.converters.URLSearchParams(V);
 		return webidl$9.converters.DOMString(V);
@@ -11875,7 +11875,7 @@ var require_util$3 = __commonJS({ "node_modules/.pnpm/undici@5.29.0/node_modules
 	const { getEncoding } = require_encoding();
 	const { DOMException: DOMException$2 } = require_constants$3();
 	const { serializeAMimeType, parseMIMEType } = require_dataURL();
-	const { types: types$2 } = require("util");
+	const { types: types$1 } = require("util");
 	const { StringDecoder } = require("string_decoder");
 	const { btoa: btoa$1 } = require("buffer");
 	/** @type {PropertyDescriptor} */
@@ -11910,7 +11910,7 @@ var require_util$3 = __commonJS({ "node_modules/.pnpm/undici@5.29.0/node_modules
 					fireAProgressEvent$1("loadstart", fr);
 				});
 				isFirstChunk = false;
-				if (!done && types$2.isUint8Array(value)) {
+				if (!done && types$1.isUint8Array(value)) {
 					bytes.push(value);
 					if ((fr[kLastProgressEventFired] === void 0 || Date.now() - fr[kLastProgressEventFired] >= 50) && !fr[kAborted$1]) {
 						fr[kLastProgressEventFired] = Date.now();
@@ -12915,8 +12915,8 @@ var require_util$1 = __commonJS({ "node_modules/.pnpm/undici@5.29.0/node_modules
 	* path-value        = <any CHAR except CTLs or ";">
 	* @param {string} path
 	*/
-	function validateCookiePath(path$6) {
-		for (const char of path$6) {
+	function validateCookiePath(path$5) {
+		for (const char of path$5) {
 			const code = char.charCodeAt(0);
 			if (code < 33 || char === ";") throw new Error("Invalid cookie path");
 		}
@@ -14129,7 +14129,7 @@ var require_websocket = __commonJS({ "node_modules/.pnpm/undici@5.29.0/node_modu
 	const { ByteParser } = require_receiver();
 	const { kEnumerableProperty, isBlobLike } = require_util$6();
 	const { getGlobalDispatcher: getGlobalDispatcher$1 } = require_global();
-	const { types: types$1 } = require("util");
+	const { types } = require("util");
 	let experimentalWarned = false;
 	var WebSocket = class WebSocket extends EventTarget {
 		#events = {
@@ -14232,7 +14232,7 @@ var require_websocket = __commonJS({ "node_modules/.pnpm/undici@5.29.0/node_modu
 				socket.write(buffer, () => {
 					this.#bufferedAmount -= value.byteLength;
 				});
-			} else if (types$1.isArrayBuffer(data)) {
+			} else if (types.isArrayBuffer(data)) {
 				const value = Buffer.from(data);
 				const frame = new WebsocketFrameSend(value);
 				const buffer = frame.createFrame(opcodes.BINARY);
@@ -14423,7 +14423,7 @@ var require_websocket = __commonJS({ "node_modules/.pnpm/undici@5.29.0/node_modu
 	webidl.converters.WebSocketSendData = function(V) {
 		if (webidl.util.Type(V) === "Object") {
 			if (isBlobLike(V)) return webidl.converters.Blob(V, { strict: false });
-			if (ArrayBuffer.isView(V) || types$1.isAnyArrayBuffer(V)) return webidl.converters.BufferSource(V);
+			if (ArrayBuffer.isView(V) || types.isAnyArrayBuffer(V)) return webidl.converters.BufferSource(V);
 		}
 		return webidl.converters.USVString(V);
 	};
@@ -14483,9 +14483,9 @@ var require_undici = __commonJS({ "node_modules/.pnpm/undici@5.29.0/node_modules
 			if (opts != null && typeof opts !== "object") throw new InvalidArgumentError$2("invalid opts");
 			if (opts && opts.path != null) {
 				if (typeof opts.path !== "string") throw new InvalidArgumentError$2("invalid opts.path");
-				let path$6 = opts.path;
-				if (!opts.path.startsWith("/")) path$6 = `/${path$6}`;
-				url = new URL(util$1.parseOrigin(url).origin + path$6);
+				let path$5 = opts.path;
+				if (!opts.path.startsWith("/")) path$5 = `/${path$5}`;
+				url = new URL(util$1.parseOrigin(url).origin + path$5);
 			} else {
 				if (!opts) opts = typeof url === "object" ? url : {};
 				url = util$1.parseURL(url);
@@ -15235,7 +15235,7 @@ var require_oidc_utils = __commonJS({ "node_modules/.pnpm/@actions+core@1.11.1/n
 			return runtimeUrl;
 		}
 		static getCall(id_token_url) {
-			var _a$4;
+			var _a$3;
 			return __awaiter$8(this, void 0, void 0, function* () {
 				const httpclient = OidcClient.createHttpClient();
 				const res = yield httpclient.getJson(id_token_url).catch((error$1) => {
@@ -15243,7 +15243,7 @@ var require_oidc_utils = __commonJS({ "node_modules/.pnpm/@actions+core@1.11.1/n
         Error Code : ${error$1.statusCode}\n 
         Error Message: ${error$1.message}`);
 				});
-				const id_token = (_a$4 = res.result) === null || _a$4 === void 0 ? void 0 : _a$4.value;
+				const id_token = (_a$3 = res.result) === null || _a$3 === void 0 ? void 0 : _a$3.value;
 				if (!id_token) throw new Error("Response json body do not have ID Token field");
 				return id_token;
 			});
@@ -15323,7 +15323,7 @@ var require_summary = __commonJS({ "node_modules/.pnpm/@actions+core@1.11.1/node
 				if (!pathFromEnv) throw new Error(`Unable to find environment variable for $${exports.SUMMARY_ENV_VAR}. Check if your runtime environment supports job summaries.`);
 				try {
 					yield access(pathFromEnv, fs_1$1.constants.R_OK | fs_1$1.constants.W_OK);
-				} catch (_a$4) {
+				} catch (_a$3) {
 					throw new Error(`Unable to access summary file: '${pathFromEnv}'. Check if the file has correct read/write permissions.`);
 				}
 				this._filePath = pathFromEnv;
@@ -15602,7 +15602,7 @@ var require_path_utils = __commonJS({ "node_modules/.pnpm/@actions+core@1.11.1/n
 	};
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.toPlatformPath = exports.toWin32Path = exports.toPosixPath = void 0;
-	const path$5 = __importStar$9(require("path"));
+	const path$4 = __importStar$9(require("path"));
 	/**
 	* toPosixPath converts the given path to the posix form. On Windows, \\ will be
 	* replaced with /.
@@ -15634,7 +15634,7 @@ var require_path_utils = __commonJS({ "node_modules/.pnpm/@actions+core@1.11.1/n
 	* @return string The platform-specific path.
 	*/
 	function toPlatformPath(pth) {
-		return pth.replace(/[/\\]/g, path$5.sep);
+		return pth.replace(/[/\\]/g, path$4.sep);
 	}
 	exports.toPlatformPath = toPlatformPath;
 } });
@@ -15698,12 +15698,12 @@ var require_io_util = __commonJS({ "node_modules/.pnpm/@actions+io@1.1.3/node_mo
 			step((generator = generator.apply(thisArg, _arguments || [])).next());
 		});
 	};
-	var _a$3;
+	var _a$2;
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.getCmdPath = exports.tryGetExecutablePath = exports.isRooted = exports.isDirectory = exports.exists = exports.READONLY = exports.UV_FS_O_EXLOCK = exports.IS_WINDOWS = exports.unlink = exports.symlink = exports.stat = exports.rmdir = exports.rm = exports.rename = exports.readlink = exports.readdir = exports.open = exports.mkdir = exports.lstat = exports.copyFile = exports.chmod = void 0;
 	const fs$1 = __importStar$8(require("fs"));
-	const path$4 = __importStar$8(require("path"));
-	_a$3 = fs$1.promises, exports.chmod = _a$3.chmod, exports.copyFile = _a$3.copyFile, exports.lstat = _a$3.lstat, exports.mkdir = _a$3.mkdir, exports.open = _a$3.open, exports.readdir = _a$3.readdir, exports.readlink = _a$3.readlink, exports.rename = _a$3.rename, exports.rm = _a$3.rm, exports.rmdir = _a$3.rmdir, exports.stat = _a$3.stat, exports.symlink = _a$3.symlink, exports.unlink = _a$3.unlink;
+	const path$3 = __importStar$8(require("path"));
+	_a$2 = fs$1.promises, exports.chmod = _a$2.chmod, exports.copyFile = _a$2.copyFile, exports.lstat = _a$2.lstat, exports.mkdir = _a$2.mkdir, exports.open = _a$2.open, exports.readdir = _a$2.readdir, exports.readlink = _a$2.readlink, exports.rename = _a$2.rename, exports.rm = _a$2.rm, exports.rmdir = _a$2.rmdir, exports.stat = _a$2.stat, exports.symlink = _a$2.symlink, exports.unlink = _a$2.unlink;
 	exports.IS_WINDOWS = process.platform === "win32";
 	exports.UV_FS_O_EXLOCK = 268435456;
 	exports.READONLY = fs$1.constants.O_RDONLY;
@@ -15753,7 +15753,7 @@ var require_io_util = __commonJS({ "node_modules/.pnpm/@actions+io@1.1.3/node_mo
 			}
 			if (stats && stats.isFile()) {
 				if (exports.IS_WINDOWS) {
-					const upperExt = path$4.extname(filePath).toUpperCase();
+					const upperExt = path$3.extname(filePath).toUpperCase();
 					if (extensions.some((validExt) => validExt.toUpperCase() === upperExt)) return filePath;
 				} else if (isUnixExecutable(stats)) return filePath;
 			}
@@ -15769,10 +15769,10 @@ var require_io_util = __commonJS({ "node_modules/.pnpm/@actions+io@1.1.3/node_mo
 				if (stats && stats.isFile()) {
 					if (exports.IS_WINDOWS) {
 						try {
-							const directory = path$4.dirname(filePath);
-							const upperName = path$4.basename(filePath).toUpperCase();
+							const directory = path$3.dirname(filePath);
+							const upperName = path$3.basename(filePath).toUpperCase();
 							for (const actualName of yield exports.readdir(directory)) if (upperName === actualName.toUpperCase()) {
-								filePath = path$4.join(directory, actualName);
+								filePath = path$3.join(directory, actualName);
 								break;
 							}
 						} catch (err) {
@@ -15798,8 +15798,8 @@ var require_io_util = __commonJS({ "node_modules/.pnpm/@actions+io@1.1.3/node_mo
 		return (stats.mode & 1) > 0 || (stats.mode & 8) > 0 && stats.gid === process.getgid() || (stats.mode & 64) > 0 && stats.uid === process.getuid();
 	}
 	function getCmdPath() {
-		var _a$4;
-		return (_a$4 = process.env["COMSPEC"]) !== null && _a$4 !== void 0 ? _a$4 : `cmd.exe`;
+		var _a$3;
+		return (_a$3 = process.env["COMSPEC"]) !== null && _a$3 !== void 0 ? _a$3 : `cmd.exe`;
 	}
 	exports.getCmdPath = getCmdPath;
 } });
@@ -15866,7 +15866,7 @@ var require_io = __commonJS({ "node_modules/.pnpm/@actions+io@1.1.3/node_modules
 	Object.defineProperty(exports, "__esModule", { value: true });
 	exports.findInPath = exports.which = exports.mkdirP = exports.rmRF = exports.mv = exports.cp = void 0;
 	const assert_1 = require("assert");
-	const path$3 = __importStar$7(require("path"));
+	const path$2 = __importStar$7(require("path"));
 	const ioUtil$1 = __importStar$7(require_io_util());
 	/**
 	* Copies a file or folder.
@@ -15881,13 +15881,13 @@ var require_io = __commonJS({ "node_modules/.pnpm/@actions+io@1.1.3/node_modules
 			const { force, recursive, copySourceDirectory } = readCopyOptions(options);
 			const destStat = (yield ioUtil$1.exists(dest)) ? yield ioUtil$1.stat(dest) : null;
 			if (destStat && destStat.isFile() && !force) return;
-			const newDest = destStat && destStat.isDirectory() && copySourceDirectory ? path$3.join(dest, path$3.basename(source)) : dest;
+			const newDest = destStat && destStat.isDirectory() && copySourceDirectory ? path$2.join(dest, path$2.basename(source)) : dest;
 			if (!(yield ioUtil$1.exists(source))) throw new Error(`no such file or directory: ${source}`);
 			const sourceStat = yield ioUtil$1.stat(source);
 			if (sourceStat.isDirectory()) if (!recursive) throw new Error(`Failed to copy. ${source} is a directory, but tried to copy without recursive flag.`);
 			else yield cpDirRecursive(source, newDest, 0, force);
 			else {
-				if (path$3.relative(source, newDest) === "") throw new Error(`'${newDest}' and '${source}' are the same file`);
+				if (path$2.relative(source, newDest) === "") throw new Error(`'${newDest}' and '${source}' are the same file`);
 				yield copyFile(source, newDest, force);
 			}
 		});
@@ -15905,13 +15905,13 @@ var require_io = __commonJS({ "node_modules/.pnpm/@actions+io@1.1.3/node_modules
 			if (yield ioUtil$1.exists(dest)) {
 				let destExists = true;
 				if (yield ioUtil$1.isDirectory(dest)) {
-					dest = path$3.join(dest, path$3.basename(source));
+					dest = path$2.join(dest, path$2.basename(source));
 					destExists = yield ioUtil$1.exists(dest);
 				}
 				if (destExists) if (options.force == null || options.force) yield rmRF(dest);
 				else throw new Error("Destination already exists");
 			}
-			yield mkdirP(path$3.dirname(dest));
+			yield mkdirP(path$2.dirname(dest));
 			yield ioUtil$1.rename(source, dest);
 		});
 	}
@@ -15986,21 +15986,21 @@ var require_io = __commonJS({ "node_modules/.pnpm/@actions+io@1.1.3/node_modules
 			if (!tool) throw new Error("parameter 'tool' is required");
 			const extensions = [];
 			if (ioUtil$1.IS_WINDOWS && process.env["PATHEXT"]) {
-				for (const extension of process.env["PATHEXT"].split(path$3.delimiter)) if (extension) extensions.push(extension);
+				for (const extension of process.env["PATHEXT"].split(path$2.delimiter)) if (extension) extensions.push(extension);
 			}
 			if (ioUtil$1.isRooted(tool)) {
 				const filePath = yield ioUtil$1.tryGetExecutablePath(tool, extensions);
 				if (filePath) return [filePath];
 				return [];
 			}
-			if (tool.includes(path$3.sep)) return [];
+			if (tool.includes(path$2.sep)) return [];
 			const directories = [];
 			if (process.env.PATH) {
-				for (const p of process.env.PATH.split(path$3.delimiter)) if (p) directories.push(p);
+				for (const p of process.env.PATH.split(path$2.delimiter)) if (p) directories.push(p);
 			}
 			const matches = [];
 			for (const directory of directories) {
-				const filePath = yield ioUtil$1.tryGetExecutablePath(path$3.join(directory, tool), extensions);
+				const filePath = yield ioUtil$1.tryGetExecutablePath(path$2.join(directory, tool), extensions);
 				if (filePath) matches.push(filePath);
 			}
 			return matches;
@@ -16116,7 +16116,7 @@ var require_toolrunner = __commonJS({ "node_modules/.pnpm/@actions+exec@1.1.1/no
 	const os$1 = __importStar$6(require("os"));
 	const events = __importStar$6(require("events"));
 	const child = __importStar$6(require("child_process"));
-	const path$2 = __importStar$6(require("path"));
+	const path$1 = __importStar$6(require("path"));
 	const io = __importStar$6(require_io());
 	const ioUtil = __importStar$6(require_io_util());
 	const timers_1 = require("timers");
@@ -16293,7 +16293,7 @@ var require_toolrunner = __commonJS({ "node_modules/.pnpm/@actions+exec@1.1.1/no
 		*/
 		exec() {
 			return __awaiter$4(this, void 0, void 0, function* () {
-				if (!ioUtil.isRooted(this.toolPath) && (this.toolPath.includes("/") || IS_WINDOWS && this.toolPath.includes("\\"))) this.toolPath = path$2.resolve(process.cwd(), this.options.cwd || process.cwd(), this.toolPath);
+				if (!ioUtil.isRooted(this.toolPath) && (this.toolPath.includes("/") || IS_WINDOWS && this.toolPath.includes("\\"))) this.toolPath = path$1.resolve(process.cwd(), this.options.cwd || process.cwd(), this.toolPath);
 				this.toolPath = yield io.which(this.toolPath, true);
 				return new Promise((resolve$1, reject) => __awaiter$4(this, void 0, void 0, function* () {
 					this._debug(`exec tool: ${this.toolPath}`);
@@ -16551,13 +16551,13 @@ var require_exec = __commonJS({ "node_modules/.pnpm/@actions+exec@1.1.1/node_mod
 	* @returns   Promise<ExecOutput>   exit code, stdout, and stderr
 	*/
 	function getExecOutput(commandLine, args, options) {
-		var _a$4, _b;
+		var _a$3, _b;
 		return __awaiter$3(this, void 0, void 0, function* () {
 			let stdout = "";
 			let stderr = "";
 			const stdoutDecoder = new string_decoder_1.StringDecoder("utf8");
 			const stderrDecoder = new string_decoder_1.StringDecoder("utf8");
-			const originalStdoutListener = (_a$4 = options === null || options === void 0 ? void 0 : options.listeners) === null || _a$4 === void 0 ? void 0 : _a$4.stdout;
+			const originalStdoutListener = (_a$3 = options === null || options === void 0 ? void 0 : options.listeners) === null || _a$3 === void 0 ? void 0 : _a$3.stdout;
 			const originalStdErrListener = (_b = options === null || options === void 0 ? void 0 : options.listeners) === null || _b === void 0 ? void 0 : _b.stderr;
 			const stdErrListener = (data) => {
 				stderr += stderrDecoder.write(data);
@@ -16661,9 +16661,9 @@ var require_platform$1 = __commonJS({ "node_modules/.pnpm/@actions+core@1.11.1/n
 		};
 	});
 	const getMacOsInfo = () => __awaiter$2(void 0, void 0, void 0, function* () {
-		var _a$4, _b, _c, _d;
+		var _a$3, _b, _c, _d;
 		const { stdout } = yield exec.getExecOutput("sw_vers", void 0, { silent: true });
-		const version = (_b = (_a$4 = stdout.match(/ProductVersion:\s*(.+)/)) === null || _a$4 === void 0 ? void 0 : _a$4[1]) !== null && _b !== void 0 ? _b : "";
+		const version = (_b = (_a$3 = stdout.match(/ProductVersion:\s*(.+)/)) === null || _a$3 === void 0 ? void 0 : _a$3[1]) !== null && _b !== void 0 ? _b : "";
 		const name$2 = (_d = (_c = stdout.match(/ProductName:\s*(.+)/)) === null || _c === void 0 ? void 0 : _c[1]) !== null && _d !== void 0 ? _d : "";
 		return {
 			name: name$2,
@@ -16768,7 +16768,7 @@ var require_core$1 = __commonJS({ "node_modules/.pnpm/@actions+core@1.11.1/node_
 	const file_command_1 = require_file_command();
 	const utils_1$3 = require_utils$6();
 	const os = __importStar$3(require("os"));
-	const path$1 = __importStar$3(require("path"));
+	const path = __importStar$3(require("path"));
 	const oidc_utils_1 = require_oidc_utils();
 	/**
 	* The code to exit an action
@@ -16813,7 +16813,7 @@ var require_core$1 = __commonJS({ "node_modules/.pnpm/@actions+core@1.11.1/node_
 		const filePath = process.env["GITHUB_PATH"] || "";
 		if (filePath) (0, file_command_1.issueFileCommand)("PATH", inputPath);
 		else (0, command_1.issueCommand)("add-path", {}, inputPath);
-		process.env["PATH"] = `${inputPath}${path$1.delimiter}${process.env["PATH"]}`;
+		process.env["PATH"] = `${inputPath}${path.delimiter}${process.env["PATH"]}`;
 	}
 	exports.addPath = addPath;
 	/**
@@ -17082,12 +17082,12 @@ var require_context$2 = __commonJS({ "node_modules/.pnpm/@actions+github@6.0.1/n
 		* Hydrate the context from the environment
 		*/
 		constructor() {
-			var _a$4, _b, _c;
+			var _a$3, _b, _c;
 			this.payload = {};
 			if (process.env.GITHUB_EVENT_PATH) if ((0, fs_1.existsSync)(process.env.GITHUB_EVENT_PATH)) this.payload = JSON.parse((0, fs_1.readFileSync)(process.env.GITHUB_EVENT_PATH, { encoding: "utf8" }));
 			else {
-				const path$6 = process.env.GITHUB_EVENT_PATH;
-				process.stdout.write(`GITHUB_EVENT_PATH ${path$6} does not exist${os_1.EOL}`);
+				const path$5 = process.env.GITHUB_EVENT_PATH;
+				process.stdout.write(`GITHUB_EVENT_PATH ${path$5} does not exist${os_1.EOL}`);
 			}
 			this.eventName = process.env.GITHUB_EVENT_NAME;
 			this.sha = process.env.GITHUB_SHA;
@@ -17099,7 +17099,7 @@ var require_context$2 = __commonJS({ "node_modules/.pnpm/@actions+github@6.0.1/n
 			this.runAttempt = parseInt(process.env.GITHUB_RUN_ATTEMPT, 10);
 			this.runNumber = parseInt(process.env.GITHUB_RUN_NUMBER, 10);
 			this.runId = parseInt(process.env.GITHUB_RUN_ID, 10);
-			this.apiUrl = (_a$4 = process.env.GITHUB_API_URL) !== null && _a$4 !== void 0 ? _a$4 : `https://api.github.com`;
+			this.apiUrl = (_a$3 = process.env.GITHUB_API_URL) !== null && _a$3 !== void 0 ? _a$3 : `https://api.github.com`;
 			this.serverUrl = (_b = process.env.GITHUB_SERVER_URL) !== null && _b !== void 0 ? _b : `https://github.com`;
 			this.graphqlUrl = (_c = process.env.GITHUB_GRAPHQL_URL) !== null && _c !== void 0 ? _c : `https://api.github.com/graphql`;
 		}
@@ -17404,11 +17404,11 @@ var require_dist_node$8 = __commonJS({ "node_modules/.pnpm/@octokit+endpoint@9.0
 		const Ctor = Object.prototype.hasOwnProperty.call(proto, "constructor") && proto.constructor;
 		return typeof Ctor === "function" && Ctor instanceof Ctor && Function.prototype.call(Ctor) === Function.prototype.call(value);
 	}
-	function mergeDeep$1(defaults$5, options) {
-		const result = Object.assign({}, defaults$5);
+	function mergeDeep$1(defaults$4, options) {
+		const result = Object.assign({}, defaults$4);
 		Object.keys(options).forEach((key) => {
-			if (isPlainObject$3(options[key])) if (!(key in defaults$5)) Object.assign(result, { [key]: options[key] });
-			else result[key] = mergeDeep$1(defaults$5[key], options[key]);
+			if (isPlainObject$3(options[key])) if (!(key in defaults$4)) Object.assign(result, { [key]: options[key] });
+			else result[key] = mergeDeep$1(defaults$4[key], options[key]);
 			else Object.assign(result, { [key]: options[key] });
 		});
 		return result;
@@ -17417,7 +17417,7 @@ var require_dist_node$8 = __commonJS({ "node_modules/.pnpm/@octokit+endpoint@9.0
 		for (const key in obj) if (obj[key] === void 0) delete obj[key];
 		return obj;
 	}
-	function merge$1(defaults$5, route, options) {
+	function merge$1(defaults$4, route, options) {
 		if (typeof route === "string") {
 			let [method, url] = route.split(" ");
 			options = Object.assign(url ? {
@@ -17428,9 +17428,9 @@ var require_dist_node$8 = __commonJS({ "node_modules/.pnpm/@octokit+endpoint@9.0
 		options.headers = lowercaseKeys$1(options.headers);
 		removeUndefinedProperties$1(options);
 		removeUndefinedProperties$1(options.headers);
-		const mergedOptions = mergeDeep$1(defaults$5 || {}, options);
+		const mergedOptions = mergeDeep$1(defaults$4 || {}, options);
 		if (options.url === "/graphql") {
-			if (defaults$5 && defaults$5.mediaType.previews?.length) mergedOptions.mediaType.previews = defaults$5.mediaType.previews.filter((preview) => !mergedOptions.mediaType.previews.includes(preview)).concat(mergedOptions.mediaType.previews);
+			if (defaults$4 && defaults$4.mediaType.previews?.length) mergedOptions.mediaType.previews = defaults$4.mediaType.previews.filter((preview) => !mergedOptions.mediaType.previews.includes(preview)).concat(mergedOptions.mediaType.previews);
 			mergedOptions.mediaType.previews = (mergedOptions.mediaType.previews || []).map((preview) => preview.replace(/-preview/, ""));
 		}
 		return mergedOptions;
@@ -17513,9 +17513,9 @@ var require_dist_node$8 = __commonJS({ "node_modules/.pnpm/@octokit+endpoint@9.0
 		return result;
 	}
 	function parseUrl$1(template) {
-		return { expand: expand$2.bind(null, template) };
+		return { expand: expand$1.bind(null, template) };
 	}
-	function expand$2(template, context) {
+	function expand$1(template, context) {
 		var operators = [
 			"+",
 			"#",
@@ -17590,8 +17590,8 @@ var require_dist_node$8 = __commonJS({ "node_modules/.pnpm/@octokit+endpoint@9.0
 			headers
 		}, typeof body !== "undefined" ? { body } : null, options.request ? { request: options.request } : null);
 	}
-	function endpointWithDefaults$1(defaults$5, route, options) {
-		return parse$4(merge$1(defaults$5, route, options));
+	function endpointWithDefaults$1(defaults$4, route, options) {
+		return parse$4(merge$1(defaults$4, route, options));
 	}
 	function withDefaults$5(oldDefaults, newDefaults) {
 		const DEFAULTS2 = merge$1(oldDefaults, newDefaults);
@@ -17793,9 +17793,9 @@ var require_dist_node$5 = __commonJS({ "node_modules/.pnpm/@octokit+request@8.4.
 		return response.arrayBuffer();
 	}
 	function fetchWrapper$1(requestOptions) {
-		var _a$4, _b, _c, _d;
+		var _a$3, _b, _c, _d;
 		const log = requestOptions.request && requestOptions.request.log ? requestOptions.request.log : console;
-		const parseSuccessResponseBody = ((_a$4 = requestOptions.request) == null ? void 0 : _a$4.parseSuccessResponseBody) !== false;
+		const parseSuccessResponseBody = ((_a$3 = requestOptions.request) == null ? void 0 : _a$3.parseSuccessResponseBody) !== false;
 		if (isPlainObject$2(requestOptions.body) || Array.isArray(requestOptions.body)) requestOptions.body = JSON.stringify(requestOptions.body);
 		let headers = {};
 		let status;
@@ -18134,15 +18134,15 @@ var require_dist_node$2 = __commonJS({ "node_modules/.pnpm/@octokit+core@5.2.2/n
 		static {
 			this.VERSION = VERSION$10;
 		}
-		static defaults(defaults$5) {
+		static defaults(defaults$4) {
 			const OctokitWithDefaults = class extends this {
 				constructor(...args) {
 					const options = args[0] || {};
-					if (typeof defaults$5 === "function") {
-						super(defaults$5(options));
+					if (typeof defaults$4 === "function") {
+						super(defaults$4(options));
 						return;
 					}
-					super(Object.assign({}, defaults$5, options, options.userAgent && defaults$5.userAgent ? { userAgent: `${options.userAgent} ${defaults$5.userAgent}` } : null));
+					super(Object.assign({}, defaults$4, options, options.userAgent && defaults$4.userAgent ? { userAgent: `${options.userAgent} ${defaults$4.userAgent}` } : null));
 				}
 			};
 			return OctokitWithDefaults;
@@ -19427,12 +19427,12 @@ var require_dist_node$1 = __commonJS({ "node_modules/.pnpm/@octokit+plugin-rest-
 	var endpoints_default$1 = Endpoints$1;
 	var endpointMethodsMap$1 = /* @__PURE__ */ new Map();
 	for (const [scope, endpoints] of Object.entries(endpoints_default$1)) for (const [methodName, endpoint$2] of Object.entries(endpoints)) {
-		const [route, defaults$5, decorations] = endpoint$2;
+		const [route, defaults$4, decorations] = endpoint$2;
 		const [method, url] = route.split(/ /);
 		const endpointDefaults = Object.assign({
 			method,
 			url
-		}, defaults$5);
+		}, defaults$4);
 		if (!endpointMethodsMap$1.has(scope)) endpointMethodsMap$1.set(scope, /* @__PURE__ */ new Map());
 		endpointMethodsMap$1.get(scope).set(methodName, {
 			scope,
@@ -19486,8 +19486,8 @@ var require_dist_node$1 = __commonJS({ "node_modules/.pnpm/@octokit+plugin-rest-
 		}, handler$1);
 		return newMethods;
 	}
-	function decorate$1(octokit, scope, methodName, defaults$5, decorations) {
-		const requestWithDefaults = octokit.request.defaults(defaults$5);
+	function decorate$1(octokit, scope, methodName, defaults$4, decorations) {
+		const requestWithDefaults = octokit.request.defaults(defaults$4);
 		function withDecorations(...args) {
 			let options = requestWithDefaults.endpoint.merge(...args);
 			if (decorations.mapToData) {
@@ -20126,11 +20126,11 @@ function isPlainObject$1(value) {
 	const Ctor = Object.prototype.hasOwnProperty.call(proto, "constructor") && proto.constructor;
 	return typeof Ctor === "function" && Ctor instanceof Ctor && Function.prototype.call(Ctor) === Function.prototype.call(value);
 }
-function mergeDeep(defaults$5, options) {
-	const result = Object.assign({}, defaults$5);
+function mergeDeep(defaults$4, options) {
+	const result = Object.assign({}, defaults$4);
 	Object.keys(options).forEach((key) => {
-		if (isPlainObject$1(options[key])) if (!(key in defaults$5)) Object.assign(result, { [key]: options[key] });
-		else result[key] = mergeDeep(defaults$5[key], options[key]);
+		if (isPlainObject$1(options[key])) if (!(key in defaults$4)) Object.assign(result, { [key]: options[key] });
+		else result[key] = mergeDeep(defaults$4[key], options[key]);
 		else Object.assign(result, { [key]: options[key] });
 	});
 	return result;
@@ -20139,7 +20139,7 @@ function removeUndefinedProperties(obj) {
 	for (const key in obj) if (obj[key] === void 0) delete obj[key];
 	return obj;
 }
-function merge(defaults$5, route, options) {
+function merge(defaults$4, route, options) {
 	if (typeof route === "string") {
 		let [method, url] = route.split(" ");
 		options = Object.assign(url ? {
@@ -20150,9 +20150,9 @@ function merge(defaults$5, route, options) {
 	options.headers = lowercaseKeys(options.headers);
 	removeUndefinedProperties(options);
 	removeUndefinedProperties(options.headers);
-	const mergedOptions = mergeDeep(defaults$5 || {}, options);
+	const mergedOptions = mergeDeep(defaults$4 || {}, options);
 	if (options.url === "/graphql") {
-		if (defaults$5 && defaults$5.mediaType.previews?.length) mergedOptions.mediaType.previews = defaults$5.mediaType.previews.filter((preview) => !mergedOptions.mediaType.previews.includes(preview)).concat(mergedOptions.mediaType.previews);
+		if (defaults$4 && defaults$4.mediaType.previews?.length) mergedOptions.mediaType.previews = defaults$4.mediaType.previews.filter((preview) => !mergedOptions.mediaType.previews.includes(preview)).concat(mergedOptions.mediaType.previews);
 		mergedOptions.mediaType.previews = (mergedOptions.mediaType.previews || []).map((preview) => preview.replace(/-preview/, ""));
 	}
 	return mergedOptions;
@@ -20235,9 +20235,9 @@ function getValues(context, operator, key, modifier) {
 	return result;
 }
 function parseUrl(template) {
-	return { expand: expand$1.bind(null, template) };
+	return { expand: expand.bind(null, template) };
 }
-function expand$1(template, context) {
+function expand(template, context) {
 	var operators = [
 		"+",
 		"#",
@@ -20312,8 +20312,8 @@ function parse$3(options) {
 		headers
 	}, typeof body !== "undefined" ? { body } : null, options.request ? { request: options.request } : null);
 }
-function endpointWithDefaults(defaults$5, route, options) {
-	return parse$3(merge(defaults$5, route, options));
+function endpointWithDefaults(defaults$4, route, options) {
+	return parse$3(merge(defaults$4, route, options));
 }
 function withDefaults$2(oldDefaults, newDefaults) {
 	const DEFAULTS2 = merge(oldDefaults, newDefaults);
@@ -20386,14 +20386,14 @@ var require_fast_content_type_parse = __commonJS({ "node_modules/.pnpm/fast-cont
 		};
 		if (index === -1) return result;
 		let key;
-		let match$1;
+		let match;
 		let value;
 		paramRE.lastIndex = index;
-		while (match$1 = paramRE.exec(header)) {
-			if (match$1.index !== index) throw new TypeError("invalid parameter format");
-			index += match$1[0].length;
-			key = match$1[1].toLowerCase();
-			value = match$1[2];
+		while (match = paramRE.exec(header)) {
+			if (match.index !== index) throw new TypeError("invalid parameter format");
+			index += match[0].length;
+			key = match[1].toLowerCase();
+			value = match[2];
 			if (value[0] === "\"") {
 				value = value.slice(1, value.length - 1);
 				quotedPairRE.test(value) && (value = value.replace(quotedPairRE, "$1"));
@@ -20414,14 +20414,14 @@ var require_fast_content_type_parse = __commonJS({ "node_modules/.pnpm/fast-cont
 		};
 		if (index === -1) return result;
 		let key;
-		let match$1;
+		let match;
 		let value;
 		paramRE.lastIndex = index;
-		while (match$1 = paramRE.exec(header)) {
-			if (match$1.index !== index) return defaultContentType;
-			index += match$1[0].length;
-			key = match$1[1].toLowerCase();
-			value = match$1[2];
+		while (match = paramRE.exec(header)) {
+			if (match.index !== index) return defaultContentType;
+			index += match[0].length;
+			key = match[1].toLowerCase();
+			value = match[2];
 			if (value[0] === "\"") {
 				value = value.slice(1, value.length - 1);
 				quotedPairRE.test(value) && (value = value.replace(quotedPairRE, "$1"));
@@ -20695,8 +20695,8 @@ function withCustomRequest(customRequest) {
 //#endregion
 //#region node_modules/.pnpm/@octokit+auth-token@5.1.2/node_modules/@octokit/auth-token/dist-bundle/index.js
 var b64url = "(?:[a-zA-Z0-9_-]+)";
-var sep$1 = "\\.";
-var jwtRE = new RegExp(`^${b64url}${sep$1}${b64url}${sep$1}${b64url}$`);
+var sep = "\\.";
+var jwtRE = new RegExp(`^${b64url}${sep}${b64url}${sep}${b64url}$`);
 var isJWT = jwtRE.test.bind(jwtRE);
 async function auth(token) {
 	const isApp = isJWT(token);
@@ -20744,15 +20744,15 @@ function createLogger(logger = {}) {
 const userAgentTrail = `octokit-core.js/${VERSION$4} ${getUserAgent()}`;
 var Octokit$1 = class {
 	static VERSION = VERSION$4;
-	static defaults(defaults$5) {
+	static defaults(defaults$4) {
 		const OctokitWithDefaults = class extends this {
 			constructor(...args) {
 				const options = args[0] || {};
-				if (typeof defaults$5 === "function") {
-					super(defaults$5(options));
+				if (typeof defaults$4 === "function") {
+					super(defaults$4(options));
 					return;
 				}
-				super(Object.assign({}, defaults$5, options, options.userAgent && defaults$5.userAgent ? { userAgent: `${options.userAgent} ${defaults$5.userAgent}` } : null));
+				super(Object.assign({}, defaults$4, options, options.userAgent && defaults$4.userAgent ? { userAgent: `${options.userAgent} ${defaults$4.userAgent}` } : null));
 			}
 		};
 		return OctokitWithDefaults;
@@ -20828,14 +20828,14 @@ function requestLog(octokit) {
 		octokit.log.debug("request", options);
 		const start = Date.now();
 		const requestOptions = octokit.request.endpoint.parse(options);
-		const path$6 = requestOptions.url.replace(options.baseUrl, "");
+		const path$5 = requestOptions.url.replace(options.baseUrl, "");
 		return request$3(options).then((response) => {
 			const requestId = response.headers["x-github-request-id"];
-			octokit.log.info(`${requestOptions.method} ${path$6} - ${response.status} with id ${requestId} in ${Date.now() - start}ms`);
+			octokit.log.info(`${requestOptions.method} ${path$5} - ${response.status} with id ${requestId} in ${Date.now() - start}ms`);
 			return response;
 		}).catch((error$1) => {
 			const requestId = error$1.response?.headers["x-github-request-id"] || "UNKNOWN";
-			octokit.log.error(`${requestOptions.method} ${path$6} - ${error$1.status} with id ${requestId} in ${Date.now() - start}ms`);
+			octokit.log.error(`${requestOptions.method} ${path$5} - ${error$1.status} with id ${requestId} in ${Date.now() - start}ms`);
 			throw error$1;
 		});
 	});
@@ -22310,12 +22310,12 @@ var endpoints_default = Endpoints;
 //#region node_modules/.pnpm/@octokit+plugin-rest-endpoint-methods@13.5.0_@octokit+core@6.1.6/node_modules/@octokit/plugin-rest-endpoint-methods/dist-src/endpoints-to-methods.js
 const endpointMethodsMap = /* @__PURE__ */ new Map();
 for (const [scope, endpoints] of Object.entries(endpoints_default)) for (const [methodName, endpoint$2] of Object.entries(endpoints)) {
-	const [route, defaults$5, decorations] = endpoint$2;
+	const [route, defaults$4, decorations] = endpoint$2;
 	const [method, url] = route.split(/ /);
 	const endpointDefaults = Object.assign({
 		method,
 		url
-	}, defaults$5);
+	}, defaults$4);
 	if (!endpointMethodsMap.has(scope)) endpointMethodsMap.set(scope, /* @__PURE__ */ new Map());
 	endpointMethodsMap.get(scope).set(methodName, {
 		scope,
@@ -22369,8 +22369,8 @@ function endpointsToMethods(octokit) {
 	}, handler);
 	return newMethods;
 }
-function decorate(octokit, scope, methodName, defaults$5, decorations) {
-	const requestWithDefaults = octokit.request.defaults(defaults$5);
+function decorate(octokit, scope, methodName, defaults$4, decorations) {
+	const requestWithDefaults = octokit.request.defaults(defaults$4);
 	function withDecorations(...args) {
 		let options = requestWithDefaults.endpoint.merge(...args);
 		if (decorations.mapToData) {
@@ -22427,7 +22427,7 @@ const Octokit = Octokit$1.plugin(requestLog, legacyRestEndpointMethods, paginate
 //#region node_modules/.pnpm/@ai-sdk+provider@1.1.3/node_modules/@ai-sdk/provider/dist/index.mjs
 var marker$1 = "vercel.ai.error";
 var symbol$1 = Symbol.for(marker$1);
-var _a$2;
+var _a$1;
 var _AISDKError = class _AISDKError$1 extends Error {
 	/**
 	* Creates an AI SDK Error.
@@ -22439,7 +22439,7 @@ var _AISDKError = class _AISDKError$1 extends Error {
 	*/
 	constructor({ name: name14$1, message, cause }) {
 		super(message);
-		this[_a$2] = true;
+		this[_a$1] = true;
 		this.name = name14$1;
 		this.cause = cause;
 	}
@@ -22456,7 +22456,7 @@ var _AISDKError = class _AISDKError$1 extends Error {
 		return error$1 != null && typeof error$1 === "object" && markerSymbol in error$1 && typeof error$1[markerSymbol] === "boolean" && error$1[markerSymbol] === true;
 	}
 };
-_a$2 = symbol$1;
+_a$1 = symbol$1;
 var AISDKError = _AISDKError;
 var name$1 = "AI_APICallError";
 var marker2$1 = `vercel.ai.error.${name$1}`;
@@ -22753,13 +22753,13 @@ var require_secure_json_parse = __commonJS({ "node_modules/.pnpm/secure-json-par
 		} else if (protoAction !== "ignore" && constructorAction === "ignore") {
 			if (suspectProtoRx.test(text$1) === false) return obj;
 		} else if (suspectConstructorRx.test(text$1) === false) return obj;
-		return filter$1(obj, {
+		return filter(obj, {
 			protoAction,
 			constructorAction,
 			safe: options && options.safe
 		});
 	}
-	function filter$1(obj, { protoAction = "error", constructorAction = "error", safe } = {}) {
+	function filter(obj, { protoAction = "error", constructorAction = "error", safe } = {}) {
 		let next = [obj];
 		while (next.length) {
 			const nodes = next;
@@ -22807,7 +22807,7 @@ var require_secure_json_parse = __commonJS({ "node_modules/.pnpm/secure-json-par
 	module.exports.default = parse$1;
 	module.exports.parse = parse$1;
 	module.exports.safeParse = safeParse;
-	module.exports.scan = filter$1;
+	module.exports.scan = filter;
 } });
 
 //#endregion
@@ -23595,8 +23595,8 @@ function getErrorMap() {
 //#endregion
 //#region node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/helpers/parseUtil.js
 const makeIssue = (params) => {
-	const { data, path: path$6, errorMaps, issueData } = params;
-	const fullPath = [...path$6, ...issueData.path || []];
+	const { data, path: path$5, errorMaps, issueData } = params;
+	const fullPath = [...path$5, ...issueData.path || []];
 	const fullIssue = {
 		...issueData,
 		path: fullPath
@@ -23708,11 +23708,11 @@ var errorUtil;
 //#endregion
 //#region node_modules/.pnpm/zod@3.25.76/node_modules/zod/v3/types.js
 var ParseInputLazyPath = class {
-	constructor(parent, value, path$6, key) {
+	constructor(parent, value, path$5, key) {
 		this._cachedPath = [];
 		this.parent = parent;
 		this.data = value;
-		this._path = path$6;
+		this._path = path$5;
 		this._key = key;
 	}
 	get path() {
@@ -25748,9 +25748,9 @@ var ZodUnion = class extends ZodType {
 		return this._def.options;
 	}
 };
-ZodUnion.create = (types$6, params) => {
+ZodUnion.create = (types$5, params) => {
 	return new ZodUnion({
-		options: types$6,
+		options: types$5,
 		typeName: ZodFirstPartyTypeKind.ZodUnion,
 		...processCreateParams(params)
 	});
@@ -26973,7 +26973,7 @@ function convertToOpenAIChatMessages({ prompt, useLegacyFunctionCalling = false,
 			messages.push({
 				role: "user",
 				content: content.map((part, index) => {
-					var _a$4, _b, _c, _d;
+					var _a$3, _b, _c, _d;
 					switch (part.type) {
 						case "text": return {
 							type: "text",
@@ -26982,7 +26982,7 @@ function convertToOpenAIChatMessages({ prompt, useLegacyFunctionCalling = false,
 						case "image": return {
 							type: "image_url",
 							image_url: {
-								url: part.image instanceof URL ? part.image.toString() : `data:${(_a$4 = part.mimeType) != null ? _a$4 : "image/jpeg"};base64,${convertUint8ArrayToBase64(part.image)}`,
+								url: part.image instanceof URL ? part.image.toString() : `data:${(_a$3 = part.mimeType) != null ? _a$3 : "image/jpeg"};base64,${convertUint8ArrayToBase64(part.image)}`,
 								detail: (_c = (_b = part.providerMetadata) == null ? void 0 : _b.openai) == null ? void 0 : _c.imageDetail
 							}
 						};
@@ -27077,8 +27077,8 @@ function convertToOpenAIChatMessages({ prompt, useLegacyFunctionCalling = false,
 	};
 }
 function mapOpenAIChatLogProbsOutput(logprobs) {
-	var _a$4, _b;
-	return (_b = (_a$4 = logprobs == null ? void 0 : logprobs.content) == null ? void 0 : _a$4.map(({ token, logprob, top_logprobs }) => ({
+	var _a$3, _b;
+	return (_b = (_a$3 = logprobs == null ? void 0 : logprobs.content) == null ? void 0 : _a$3.map(({ token, logprob, top_logprobs }) => ({
 		token,
 		logprob,
 		topLogprobs: top_logprobs ? top_logprobs.map(({ token: token2, logprob: logprob2 }) => ({
@@ -27115,8 +27115,8 @@ function getResponseMetadata({ id, model, created }) {
 	};
 }
 function prepareTools$1({ mode, useLegacyFunctionCalling = false, structuredOutputs }) {
-	var _a$4;
-	const tools = ((_a$4 = mode.tools) == null ? void 0 : _a$4.length) ? mode.tools : void 0;
+	var _a$3;
+	const tools = ((_a$3 = mode.tools) == null ? void 0 : _a$3.length) ? mode.tools : void 0;
 	const toolWarnings = [];
 	if (tools == null) return {
 		tools: void 0,
@@ -27207,8 +27207,8 @@ var OpenAIChatLanguageModel = class {
 		this.config = config;
 	}
 	get supportsStructuredOutputs() {
-		var _a$4;
-		return (_a$4 = this.settings.structuredOutputs) != null ? _a$4 : isReasoningModel(this.modelId);
+		var _a$3;
+		return (_a$3 = this.settings.structuredOutputs) != null ? _a$3 : isReasoningModel(this.modelId);
 	}
 	get defaultObjectGenerationMode() {
 		if (isAudioModel(this.modelId)) return "tool";
@@ -27221,7 +27221,7 @@ var OpenAIChatLanguageModel = class {
 		return !this.settings.downloadImages;
 	}
 	getArgs({ mode, prompt, maxTokens, temperature, topP, topK, frequencyPenalty, presencePenalty, stopSequences, responseFormat, seed, providerMetadata }) {
-		var _a$4, _b, _c, _d, _e, _f, _g, _h;
+		var _a$3, _b, _c, _d, _e, _f, _g, _h;
 		const type = mode.type;
 		const warnings = [];
 		if (topK != null) warnings.push({
@@ -27259,7 +27259,7 @@ var OpenAIChatLanguageModel = class {
 				json_schema: {
 					schema: responseFormat.schema,
 					strict: true,
-					name: (_a$4 = responseFormat.name) != null ? _a$4 : "response",
+					name: (_a$3 = responseFormat.name) != null ? _a$3 : "response",
 					description: responseFormat.description
 				}
 			} : { type: "json_object" } : void 0,
@@ -27407,7 +27407,7 @@ var OpenAIChatLanguageModel = class {
 		}
 	}
 	async doGenerate(options) {
-		var _a$4, _b, _c, _d, _e, _f, _g, _h;
+		var _a$3, _b, _c, _d, _e, _f, _g, _h;
 		const { args: body, warnings } = this.getArgs(options);
 		const { responseHeaders, value: response, rawValue: rawResponse } = await postJsonToApi({
 			url: this.config.url({
@@ -27423,7 +27423,7 @@ var OpenAIChatLanguageModel = class {
 		});
 		const { messages: rawPrompt,...rawSettings } = body;
 		const choice = response.choices[0];
-		const completionTokenDetails = (_a$4 = response.usage) == null ? void 0 : _a$4.completion_tokens_details;
+		const completionTokenDetails = (_a$3 = response.usage) == null ? void 0 : _a$3.completion_tokens_details;
 		const promptTokenDetails = (_b = response.usage) == null ? void 0 : _b.prompt_tokens_details;
 		const providerMetadata = { openai: {} };
 		if ((completionTokenDetails == null ? void 0 : completionTokenDetails.reasoning_tokens) != null) providerMetadata.openai.reasoningTokens = completionTokenDetails == null ? void 0 : completionTokenDetails.reasoning_tokens;
@@ -27539,7 +27539,7 @@ var OpenAIChatLanguageModel = class {
 		return {
 			stream: response.pipeThrough(new TransformStream({
 				transform(chunk, controller) {
-					var _a$4, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l;
+					var _a$3, _b, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l;
 					if (!chunk.success) {
 						finishReason = "error";
 						controller.enqueue({
@@ -27605,7 +27605,7 @@ var OpenAIChatLanguageModel = class {
 								data: toolCallDelta,
 								message: `Expected 'id' to be a string.`
 							});
-							if (((_a$4 = toolCallDelta.function) == null ? void 0 : _a$4.name) == null) throw new InvalidResponseDataError({
+							if (((_a$3 = toolCallDelta.function) == null ? void 0 : _a$3.name) == null) throw new InvalidResponseDataError({
 								data: toolCallDelta,
 								message: `Expected 'function.name' to be a string.`
 							});
@@ -27663,13 +27663,13 @@ var OpenAIChatLanguageModel = class {
 					}
 				},
 				flush(controller) {
-					var _a$4, _b;
+					var _a$3, _b;
 					controller.enqueue({
 						type: "finish",
 						finishReason,
 						logprobs,
 						usage: {
-							promptTokens: (_a$4 = usage.promptTokens) != null ? _a$4 : NaN,
+							promptTokens: (_a$3 = usage.promptTokens) != null ? _a$3 : NaN,
 							completionTokens: (_b = usage.completionTokens) != null ? _b : NaN
 						},
 						...providerMetadata != null ? { providerMetadata } : {}
@@ -27772,9 +27772,9 @@ function isAudioModel(modelId) {
 	return modelId.startsWith("gpt-4o-audio-preview");
 }
 function getSystemMessageMode(modelId) {
-	var _a$4, _b;
+	var _a$3, _b;
 	if (!isReasoningModel(modelId)) return "system";
-	return (_b = (_a$4 = reasoningModels[modelId]) == null ? void 0 : _a$4.systemMessageMode) != null ? _b : "developer";
+	return (_b = (_a$3 = reasoningModels[modelId]) == null ? void 0 : _a$3.systemMessageMode) != null ? _b : "developer";
 }
 var reasoningModels = {
 	"o1-mini": { systemMessageMode: "remove" },
@@ -27864,7 +27864,7 @@ var OpenAICompletionLanguageModel = class {
 		return this.config.provider;
 	}
 	getArgs({ mode, inputFormat, prompt, maxTokens, temperature, topP, topK, frequencyPenalty, presencePenalty, stopSequences: userStopSequences, responseFormat, seed }) {
-		var _a$4;
+		var _a$3;
 		const type = mode.type;
 		const warnings = [];
 		if (topK != null) warnings.push({
@@ -27899,7 +27899,7 @@ var OpenAICompletionLanguageModel = class {
 		};
 		switch (type) {
 			case "regular": {
-				if ((_a$4 = mode.tools) == null ? void 0 : _a$4.length) throw new UnsupportedFunctionalityError({ functionality: "tools" });
+				if ((_a$3 = mode.tools) == null ? void 0 : _a$3.length) throw new UnsupportedFunctionalityError({ functionality: "tools" });
 				if (mode.toolChoice) throw new UnsupportedFunctionalityError({ functionality: "toolChoice" });
 				return {
 					args: baseArgs,
@@ -28088,12 +28088,12 @@ var OpenAIEmbeddingModel = class {
 		return this.config.provider;
 	}
 	get maxEmbeddingsPerCall() {
-		var _a$4;
-		return (_a$4 = this.settings.maxEmbeddingsPerCall) != null ? _a$4 : 2048;
+		var _a$3;
+		return (_a$3 = this.settings.maxEmbeddingsPerCall) != null ? _a$3 : 2048;
 	}
 	get supportsParallelCalls() {
-		var _a$4;
-		return (_a$4 = this.settings.supportsParallelCalls) != null ? _a$4 : true;
+		var _a$3;
+		return (_a$3 = this.settings.supportsParallelCalls) != null ? _a$3 : true;
 	}
 	async doEmbed({ values, headers, abortSignal }) {
 		if (values.length > this.maxEmbeddingsPerCall) throw new TooManyEmbeddingValuesForCallError({
@@ -28145,14 +28145,14 @@ var OpenAIImageModel = class {
 		this.specificationVersion = "v1";
 	}
 	get maxImagesPerCall() {
-		var _a$4, _b;
-		return (_b = (_a$4 = this.settings.maxImagesPerCall) != null ? _a$4 : modelMaxImagesPerCall[this.modelId]) != null ? _b : 1;
+		var _a$3, _b;
+		return (_b = (_a$3 = this.settings.maxImagesPerCall) != null ? _a$3 : modelMaxImagesPerCall[this.modelId]) != null ? _b : 1;
 	}
 	get provider() {
 		return this.config.provider;
 	}
 	async doGenerate({ prompt, n, size, aspectRatio, seed, providerOptions, headers, abortSignal }) {
-		var _a$4, _b, _c, _d;
+		var _a$3, _b, _c, _d;
 		const warnings = [];
 		if (aspectRatio != null) warnings.push({
 			type: "unsupported-setting",
@@ -28163,7 +28163,7 @@ var OpenAIImageModel = class {
 			type: "unsupported-setting",
 			setting: "seed"
 		});
-		const currentDate = (_c = (_b = (_a$4 = this.config._internal) == null ? void 0 : _a$4.currentDate) == null ? void 0 : _b.call(_a$4)) != null ? _c : /* @__PURE__ */ new Date();
+		const currentDate = (_c = (_b = (_a$3 = this.config._internal) == null ? void 0 : _a$3.currentDate) == null ? void 0 : _b.call(_a$3)) != null ? _c : /* @__PURE__ */ new Date();
 		const { value: response, responseHeaders } = await postJsonToApi({
 			url: this.config.url({
 				path: "/images/generations",
@@ -28271,7 +28271,7 @@ var OpenAITranscriptionModel = class {
 		return this.config.provider;
 	}
 	getArgs({ audio, mediaType, providerOptions }) {
-		var _a$4, _b, _c, _d, _e;
+		var _a$3, _b, _c, _d, _e;
 		const warnings = [];
 		const openAIOptions = parseProviderOptions({
 			provider: "openai",
@@ -28284,7 +28284,7 @@ var OpenAITranscriptionModel = class {
 		formData.append("file", new File([blob], "audio", { type: mediaType }));
 		if (openAIOptions) {
 			const transcriptionModelOptions = {
-				include: (_a$4 = openAIOptions.include) != null ? _a$4 : void 0,
+				include: (_a$3 = openAIOptions.include) != null ? _a$3 : void 0,
 				language: (_b = openAIOptions.language) != null ? _b : void 0,
 				prompt: (_c = openAIOptions.prompt) != null ? _c : void 0,
 				temperature: (_d = openAIOptions.temperature) != null ? _d : void 0,
@@ -28301,8 +28301,8 @@ var OpenAITranscriptionModel = class {
 		};
 	}
 	async doGenerate(options) {
-		var _a$4, _b, _c, _d, _e, _f;
-		const currentDate = (_c = (_b = (_a$4 = this.config._internal) == null ? void 0 : _a$4.currentDate) == null ? void 0 : _b.call(_a$4)) != null ? _c : /* @__PURE__ */ new Date();
+		var _a$3, _b, _c, _d, _e, _f;
+		const currentDate = (_c = (_b = (_a$3 = this.config._internal) == null ? void 0 : _a$3.currentDate) == null ? void 0 : _b.call(_a$3)) != null ? _c : /* @__PURE__ */ new Date();
 		const { formData, warnings } = this.getArgs(options);
 		const { value: response, responseHeaders, rawValue: rawResponse } = await postFormDataToApi({
 			url: this.config.url({
@@ -28384,7 +28384,7 @@ function convertToOpenAIResponsesMessages({ prompt, systemMessageMode }) {
 			messages.push({
 				role: "user",
 				content: content.map((part, index) => {
-					var _a$4, _b, _c, _d;
+					var _a$3, _b, _c, _d;
 					switch (part.type) {
 						case "text": return {
 							type: "input_text",
@@ -28392,7 +28392,7 @@ function convertToOpenAIResponsesMessages({ prompt, systemMessageMode }) {
 						};
 						case "image": return {
 							type: "input_image",
-							image_url: part.image instanceof URL ? part.image.toString() : `data:${(_a$4 = part.mimeType) != null ? _a$4 : "image/jpeg"};base64,${convertUint8ArrayToBase64(part.image)}`,
+							image_url: part.image instanceof URL ? part.image.toString() : `data:${(_a$3 = part.mimeType) != null ? _a$3 : "image/jpeg"};base64,${convertUint8ArrayToBase64(part.image)}`,
 							detail: (_c = (_b = part.providerMetadata) == null ? void 0 : _b.openai) == null ? void 0 : _c.imageDetail
 						};
 						case "file": {
@@ -28463,8 +28463,8 @@ function mapOpenAIResponseFinishReason({ finishReason, hasToolCalls }) {
 	}
 }
 function prepareResponsesTools({ mode, strict }) {
-	var _a$4;
-	const tools = ((_a$4 = mode.tools) == null ? void 0 : _a$4.length) ? mode.tools : void 0;
+	var _a$3;
+	const tools = ((_a$3 = mode.tools) == null ? void 0 : _a$3.length) ? mode.tools : void 0;
 	const toolWarnings = [];
 	if (tools == null) return {
 		tools: void 0,
@@ -28554,7 +28554,7 @@ var OpenAIResponsesLanguageModel = class {
 		return this.config.provider;
 	}
 	getArgs({ mode, maxTokens, temperature, stopSequences, topP, topK, presencePenalty, frequencyPenalty, seed, prompt, providerMetadata, responseFormat }) {
-		var _a$4, _b, _c;
+		var _a$3, _b, _c;
 		const warnings = [];
 		const modelConfig = getResponsesModelConfig(this.modelId);
 		const type = mode.type;
@@ -28588,7 +28588,7 @@ var OpenAIResponsesLanguageModel = class {
 			providerOptions: providerMetadata,
 			schema: openaiResponsesProviderOptionsSchema
 		});
-		const isStrict = (_a$4 = openaiOptions == null ? void 0 : openaiOptions.strictSchemas) != null ? _a$4 : true;
+		const isStrict = (_a$3 = openaiOptions == null ? void 0 : openaiOptions.strictSchemas) != null ? _a$3 : true;
 		const baseArgs = {
 			model: this.modelId,
 			input: messages,
@@ -28684,7 +28684,7 @@ var OpenAIResponsesLanguageModel = class {
 		}
 	}
 	async doGenerate(options) {
-		var _a$4, _b, _c, _d, _e, _f, _g;
+		var _a$3, _b, _c, _d, _e, _f, _g;
 		const { args: body, warnings } = this.getArgs(options);
 		const url = this.config.url({
 			path: "/responses",
@@ -28757,7 +28757,7 @@ var OpenAIResponsesLanguageModel = class {
 			toolName: output.name,
 			args: output.arguments
 		}));
-		const reasoningSummary = (_b = (_a$4 = response.output.find((item) => item.type === "reasoning")) == null ? void 0 : _a$4.summary) != null ? _b : null;
+		const reasoningSummary = (_b = (_a$3 = response.output.find((item) => item.type === "reasoning")) == null ? void 0 : _a$3.summary) != null ? _b : null;
 		return {
 			text: outputTextElements.map((content) => content.text).join("\n"),
 			sources: outputTextElements.flatMap((content) => content.annotations.map((annotation) => {
@@ -28833,7 +28833,7 @@ var OpenAIResponsesLanguageModel = class {
 		return {
 			stream: response.pipeThrough(new TransformStream({
 				transform(chunk, controller) {
-					var _a$4, _b, _c, _d, _e, _f, _g, _h;
+					var _a$3, _b, _c, _d, _e, _f, _g, _h;
 					if (!chunk.success) {
 						finishReason = "error";
 						controller.enqueue({
@@ -28894,7 +28894,7 @@ var OpenAIResponsesLanguageModel = class {
 						});
 					} else if (isResponseFinishedChunk(value)) {
 						finishReason = mapOpenAIResponseFinishReason({
-							finishReason: (_a$4 = value.response.incomplete_details) == null ? void 0 : _a$4.reason,
+							finishReason: (_a$3 = value.response.incomplete_details) == null ? void 0 : _a$3.reason,
 							hasToolCalls
 						});
 						promptTokens = value.response.usage.input_tokens;
@@ -29153,8 +29153,8 @@ var OpenAISpeechModel = class {
 		};
 	}
 	async doGenerate(options) {
-		var _a$4, _b, _c;
-		const currentDate = (_c = (_b = (_a$4 = this.config._internal) == null ? void 0 : _a$4.currentDate) == null ? void 0 : _b.call(_a$4)) != null ? _c : /* @__PURE__ */ new Date();
+		var _a$3, _b, _c;
+		const currentDate = (_c = (_b = (_a$3 = this.config._internal) == null ? void 0 : _a$3.currentDate) == null ? void 0 : _b.call(_a$3)) != null ? _c : /* @__PURE__ */ new Date();
 		const { requestBody, warnings } = this.getArgs(options);
 		const { value: audio, responseHeaders, rawValue: rawResponse } = await postJsonToApi({
 			url: this.config.url({
@@ -29182,8 +29182,8 @@ var OpenAISpeechModel = class {
 	}
 };
 function createOpenAI(options = {}) {
-	var _a$4, _b, _c;
-	const baseURL = (_a$4 = withoutTrailingSlash(options.baseURL)) != null ? _a$4 : "https://api.openai.com/v1";
+	var _a$3, _b, _c;
+	const baseURL = (_a$3 = withoutTrailingSlash(options.baseURL)) != null ? _a$3 : "https://api.openai.com/v1";
 	const compatibility = (_b = options.compatibility) != null ? _b : "compatible";
 	const providerName = (_c = options.name) != null ? _c : "openai";
 	const getHeaders = () => ({
@@ -29198,39 +29198,39 @@ function createOpenAI(options = {}) {
 	});
 	const createChatModel = (modelId, settings = {}) => new OpenAIChatLanguageModel(modelId, settings, {
 		provider: `${providerName}.chat`,
-		url: ({ path: path$6 }) => `${baseURL}${path$6}`,
+		url: ({ path: path$5 }) => `${baseURL}${path$5}`,
 		headers: getHeaders,
 		compatibility,
 		fetch: options.fetch
 	});
 	const createCompletionModel = (modelId, settings = {}) => new OpenAICompletionLanguageModel(modelId, settings, {
 		provider: `${providerName}.completion`,
-		url: ({ path: path$6 }) => `${baseURL}${path$6}`,
+		url: ({ path: path$5 }) => `${baseURL}${path$5}`,
 		headers: getHeaders,
 		compatibility,
 		fetch: options.fetch
 	});
 	const createEmbeddingModel = (modelId, settings = {}) => new OpenAIEmbeddingModel(modelId, settings, {
 		provider: `${providerName}.embedding`,
-		url: ({ path: path$6 }) => `${baseURL}${path$6}`,
+		url: ({ path: path$5 }) => `${baseURL}${path$5}`,
 		headers: getHeaders,
 		fetch: options.fetch
 	});
 	const createImageModel = (modelId, settings = {}) => new OpenAIImageModel(modelId, settings, {
 		provider: `${providerName}.image`,
-		url: ({ path: path$6 }) => `${baseURL}${path$6}`,
+		url: ({ path: path$5 }) => `${baseURL}${path$5}`,
 		headers: getHeaders,
 		fetch: options.fetch
 	});
 	const createTranscriptionModel = (modelId) => new OpenAITranscriptionModel(modelId, {
 		provider: `${providerName}.transcription`,
-		url: ({ path: path$6 }) => `${baseURL}${path$6}`,
+		url: ({ path: path$5 }) => `${baseURL}${path$5}`,
 		headers: getHeaders,
 		fetch: options.fetch
 	});
 	const createSpeechModel = (modelId) => new OpenAISpeechModel(modelId, {
 		provider: `${providerName}.speech`,
-		url: ({ path: path$6 }) => `${baseURL}${path$6}`,
+		url: ({ path: path$5 }) => `${baseURL}${path$5}`,
 		headers: getHeaders,
 		fetch: options.fetch
 	});
@@ -29242,7 +29242,7 @@ function createOpenAI(options = {}) {
 	const createResponsesModel = (modelId) => {
 		return new OpenAIResponsesLanguageModel(modelId, {
 			provider: `${providerName}.responses`,
-			url: ({ path: path$6 }) => `${baseURL}${path$6}`,
+			url: ({ path: path$5 }) => `${baseURL}${path$5}`,
 			headers: getHeaders,
 			fetch: options.fetch
 		});
@@ -29282,8 +29282,8 @@ var anthropicFailedResponseHandler = createJsonErrorResponseHandler({
 	errorToMessage: (data) => data.error.message
 });
 function prepareTools(mode) {
-	var _a$4;
-	const tools = ((_a$4 = mode.tools) == null ? void 0 : _a$4.length) ? mode.tools : void 0;
+	var _a$3;
+	const tools = ((_a$3 = mode.tools) == null ? void 0 : _a$3.length) ? mode.tools : void 0;
 	const toolWarnings = [];
 	const betas = /* @__PURE__ */ new Set();
 	if (tools == null) return {
@@ -29409,7 +29409,7 @@ function prepareTools(mode) {
 	}
 }
 function convertToAnthropicMessagesPrompt({ prompt, sendReasoning, warnings }) {
-	var _a$4, _b, _c, _d;
+	var _a$3, _b, _c, _d;
 	const betas = /* @__PURE__ */ new Set();
 	const blocks = groupIntoBlocks(prompt);
 	let system = void 0;
@@ -29443,7 +29443,7 @@ function convertToAnthropicMessagesPrompt({ prompt, sendReasoning, warnings }) {
 							for (let j = 0; j < content.length; j++) {
 								const part = content[j];
 								const isLastPart = j === content.length - 1;
-								const cacheControl = (_a$4 = getCacheControl(part.providerMetadata)) != null ? _a$4 : isLastPart ? getCacheControl(message.providerMetadata) : void 0;
+								const cacheControl = (_a$3 = getCacheControl(part.providerMetadata)) != null ? _a$3 : isLastPart ? getCacheControl(message.providerMetadata) : void 0;
 								switch (part.type) {
 									case "text": {
 										anthropicContent.push({
@@ -29693,7 +29693,7 @@ var AnthropicMessagesLanguageModel = class {
 		return this.config.supportsImageUrls;
 	}
 	async getArgs({ mode, prompt, maxTokens = 4096, temperature, topP, topK, frequencyPenalty, presencePenalty, stopSequences, responseFormat, seed, providerMetadata: providerOptions }) {
-		var _a$4, _b, _c;
+		var _a$3, _b, _c;
 		const type = mode.type;
 		const warnings = [];
 		if (frequencyPenalty != null) warnings.push({
@@ -29715,7 +29715,7 @@ var AnthropicMessagesLanguageModel = class {
 		});
 		const { prompt: messagesPrompt, betas: messagesBetas } = convertToAnthropicMessagesPrompt({
 			prompt,
-			sendReasoning: (_a$4 = this.settings.sendReasoning) != null ? _a$4 : true,
+			sendReasoning: (_a$3 = this.settings.sendReasoning) != null ? _a$3 : true,
 			warnings
 		});
 		const anthropicOptions = parseProviderOptions({
@@ -29810,15 +29810,15 @@ var AnthropicMessagesLanguageModel = class {
 		return combineHeaders(await resolve(this.config.headers), betas.size > 0 ? { "anthropic-beta": Array.from(betas).join(",") } : {}, headers);
 	}
 	buildRequestUrl(isStreaming) {
-		var _a$4, _b, _c;
-		return (_c = (_b = (_a$4 = this.config).buildRequestUrl) == null ? void 0 : _b.call(_a$4, this.config.baseURL, isStreaming)) != null ? _c : `${this.config.baseURL}/messages`;
+		var _a$3, _b, _c;
+		return (_c = (_b = (_a$3 = this.config).buildRequestUrl) == null ? void 0 : _b.call(_a$3, this.config.baseURL, isStreaming)) != null ? _c : `${this.config.baseURL}/messages`;
 	}
 	transformRequestBody(args) {
-		var _a$4, _b, _c;
-		return (_c = (_b = (_a$4 = this.config).transformRequestBody) == null ? void 0 : _b.call(_a$4, args)) != null ? _c : args;
+		var _a$3, _b, _c;
+		return (_c = (_b = (_a$3 = this.config).transformRequestBody) == null ? void 0 : _b.call(_a$3, args)) != null ? _c : args;
 	}
 	async doGenerate(options) {
-		var _a$4, _b, _c, _d;
+		var _a$3, _b, _c, _d;
 		const { args, warnings, betas } = await this.getArgs(options);
 		const { responseHeaders, value: response, rawValue: rawResponse } = await postJsonToApi({
 			url: this.buildRequestUrl(false),
@@ -29871,7 +29871,7 @@ var AnthropicMessagesLanguageModel = class {
 				body: rawResponse
 			},
 			response: {
-				id: (_a$4 = response.id) != null ? _a$4 : void 0,
+				id: (_a$3 = response.id) != null ? _a$3 : void 0,
 				modelId: (_b = response.model) != null ? _b : void 0
 			},
 			warnings,
@@ -29911,7 +29911,7 @@ var AnthropicMessagesLanguageModel = class {
 		let blockType = void 0;
 		return {
 			stream: response.pipeThrough(new TransformStream({ transform(chunk, controller) {
-				var _a$4, _b, _c, _d;
+				var _a$3, _b, _c, _d;
 				if (!chunk.success) {
 					controller.enqueue({
 						type: "error",
@@ -30010,7 +30010,7 @@ var AnthropicMessagesLanguageModel = class {
 						usage.promptTokens = value.message.usage.input_tokens;
 						usage.completionTokens = value.message.usage.output_tokens;
 						providerMetadata = { anthropic: {
-							cacheCreationInputTokens: (_a$4 = value.message.usage.cache_creation_input_tokens) != null ? _a$4 : null,
+							cacheCreationInputTokens: (_a$3 = value.message.usage.cache_creation_input_tokens) != null ? _a$3 : null,
 							cacheReadInputTokens: (_b = value.message.usage.cache_read_input_tokens) != null ? _b : null
 						} };
 						controller.enqueue({
@@ -30334,8 +30334,8 @@ var anthropicTools = {
 	computer_20250124: computerTool_20250124
 };
 function createAnthropic(options = {}) {
-	var _a$4;
-	const baseURL = (_a$4 = withoutTrailingSlash(options.baseURL)) != null ? _a$4 : "https://api.anthropic.com/v1";
+	var _a$3;
+	const baseURL = (_a$3 = withoutTrailingSlash(options.baseURL)) != null ? _a$3 : "https://api.anthropic.com/v1";
 	const getHeaders = () => ({
 		"anthropic-version": "2023-06-01",
 		"x-api-key": loadApiKey({
@@ -30413,12 +30413,12 @@ async function getPRFiles(octokit, owner, repo, prNumber) {
 	}
 	return files;
 }
-async function getFileContent(octokit, owner, repo, ref, path$6) {
+async function getFileContent(octokit, owner, repo, ref, path$5) {
 	try {
 		const { data } = await octokit.rest.repos.getContent({
 			owner,
 			repo,
-			path: path$6,
+			path: path$5,
 			ref
 		});
 		if (Array.isArray(data) || data.type !== "file") return null;
@@ -30443,8 +30443,8 @@ function parseDiffPositions(patch) {
 	for (const line of lines) {
 		diffPosition++;
 		if (line.startsWith("@@")) {
-			const match$1 = line.match(/@@ -\d+(?:,\d+)? \+(\d+)(?:,\d+)? @@/);
-			if (match$1) newLineNumber = parseInt(match$1[1] ?? "0", 10) - 1;
+			const match = line.match(/@@ -\d+(?:,\d+)? \+(\d+)(?:,\d+)? @@/);
+			if (match) newLineNumber = parseInt(match[1] ?? "0", 10) - 1;
 			continue;
 		}
 		if (line.startsWith("+")) {
@@ -30464,10 +30464,10 @@ function makeStateComment(state) {
 const STATE_COMMENT_RE = new RegExp(`<!-- ${STATE_MARKER} (\\{"sha":"[0-9a-f]{40}","timestamp":"[^"]{1,64}"\\}) -->`);
 function parseStateComment(body) {
 	if (body.length > 1e4) return null;
-	const match$1 = body.match(STATE_COMMENT_RE);
-	if (!match$1 || !match$1[1]) return null;
+	const match = body.match(STATE_COMMENT_RE);
+	if (!match || !match[1]) return null;
 	try {
-		return JSON.parse(match$1[1]);
+		return JSON.parse(match[1]);
 	} catch {
 		return null;
 	}
@@ -30719,11 +30719,11 @@ var require_section_matter = __commonJS({ "node_modules/.pnpm/section-matter@1.0
 	module.exports = function(input, options) {
 		if (typeof options === "function") options = { parse: options };
 		var file = toObject(input);
-		var defaults$5 = {
+		var defaults$4 = {
 			section_delimiter: "---",
 			parse: identity
 		};
-		var opts = extend$1({}, defaults$5, options);
+		var opts = extend$1({}, defaults$4, options);
 		var delim = opts.section_delimiter;
 		var lines = file.content.split(/\r?\n/);
 		var sections$1 = null;
@@ -31018,29 +31018,29 @@ var require_schema = __commonJS({ "node_modules/.pnpm/js-yaml@3.14.2/node_module
 	}
 	Schema$5.DEFAULT = null;
 	Schema$5.create = function createSchema() {
-		var schemas, types$6;
+		var schemas, types$5;
 		switch (arguments.length) {
 			case 1:
 				schemas = Schema$5.DEFAULT;
-				types$6 = arguments[0];
+				types$5 = arguments[0];
 				break;
 			case 2:
 				schemas = arguments[0];
-				types$6 = arguments[1];
+				types$5 = arguments[1];
 				break;
 			default: throw new YAMLException$2("Wrong number of arguments for Schema.create function");
 		}
 		schemas = common$4.toArray(schemas);
-		types$6 = common$4.toArray(types$6);
+		types$5 = common$4.toArray(types$5);
 		if (!schemas.every(function(schema) {
 			return schema instanceof Schema$5;
 		})) throw new YAMLException$2("Specified list of super schemas (or a single Schema object) contains a non-Schema object.");
-		if (!types$6.every(function(type) {
+		if (!types$5.every(function(type) {
 			return type instanceof Type$16;
 		})) throw new YAMLException$2("Specified list of YAML types (or a single Type object) contains a non-Type object.");
 		return new Schema$5({
 			include: schemas,
-			explicit: types$6
+			explicit: types$5
 		});
 	};
 	module.exports = Schema$5;
@@ -31393,27 +31393,27 @@ var require_timestamp = __commonJS({ "node_modules/.pnpm/js-yaml@3.14.2/node_mod
 		return false;
 	}
 	function constructYamlTimestamp(data) {
-		var match$1, year, month, day, hour, minute, second, fraction = 0, delta = null, tz_hour, tz_minute, date;
-		match$1 = YAML_DATE_REGEXP.exec(data);
-		if (match$1 === null) match$1 = YAML_TIMESTAMP_REGEXP.exec(data);
-		if (match$1 === null) throw new Error("Date resolve error");
-		year = +match$1[1];
-		month = +match$1[2] - 1;
-		day = +match$1[3];
-		if (!match$1[4]) return new Date(Date.UTC(year, month, day));
-		hour = +match$1[4];
-		minute = +match$1[5];
-		second = +match$1[6];
-		if (match$1[7]) {
-			fraction = match$1[7].slice(0, 3);
+		var match, year, month, day, hour, minute, second, fraction = 0, delta = null, tz_hour, tz_minute, date;
+		match = YAML_DATE_REGEXP.exec(data);
+		if (match === null) match = YAML_TIMESTAMP_REGEXP.exec(data);
+		if (match === null) throw new Error("Date resolve error");
+		year = +match[1];
+		month = +match[2] - 1;
+		day = +match[3];
+		if (!match[4]) return new Date(Date.UTC(year, month, day));
+		hour = +match[4];
+		minute = +match[5];
+		second = +match[6];
+		if (match[7]) {
+			fraction = match[7].slice(0, 3);
 			while (fraction.length < 3) fraction += "0";
 			fraction = +fraction;
 		}
-		if (match$1[9]) {
-			tz_hour = +match$1[10];
-			tz_minute = +(match$1[11] || 0);
+		if (match[9]) {
+			tz_hour = +match[10];
+			tz_minute = +(match[11] || 0);
 			delta = (tz_hour * 60 + tz_minute) * 6e4;
-			if (match$1[9] === "-") delta = -delta;
+			if (match[9] === "-") delta = -delta;
 		}
 		date = new Date(Date.UTC(year, month, day, hour, minute, second, fraction));
 		if (delta) date.setTime(date.getTime() - delta);
@@ -31865,13 +31865,13 @@ var require_loader = __commonJS({ "node_modules/.pnpm/js-yaml@3.14.2/node_module
 	}
 	var directiveHandlers = {
 		YAML: function handleYamlDirective(state, name$2, args) {
-			var match$1, major$1, minor;
+			var match, major$1, minor;
 			if (state.version !== null) throwError(state, "duplication of %YAML directive");
 			if (args.length !== 1) throwError(state, "YAML directive accepts exactly one argument");
-			match$1 = /^([0-9]+)\.([0-9]+)$/.exec(args[0]);
-			if (match$1 === null) throwError(state, "ill-formed argument of the YAML directive");
-			major$1 = parseInt(match$1[1], 10);
-			minor = parseInt(match$1[2], 10);
+			match = /^([0-9]+)\.([0-9]+)$/.exec(args[0]);
+			if (match === null) throwError(state, "ill-formed argument of the YAML directive");
+			major$1 = parseInt(match[1], 10);
+			minor = parseInt(match[2], 10);
 			if (major$1 !== 1) throwError(state, "unacceptable YAML version of the document");
 			state.version = args[0];
 			state.checkLineBreaks = minor < 2;
@@ -32813,9 +32813,9 @@ var require_dumper = __commonJS({ "node_modules/.pnpm/js-yaml@3.14.2/node_module
 		}();
 		var prevMoreIndented = string[0] === "\n" || string[0] === " ";
 		var moreIndented;
-		var match$1;
-		while (match$1 = lineRe.exec(string)) {
-			var prefix = match$1[1], line = match$1[2];
+		var match;
+		while (match = lineRe.exec(string)) {
+			var prefix = match[1], line = match[2];
 			moreIndented = line[0] === " ";
 			result += prefix + (!prevMoreIndented && !moreIndented && line !== "" ? "\n" : "") + foldLine(line, width);
 			prevMoreIndented = moreIndented;
@@ -32825,11 +32825,11 @@ var require_dumper = __commonJS({ "node_modules/.pnpm/js-yaml@3.14.2/node_module
 	function foldLine(line, width) {
 		if (line === "" || line[0] === " ") return line;
 		var breakRe = / [^ ]/g;
-		var match$1;
+		var match;
 		var start = 0, end, curr = 0, next = 0;
 		var result = "";
-		while (match$1 = breakRe.exec(line)) {
-			next = match$1.index;
+		while (match = breakRe.exec(line)) {
+			next = match.index;
 			if (next - start > width) {
 				end = curr > start ? curr : next;
 				result += "\n" + line.slice(start, end);
@@ -33213,7 +33213,7 @@ var require_engine = __commonJS({ "node_modules/.pnpm/gray-matter@4.0.3/node_mod
 var require_stringify = __commonJS({ "node_modules/.pnpm/gray-matter@4.0.3/node_modules/gray-matter/lib/stringify.js"(exports, module) {
 	const typeOf$1 = require_kind_of();
 	const getEngine$1 = require_engine();
-	const defaults$4 = require_defaults();
+	const defaults$3 = require_defaults();
 	module.exports = function(file, data, options) {
 		if (data == null && options == null) switch (typeOf$1(file)) {
 			case "object":
@@ -33224,7 +33224,7 @@ var require_stringify = __commonJS({ "node_modules/.pnpm/gray-matter@4.0.3/node_
 			default: throw new TypeError("expected file to be a string or object");
 		}
 		const str = file.content;
-		const opts = defaults$4(options);
+		const opts = defaults$3(options);
 		if (data == null) {
 			if (!opts.data) return file;
 			data = opts.data;
@@ -33251,14 +33251,14 @@ var require_stringify = __commonJS({ "node_modules/.pnpm/gray-matter@4.0.3/node_
 //#endregion
 //#region node_modules/.pnpm/gray-matter@4.0.3/node_modules/gray-matter/lib/excerpt.js
 var require_excerpt = __commonJS({ "node_modules/.pnpm/gray-matter@4.0.3/node_modules/gray-matter/lib/excerpt.js"(exports, module) {
-	const defaults$3 = require_defaults();
+	const defaults$2 = require_defaults();
 	module.exports = function(file, options) {
-		const opts = defaults$3(options);
+		const opts = defaults$2(options);
 		if (file.data == null) file.data = {};
 		if (typeof opts.excerpt === "function") return opts.excerpt(file, opts);
-		const sep$2 = file.data.excerpt_separator || opts.excerpt_separator;
-		if (sep$2 == null && (opts.excerpt === false || opts.excerpt == null)) return file;
-		const delimiter = typeof opts.excerpt === "string" ? opts.excerpt : sep$2 || opts.delimiters[0];
+		const sep$1 = file.data.excerpt_separator || opts.excerpt_separator;
+		if (sep$1 == null && (opts.excerpt === false || opts.excerpt == null)) return file;
+		const delimiter = typeof opts.excerpt === "string" ? opts.excerpt : sep$1 || opts.delimiters[0];
 		const idx = file.content.indexOf(delimiter);
 		if (idx !== -1) file.excerpt = file.content.slice(0, idx);
 		return file;
@@ -33297,9 +33297,9 @@ var require_to_file = __commonJS({ "node_modules/.pnpm/gray-matter@4.0.3/node_mo
 //#region node_modules/.pnpm/gray-matter@4.0.3/node_modules/gray-matter/lib/parse.js
 var require_parse = __commonJS({ "node_modules/.pnpm/gray-matter@4.0.3/node_modules/gray-matter/lib/parse.js"(exports, module) {
 	const getEngine = require_engine();
-	const defaults$2 = require_defaults();
+	const defaults$1 = require_defaults();
 	module.exports = function(language, str, options) {
-		const opts = defaults$2(options);
+		const opts = defaults$1(options);
 		const engine = getEngine(language, opts);
 		if (typeof engine.parse !== "function") throw new TypeError("expected \"" + language + ".parse\" to be a function");
 		return engine.parse(str, opts);
@@ -33311,7 +33311,7 @@ var require_parse = __commonJS({ "node_modules/.pnpm/gray-matter@4.0.3/node_modu
 var require_gray_matter = __commonJS({ "node_modules/.pnpm/gray-matter@4.0.3/node_modules/gray-matter/index.js"(exports, module) {
 	const fs = require("fs");
 	const sections = require_section_matter();
-	const defaults$1 = require_defaults();
+	const defaults = require_defaults();
 	const stringify = require_stringify();
 	const excerpt = require_excerpt();
 	const engines = require_engines();
@@ -33356,7 +33356,7 @@ var require_gray_matter = __commonJS({ "node_modules/.pnpm/gray-matter@4.0.3/nod
 	* Parse front matter
 	*/
 	function parseMatter(file, options) {
-		const opts = defaults$1(options);
+		const opts = defaults(options);
 		const open = opts.delimiters[0];
 		const close = "\n" + opts.delimiters[1];
 		let str = file.content;
@@ -33447,7 +33447,7 @@ var require_gray_matter = __commonJS({ "node_modules/.pnpm/gray-matter@4.0.3/nod
 	* @api public
 	*/
 	matter$1.test = function(str, options) {
-		return utils.startsWith(str, defaults$1(options).delimiters[0]);
+		return utils.startsWith(str, defaults(options).delimiters[0]);
 	};
 	/**
 	* Detect the language to use, if one is defined after the
@@ -33457,7 +33457,7 @@ var require_gray_matter = __commonJS({ "node_modules/.pnpm/gray-matter@4.0.3/nod
 	* @return {Object} Object with `raw` (actual language string), and `name`, the language with whitespace trimmed
 	*/
 	matter$1.language = function(str, options) {
-		const opts = defaults$1(options);
+		const opts = defaults(options);
 		const open = opts.delimiters[0];
 		if (matter$1.test(str)) str = str.slice(open.length);
 		const language = str.slice(0, str.search(/\r?\n/));
@@ -33477,1594 +33477,88 @@ var require_gray_matter = __commonJS({ "node_modules/.pnpm/gray-matter@4.0.3/nod
 } });
 
 //#endregion
-//#region skills/wpilib.md
-var wpilib_default = "---\nname: WPILib Best Practices\nversion: \"2025\"\n---\n\n# WPILib Best Practices\n\n## Blocking Calls in Robot Loops\n\n**Rule:** Never use blocking calls (Thread.sleep, busy-wait loops, blocking I/O) inside `TimedRobot` periodic methods or `Command.execute()`.\n\n**Why:** WPILib runs on a 20ms loop. Blocking calls cause the scheduler to miss deadlines, trigger motor safety timeouts, and make the robot unresponsive.\n\n**Bad:**\n```java\n@Override\npublic void teleopPeriodic() {\n    Thread.sleep(100); // NEVER do this\n    while (!sensor.isReady()) {} // busy-wait — also wrong\n}\n```\n\n**Good:** Use state machines, Commands with `isFinished()`, or WPILib's `Timer` class to track elapsed time.\n\n---\n\n## CommandScheduler Usage\n\n**Rule:** Do not call `CommandScheduler.getInstance().run()` manually. It is called automatically by `TimedRobot`.\n\n**Why:** Calling `run()` manually causes commands to execute twice per loop iteration, doubling motor outputs and causing erratic behavior.\n\n**Bad:**\n```java\n@Override\npublic void teleopPeriodic() {\n    CommandScheduler.getInstance().run(); // already called by TimedRobot\n}\n```\n\n---\n\n## Subsystem periodic() — Telemetry Only\n\n**Rule:** `Subsystem.periodic()` should only update telemetry (SmartDashboard, NetworkTables, logging). Do not place robot logic in `periodic()`.\n\n**Why:** Logic in `periodic()` runs regardless of what commands are scheduled, bypassing the command-based resource management system.\n\n**Bad:**\n```java\n@Override\npublic void periodic() {\n    if (joystick.getRawButton(1)) {\n        motor.set(0.5); // logic doesn't belong here\n    }\n}\n```\n\n**Good:**\n```java\n@Override\npublic void periodic() {\n    SmartDashboard.putNumber(\"Arm/Position\", encoder.getPosition());\n    SmartDashboard.putBoolean(\"Arm/AtGoal\", atGoal());\n}\n```\n\n---\n\n## SmartDashboard vs NetworkTables\n\n**Rule:** Use `SmartDashboard` for simple driver-facing values. Use `NetworkTables` directly (or AdvantageKit's `Logger`) for structured, high-frequency robot state that needs logging or replay.\n\n**Warning:** Avoid putting the same key on SmartDashboard from multiple places — the last write wins and causes confusing behavior.\n\n---\n\n## Timer Usage\n\n**Rule:** Use `Timer.getFPGATimestamp()` for timing robot events. Do not use `System.currentTimeMillis()` or `System.nanoTime()`.\n\n**Why:** `System.currentTimeMillis()` is not synchronized with the FPGA clock and drifts relative to the robot control loop. The FPGA timestamp is consistent and matches the DS log timestamps.\n\n**Bad:**\n```java\nlong start = System.currentTimeMillis();\n```\n\n**Good:**\n```java\ndouble start = Timer.getFPGATimestamp();\n```\n\n---\n\n## Motor Safety Timeouts\n\n**Rule:** All motor controllers used in open-loop control must have motor safety enabled with an appropriate timeout (typically 0.1–0.2 seconds).\n\n**Why:** Motor safety automatically stops motors if `set()` is not called within the timeout, preventing runaway robot behavior if the control loop crashes.\n\n**Good:**\n```java\nmotor.setSafetyEnabled(true);\nmotor.setExpiration(0.1);\n```\n\n**Note:** Motors driven by PID controllers or followed from a leader should also have safety enabled on the leader.\n\n---\n\n## Encoder Resets\n\n**Warning:** Be careful with `encoder.reset()` or `encoder.setPosition(0)` calls in `periodic()` or during teleop — these can cause discontinuities in position feedback. Only reset encoders at a known mechanical position (e.g., at a limit switch or on robot enable).\n\n---\n\n## RobotContainer Structure\n\n**Rule:** Subsystems and commands should be instantiated in `RobotContainer`, not in `Robot.java`. `Robot.java` should only create `RobotContainer` and hook into the scheduler.\n\n**Rule:** Default commands (`setDefaultCommand`) should be set in `RobotContainer`, not inside the subsystem constructor, to keep subsystems reusable and testable.\n";
-
-//#endregion
-//#region skills/command-based.md
-var command_based_default = "---\nname: Command-Based Architecture\nversion: \"2025\"\n---\n\n# Command-Based Architecture\n\n## isFinished() Must Be Implemented\n\n**Rule:** Every `Command` subclass must implement `isFinished()`. A command that never returns `true` from `isFinished()` will run forever until cancelled.\n\n**Critical:** Commands that hold mechanisms in place (e.g., hold arm at angle) should return `false` intentionally and be explicitly cancelled — document this in a comment.\n\n**Bad:**\n```java\npublic class MoveArmCommand extends Command {\n    @Override\n    public void execute() {\n        arm.setGoal(targetAngle);\n    }\n    // Missing isFinished() — defaults to false, runs forever\n}\n```\n\n**Good:**\n```java\n@Override\npublic boolean isFinished() {\n    return arm.atGoal();\n}\n```\n\n---\n\n## Subsystem Requirements and Conflicts\n\n**Rule:** Commands that actuate a subsystem must declare it via `addRequirements(subsystem)`. Two commands requiring the same subsystem cannot run simultaneously — the scheduler will interrupt the running command.\n\n**Warning:** Forgetting `addRequirements()` allows two commands to drive the same motor simultaneously, causing undefined behavior and potential hardware damage.\n\n**Rule:** Never require a subsystem in a command that only reads from it (sensors, encoders). Requirements should only be declared when the command writes to hardware.\n\n**Bad:**\n```java\npublic class DriveCommand extends Command {\n    public DriveCommand(DriveSubsystem drive) {\n        // Missing addRequirements — drive subsystem unprotected\n    }\n}\n```\n\n**Good:**\n```java\npublic DriveCommand(DriveSubsystem drive) {\n    this.drive = drive;\n    addRequirements(drive);\n}\n```\n\n---\n\n## InstantCommand vs Full Command Class\n\n**Rule:** Use `InstantCommand` (or the `Commands.runOnce()` factory) for single-execution actions with no `execute()` or `isFinished()` logic. Create a full `Command` subclass when you need `execute()`, `isFinished()`, or `end()`.\n\n**Good — simple toggle:**\n```java\nnew InstantCommand(() -> intake.toggle(), intake)\n```\n\n**Good — complex sequence:**\n```java\npublic class ScoreCommand extends Command {\n    @Override public void initialize() { ... }\n    @Override public void execute() { ... }\n    @Override public boolean isFinished() { return scorer.isDone(); }\n    @Override public void end(boolean interrupted) { scorer.stop(); }\n}\n```\n\n---\n\n## Decorator API vs Manual Sequencing\n\n**Rule:** Prefer the command decorator API over manual sequencing in `execute()`.\n\n**Use decorators:**\n- `.withTimeout(seconds)` — cancels command after a time limit\n- `.andThen(command)` — run commands sequentially\n- `.alongWith(command)` — run commands in parallel (all must require different subsystems)\n- `.raceWith(command)` — run in parallel, cancel all when first finishes\n- `.deadlineWith(command)` — run in parallel, cancel others when this finishes\n- `.unless(condition)` — skip if condition is true at schedule time\n- `.onlyIf(condition)` — only run if condition is true\n\n**Bad — manual sequencing in execute():**\n```java\n@Override\npublic void execute() {\n    if (step == 0) { arm.setGoal(angle); step++; }\n    else if (step == 1 && arm.atGoal()) { intake.run(); step++; }\n}\n```\n\n**Good — declarative:**\n```java\nCommands.sequence(\n    arm.goToAngle(angle),\n    intake.runIntake()\n)\n```\n\n---\n\n## end() Must Handle Interruption\n\n**Rule:** The `end(boolean interrupted)` method must safely stop the subsystem whether the command completed normally OR was interrupted. Always stop actuators in `end()`.\n\n**Bad:**\n```java\n@Override\npublic void end(boolean interrupted) {\n    if (!interrupted) motor.stop(); // interrupted leaves motor running!\n}\n```\n\n**Good:**\n```java\n@Override\npublic void end(boolean interrupted) {\n    motor.stop(); // always stop\n}\n```\n\n---\n\n## Trigger Bindings\n\n**Rule:** Button/trigger bindings should be declared in `RobotContainer.configureBindings()` using the `Trigger` API. Avoid polling buttons in `Command.execute()` or subsystem `periodic()`.\n\n**Good:**\n```java\nnew JoystickButton(joystick, 1).onTrue(new ShootCommand(shooter));\nnew JoystickButton(joystick, 2).whileTrue(new IntakeCommand(intake));\n```\n\n---\n\n## Parallel Command Groups and Requirements\n\n**Warning:** `ParallelCommandGroup` (and `.alongWith()`) will throw an exception at runtime if any two sub-commands require the same subsystem. Audit parallel groups carefully — this is a common source of `IllegalArgumentException` crashes at match start.\n";
-
-//#endregion
-//#region skills/advantagekit.md
-var advantagekit_default = "---\nname: AdvantageKit Logging\nversion: \"2025\"\n---\n\n# AdvantageKit Logging\n\n## IO Interface Pattern\n\n**Rule:** All hardware interactions must go through an IO interface. The real hardware implementation and a simulation implementation must both be present.\n\n**Structure:**\n```\nSubsystemName/\n  SubsystemNameIOHardware.java   — real hardware\n  SubsystemNameIOSim.java        — simulation\n  SubsystemNameIO.java           — interface + @AutoLog inputs class\n  SubsystemName.java             — subsystem, depends only on the interface\n```\n\n**Why:** This pattern enables log replay — you can re-run the robot's logic against recorded IO data without hardware, which makes debugging match issues possible from the log file alone.\n\n**Critical:** The subsystem must NOT reference hardware classes directly. All hardware calls must go through the IO interface.\n\n**Bad:**\n```java\npublic class Arm extends SubsystemBase {\n    private final CANSparkMax motor = new CANSparkMax(1, MotorType.kBrushless); // direct hardware\n}\n```\n\n**Good:**\n```java\npublic class Arm extends SubsystemBase {\n    private final ArmIO io;\n    private final ArmIOInputsAutoLogged inputs = new ArmIOInputsAutoLogged();\n\n    public Arm(ArmIO io) {\n        this.io = io;\n    }\n}\n```\n\n---\n\n## Logger.recordOutput() for All State\n\n**Rule:** Log all meaningful subsystem state using `Logger.recordOutput()` in `periodic()`. This includes motor outputs, sensor readings, setpoints, and calculated values.\n\n**Why:** Logged outputs are available in AdvantageScope for post-match analysis and replay debugging.\n\n**Good:**\n```java\n@Override\npublic void periodic() {\n    io.updateInputs(inputs);\n    Logger.processInputs(\"Arm\", inputs);\n\n    Logger.recordOutput(\"Arm/GoalAngle\", goal.getDegrees());\n    Logger.recordOutput(\"Arm/AtGoal\", atGoal());\n    Logger.recordOutput(\"Arm/FFOutput\", ffOutput);\n}\n```\n\n**Warning:** Do not log inside `execute()` or other non-periodic methods — log in `periodic()` only to ensure consistent 20ms cadence.\n\n---\n\n## No Direct DriverStation Access in Subsystems\n\n**Rule:** Do not call `DriverStation` methods directly inside subsystems. Use the logged inputs pattern to pass enable/mode state through the IO layer if needed, or access it in `Robot.java` and pass it as constructor parameters.\n\n**Why:** Direct `DriverStation` calls are not captured in the log and break replay — the replayed log won't reflect the original enable state correctly.\n\n**Bad:**\n```java\n@Override\npublic void periodic() {\n    if (DriverStation.isEnabled()) { // breaks replay\n        io.setMotor(output);\n    }\n}\n```\n\n---\n\n## Replay Compatibility — No Side Effects in updateInputs()\n\n**Critical Rule:** `updateInputs()` implementations must ONLY read hardware state into the inputs struct. They must never write to hardware (set motor outputs, change modes, etc.).\n\n**Why:** During log replay, `updateInputs()` is replaced with data from the log file. If it had side effects, replaying would cause real hardware writes or corrupt the replay simulation.\n\n**Bad:**\n```java\n@Override\npublic void updateInputs(ArmIOInputs inputs) {\n    inputs.positionRad = encoder.getPosition();\n    motor.set(output); // SIDE EFFECT — breaks replay!\n}\n```\n\n**Good:**\n```java\n@Override\npublic void updateInputs(ArmIOInputs inputs) {\n    inputs.positionRad = encoder.getPosition();\n    inputs.velocityRadPerSec = encoder.getVelocity();\n    inputs.appliedVolts = motor.getAppliedOutput() * motor.getBusVoltage();\n    inputs.currentAmps = motor.getOutputCurrent();\n}\n```\n\nAll writes to hardware should happen in separate IO methods (`setVoltage()`, `setPosition()`, etc.) that the subsystem calls from `periodic()` after processing inputs.\n\n---\n\n## @AutoLog Annotation\n\n**Rule:** Use the `@AutoLog` annotation on the IO inputs inner class to automatically generate the `AutoLogged` variant with built-in logging support. Do not manually call `Logger.processInputs()` on a non-AutoLogged class.\n\n**Good:**\n```java\npublic interface ArmIO {\n    @AutoLog\n    public static class ArmIOInputs {\n        public double positionRad = 0.0;\n        public double velocityRadPerSec = 0.0;\n        public double appliedVolts = 0.0;\n        public double currentAmps = 0.0;\n    }\n\n    default void updateInputs(ArmIOInputs inputs) {}\n    default void setVoltage(double volts) {}\n}\n```\n\nThen in the subsystem:\n```java\nprivate final ArmIOInputsAutoLogged inputs = new ArmIOInputsAutoLogged();\n// ...\nLogger.processInputs(\"Arm\", inputs); // uses the AutoLogged generated class\n```\n\n---\n\n## Simulation Implementation Required\n\n**Rule:** Every IO interface must have a simulation implementation (`IOSim`) that models the physics using WPILib simulation classes (`DCMotorSim`, `ElevatorSim`, `SingleJointedArmSim`, etc.).\n\n**Why:** Sim implementations enable CI testing and driver practice without real hardware, and ensure the subsystem is testable in isolation.\n";
-
-//#endregion
 //#region src/skills/loader.ts
 var import_gray_matter = __toESM$1(require_gray_matter());
-const BUNDLED_SKILLS = [
-	{
-		stem: "wpilib",
-		raw: wpilib_default
-	},
-	{
-		stem: "command-based",
-		raw: command_based_default
-	},
-	{
-		stem: "advantagekit",
-		raw: advantagekit_default
-	}
-];
-function parseSkill(stem, raw) {
-	const parsed = (0, import_gray_matter.default)(raw);
-	const frontmatter = parsed.data;
-	const appliesTo = Array.isArray(frontmatter["applies-to"]) ? frontmatter["applies-to"] : [];
-	return {
-		name: typeof frontmatter["name"] === "string" ? frontmatter["name"] : stem,
-		appliesTo,
-		version: typeof frontmatter["version"] === "string" ? frontmatter["version"] : void 0,
-		content: parsed.content.trim(),
-		stem
-	};
-}
 const MAX_SKILL_FILE_BYTES = 512 * 1024;
-async function loadSkills(repoSkillsPath) {
-	const bundled = BUNDLED_SKILLS.map(({ stem, raw }) => parseSkill(stem, raw));
-	const skillMap = new Map();
-	for (const skill of bundled) skillMap.set(skill.stem, skill);
-	const workspace = process.env["GITHUB_WORKSPACE"] ?? process.cwd();
-	const resolvedSkillsPath = node_path.resolve(workspace, repoSkillsPath);
-	if (!resolvedSkillsPath.startsWith(workspace + node_path.sep) && resolvedSkillsPath !== workspace) throw new Error(`skills-path "${repoSkillsPath}" resolves outside the workspace. Use a relative path within the repository.`);
-	if (node_fs.existsSync(resolvedSkillsPath)) {
-		const entries = node_fs.readdirSync(resolvedSkillsPath);
-		for (const entry of entries) {
-			if (!entry.endsWith(".md")) continue;
-			const stem = node_path.basename(entry, ".md");
-			const fullPath = node_path.join(resolvedSkillsPath, stem + ".md");
-			const stat = node_fs.statSync(fullPath);
-			if (!stat.isFile() || stat.size > MAX_SKILL_FILE_BYTES) continue;
-			const raw = node_fs.readFileSync(fullPath, "utf-8");
-			const skill = parseSkill(stem, raw);
-			skillMap.set(stem, skill);
-		}
-	}
-	return Array.from(skillMap.values());
-}
-
-//#endregion
-//#region node_modules/.pnpm/balanced-match@4.0.4/node_modules/balanced-match/dist/esm/index.js
-const balanced = (a, b, str) => {
-	const ma = a instanceof RegExp ? maybeMatch(a, str) : a;
-	const mb = b instanceof RegExp ? maybeMatch(b, str) : b;
-	const r = ma !== null && mb != null && range(ma, mb, str);
-	return r && {
-		start: r[0],
-		end: r[1],
-		pre: str.slice(0, r[0]),
-		body: str.slice(r[0] + ma.length, r[1]),
-		post: str.slice(r[1] + mb.length)
-	};
-};
-const maybeMatch = (reg, str) => {
-	const m = str.match(reg);
-	return m ? m[0] : null;
-};
-const range = (a, b, str) => {
-	let begs, beg, left, right = void 0, result;
-	let ai = str.indexOf(a);
-	let bi = str.indexOf(b, ai + 1);
-	let i$1 = ai;
-	if (ai >= 0 && bi > 0) {
-		if (a === b) return [ai, bi];
-		begs = [];
-		left = str.length;
-		while (i$1 >= 0 && !result) {
-			if (i$1 === ai) {
-				begs.push(i$1);
-				ai = str.indexOf(a, i$1 + 1);
-			} else if (begs.length === 1) {
-				const r = begs.pop();
-				if (r !== void 0) result = [r, bi];
-			} else {
-				beg = begs.pop();
-				if (beg !== void 0 && beg < left) {
-					left = beg;
-					right = bi;
-				}
-				bi = str.indexOf(b, i$1 + 1);
-			}
-			i$1 = ai < bi && ai >= 0 ? ai : bi;
-		}
-		if (begs.length && right !== void 0) result = [left, right];
-	}
-	return result;
-};
-
-//#endregion
-//#region node_modules/.pnpm/brace-expansion@5.0.3/node_modules/brace-expansion/dist/esm/index.js
-const escSlash = "\0SLASH" + Math.random() + "\0";
-const escOpen = "\0OPEN" + Math.random() + "\0";
-const escClose = "\0CLOSE" + Math.random() + "\0";
-const escComma = "\0COMMA" + Math.random() + "\0";
-const escPeriod = "\0PERIOD" + Math.random() + "\0";
-const escSlashPattern = new RegExp(escSlash, "g");
-const escOpenPattern = new RegExp(escOpen, "g");
-const escClosePattern = new RegExp(escClose, "g");
-const escCommaPattern = new RegExp(escComma, "g");
-const escPeriodPattern = new RegExp(escPeriod, "g");
-const slashPattern = /\\\\/g;
-const openPattern = /\\{/g;
-const closePattern = /\\}/g;
-const commaPattern = /\\,/g;
-const periodPattern = /\\./g;
-const EXPANSION_MAX = 1e5;
-function numeric(str) {
-	return !isNaN(str) ? parseInt(str, 10) : str.charCodeAt(0);
-}
-function escapeBraces(str) {
-	return str.replace(slashPattern, escSlash).replace(openPattern, escOpen).replace(closePattern, escClose).replace(commaPattern, escComma).replace(periodPattern, escPeriod);
-}
-function unescapeBraces(str) {
-	return str.replace(escSlashPattern, "\\").replace(escOpenPattern, "{").replace(escClosePattern, "}").replace(escCommaPattern, ",").replace(escPeriodPattern, ".");
-}
-/**
-* Basically just str.split(","), but handling cases
-* where we have nested braced sections, which should be
-* treated as individual members, like {a,{b,c},d}
-*/
-function parseCommaParts(str) {
-	if (!str) return [""];
-	const parts = [];
-	const m = balanced("{", "}", str);
-	if (!m) return str.split(",");
-	const { pre, body, post } = m;
-	const p = pre.split(",");
-	p[p.length - 1] += "{" + body + "}";
-	const postParts = parseCommaParts(post);
-	if (post.length) {
-		p[p.length - 1] += postParts.shift();
-		p.push.apply(p, postParts);
-	}
-	parts.push.apply(parts, p);
-	return parts;
-}
-function expand(str, options = {}) {
-	if (!str) return [];
-	const { max = EXPANSION_MAX } = options;
-	if (str.slice(0, 2) === "{}") str = "\\{\\}" + str.slice(2);
-	return expand_(escapeBraces(str), max, true).map(unescapeBraces);
-}
-function embrace(str) {
-	return "{" + str + "}";
-}
-function isPadded(el) {
-	return /^-?0\d/.test(el);
-}
-function lte(i$1, y) {
-	return i$1 <= y;
-}
-function gte(i$1, y) {
-	return i$1 >= y;
-}
-function expand_(str, max, isTop) {
-	/** @type {string[]} */
-	const expansions = [];
-	const m = balanced("{", "}", str);
-	if (!m) return [str];
-	const pre = m.pre;
-	const post = m.post.length ? expand_(m.post, max, false) : [""];
-	if (/\$$/.test(m.pre)) for (let k = 0; k < post.length && k < max; k++) {
-		const expansion = pre + "{" + m.body + "}" + post[k];
-		expansions.push(expansion);
-	}
-	else {
-		const isNumericSequence = /^-?\d+\.\.-?\d+(?:\.\.-?\d+)?$/.test(m.body);
-		const isAlphaSequence = /^[a-zA-Z]\.\.[a-zA-Z](?:\.\.-?\d+)?$/.test(m.body);
-		const isSequence = isNumericSequence || isAlphaSequence;
-		const isOptions = m.body.indexOf(",") >= 0;
-		if (!isSequence && !isOptions) {
-			if (m.post.match(/,(?!,).*\}/)) {
-				str = m.pre + "{" + m.body + escClose + m.post;
-				return expand_(str, max, true);
-			}
-			return [str];
-		}
-		let n;
-		if (isSequence) n = m.body.split(/\.\./);
-		else {
-			n = parseCommaParts(m.body);
-			if (n.length === 1 && n[0] !== void 0) {
-				n = expand_(n[0], max, false).map(embrace);
-				/* c8 ignore start */
-				if (n.length === 1) return post.map((p) => m.pre + n[0] + p);
-			}
-		}
-		let N;
-		if (isSequence && n[0] !== void 0 && n[1] !== void 0) {
-			const x = numeric(n[0]);
-			const y = numeric(n[1]);
-			const width = Math.max(n[0].length, n[1].length);
-			let incr = n.length === 3 && n[2] !== void 0 ? Math.abs(numeric(n[2])) : 1;
-			let test = lte;
-			const reverse = y < x;
-			if (reverse) {
-				incr *= -1;
-				test = gte;
-			}
-			const pad = n.some(isPadded);
-			N = [];
-			for (let i$1 = x; test(i$1, y); i$1 += incr) {
-				let c;
-				if (isAlphaSequence) {
-					c = String.fromCharCode(i$1);
-					if (c === "\\") c = "";
-				} else {
-					c = String(i$1);
-					if (pad) {
-						const need = width - c.length;
-						if (need > 0) {
-							const z = new Array(need + 1).join("0");
-							if (i$1 < 0) c = "-" + z + c.slice(1);
-							else c = z + c;
-						}
-					}
-				}
-				N.push(c);
-			}
-		} else {
-			N = [];
-			for (let j = 0; j < n.length; j++) N.push.apply(N, expand_(n[j], max, false));
-		}
-		for (let j = 0; j < N.length; j++) for (let k = 0; k < post.length && expansions.length < max; k++) {
-			const expansion = pre + N[j] + post[k];
-			if (!isTop || isSequence || expansion) expansions.push(expansion);
-		}
-	}
-	return expansions;
-}
-
-//#endregion
-//#region node_modules/.pnpm/minimatch@10.2.3/node_modules/minimatch/dist/esm/assert-valid-pattern.js
-const MAX_PATTERN_LENGTH = 1024 * 64;
-const assertValidPattern = (pattern) => {
-	if (typeof pattern !== "string") throw new TypeError("invalid pattern");
-	if (pattern.length > MAX_PATTERN_LENGTH) throw new TypeError("pattern is too long");
-};
-
-//#endregion
-//#region node_modules/.pnpm/minimatch@10.2.3/node_modules/minimatch/dist/esm/brace-expressions.js
-const posixClasses = {
-	"[:alnum:]": ["\\p{L}\\p{Nl}\\p{Nd}", true],
-	"[:alpha:]": ["\\p{L}\\p{Nl}", true],
-	"[:ascii:]": ["\\x00-\\x7f", false],
-	"[:blank:]": ["\\p{Zs}\\t", true],
-	"[:cntrl:]": ["\\p{Cc}", true],
-	"[:digit:]": ["\\p{Nd}", true],
-	"[:graph:]": [
-		"\\p{Z}\\p{C}",
-		true,
-		true
-	],
-	"[:lower:]": ["\\p{Ll}", true],
-	"[:print:]": ["\\p{C}", true],
-	"[:punct:]": ["\\p{P}", true],
-	"[:space:]": ["\\p{Z}\\t\\r\\n\\v\\f", true],
-	"[:upper:]": ["\\p{Lu}", true],
-	"[:word:]": ["\\p{L}\\p{Nl}\\p{Nd}\\p{Pc}", true],
-	"[:xdigit:]": ["A-Fa-f0-9", false]
-};
-const braceEscape = (s) => s.replace(/[[\]\\-]/g, "\\$&");
-const regexpEscape = (s) => s.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
-const rangesToString = (ranges) => ranges.join("");
-const parseClass = (glob, position) => {
-	const pos = position;
-	/* c8 ignore start */
-	if (glob.charAt(pos) !== "[") throw new Error("not in a brace expression");
-	/* c8 ignore stop */
-	const ranges = [];
-	const negs = [];
-	let i$1 = pos + 1;
-	let sawStart = false;
-	let uflag = false;
-	let escaping = false;
-	let negate = false;
-	let endPos = pos;
-	let rangeStart = "";
-	WHILE: while (i$1 < glob.length) {
-		const c = glob.charAt(i$1);
-		if ((c === "!" || c === "^") && i$1 === pos + 1) {
-			negate = true;
-			i$1++;
-			continue;
-		}
-		if (c === "]" && sawStart && !escaping) {
-			endPos = i$1 + 1;
-			break;
-		}
-		sawStart = true;
-		if (c === "\\") {
-			if (!escaping) {
-				escaping = true;
-				i$1++;
-				continue;
-			}
-		}
-		if (c === "[" && !escaping) {
-			for (const [cls, [unip, u, neg]] of Object.entries(posixClasses)) if (glob.startsWith(cls, i$1)) {
-				if (rangeStart) return [
-					"$.",
-					false,
-					glob.length - pos,
-					true
-				];
-				i$1 += cls.length;
-				if (neg) negs.push(unip);
-				else ranges.push(unip);
-				uflag = uflag || u;
-				continue WHILE;
-			}
-		}
-		escaping = false;
-		if (rangeStart) {
-			if (c > rangeStart) ranges.push(braceEscape(rangeStart) + "-" + braceEscape(c));
-			else if (c === rangeStart) ranges.push(braceEscape(c));
-			rangeStart = "";
-			i$1++;
-			continue;
-		}
-		if (glob.startsWith("-]", i$1 + 1)) {
-			ranges.push(braceEscape(c + "-"));
-			i$1 += 2;
-			continue;
-		}
-		if (glob.startsWith("-", i$1 + 1)) {
-			rangeStart = c;
-			i$1 += 2;
-			continue;
-		}
-		ranges.push(braceEscape(c));
-		i$1++;
-	}
-	if (endPos < i$1) return [
-		"",
-		false,
-		0,
-		false
-	];
-	if (!ranges.length && !negs.length) return [
-		"$.",
-		false,
-		glob.length - pos,
-		true
-	];
-	if (negs.length === 0 && ranges.length === 1 && /^\\?.$/.test(ranges[0]) && !negate) {
-		const r = ranges[0].length === 2 ? ranges[0].slice(-1) : ranges[0];
-		return [
-			regexpEscape(r),
-			false,
-			endPos - pos,
-			false
-		];
-	}
-	const sranges = "[" + (negate ? "^" : "") + rangesToString(ranges) + "]";
-	const snegs = "[" + (negate ? "" : "^") + rangesToString(negs) + "]";
-	const comb = ranges.length && negs.length ? "(" + sranges + "|" + snegs + ")" : ranges.length ? sranges : snegs;
-	return [
-		comb,
-		uflag,
-		endPos - pos,
-		true
-	];
-};
-
-//#endregion
-//#region node_modules/.pnpm/minimatch@10.2.3/node_modules/minimatch/dist/esm/unescape.js
-/**
-* Un-escape a string that has been escaped with {@link escape}.
-*
-* If the {@link MinimatchOptions.windowsPathsNoEscape} option is used, then
-* square-bracket escapes are removed, but not backslash escapes.
-*
-* For example, it will turn the string `'[*]'` into `*`, but it will not
-* turn `'\\*'` into `'*'`, because `\` is a path separator in
-* `windowsPathsNoEscape` mode.
-*
-* When `windowsPathsNoEscape` is not set, then both square-bracket escapes and
-* backslash escapes are removed.
-*
-* Slashes (and backslashes in `windowsPathsNoEscape` mode) cannot be escaped
-* or unescaped.
-*
-* When `magicalBraces` is not set, escapes of braces (`{` and `}`) will not be
-* unescaped.
-*/
-const unescape = (s, { windowsPathsNoEscape = false, magicalBraces = true } = {}) => {
-	if (magicalBraces) return windowsPathsNoEscape ? s.replace(/\[([^\/\\])\]/g, "$1") : s.replace(/((?!\\).|^)\[([^\/\\])\]/g, "$1$2").replace(/\\([^\/])/g, "$1");
-	return windowsPathsNoEscape ? s.replace(/\[([^\/\\{}])\]/g, "$1") : s.replace(/((?!\\).|^)\[([^\/\\{}])\]/g, "$1$2").replace(/\\([^\/{}])/g, "$1");
-};
-
-//#endregion
-//#region node_modules/.pnpm/minimatch@10.2.3/node_modules/minimatch/dist/esm/ast.js
-var _a$1;
-const types = new Set([
-	"!",
-	"?",
-	"+",
-	"*",
-	"@"
-]);
-const isExtglobType = (c) => types.has(c);
-const isExtglobAST = (c) => isExtglobType(c.type);
-const adoptionMap = new Map([
-	["!", ["@"]],
-	["?", ["?", "@"]],
-	["@", ["@"]],
-	["*", [
-		"*",
-		"+",
-		"?",
-		"@"
-	]],
-	["+", ["+", "@"]]
-]);
-const adoptionWithSpaceMap = new Map([
-	["!", ["?"]],
-	["@", ["?"]],
-	["+", ["?", "*"]]
-]);
-const adoptionAnyMap = new Map([
-	["!", ["?", "@"]],
-	["?", ["?", "@"]],
-	["@", ["?", "@"]],
-	["*", [
-		"*",
-		"+",
-		"?",
-		"@"
-	]],
-	["+", [
-		"+",
-		"@",
-		"?",
-		"*"
-	]]
-]);
-const usurpMap = new Map([
-	["!", new Map([["!", "@"]])],
-	["?", new Map([["*", "*"], ["+", "*"]])],
-	["@", new Map([
-		["!", "!"],
-		["?", "?"],
-		["@", "@"],
-		["*", "*"],
-		["+", "+"]
-	])],
-	["+", new Map([["?", "*"], ["*", "*"]])]
-]);
-const startNoTraversal = "(?!(?:^|/)\\.\\.?(?:$|/))";
-const startNoDot = "(?!\\.)";
-const addPatternStart = new Set(["[", "."]);
-const justDots = new Set(["..", "."]);
-const reSpecials = new Set("().*{}+?[]^$\\!");
-const regExpEscape$1 = (s) => s.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
-const qmark$1 = "[^/]";
-const star$1 = qmark$1 + "*?";
-const starNoEmpty = qmark$1 + "+?";
-let ID = 0;
-var AST = class {
-	type;
-	#root;
-	#hasMagic;
-	#uflag = false;
-	#parts = [];
-	#parent;
-	#parentIndex;
-	#negs;
-	#filledNegs = false;
-	#options;
-	#toString;
-	#emptyExt = false;
-	id = ++ID;
-	get depth() {
-		return (this.#parent?.depth ?? -1) + 1;
-	}
-	[Symbol.for("nodejs.util.inspect.custom")]() {
-		return {
-			"@@type": "AST",
-			id: this.id,
-			type: this.type,
-			root: this.#root.id,
-			parent: this.#parent?.id,
-			depth: this.depth,
-			partsLength: this.#parts.length,
-			parts: this.#parts
-		};
-	}
-	constructor(type, parent, options = {}) {
-		this.type = type;
-		if (type) this.#hasMagic = true;
-		this.#parent = parent;
-		this.#root = this.#parent ? this.#parent.#root : this;
-		this.#options = this.#root === this ? options : this.#root.#options;
-		this.#negs = this.#root === this ? [] : this.#root.#negs;
-		if (type === "!" && !this.#root.#filledNegs) this.#negs.push(this);
-		this.#parentIndex = this.#parent ? this.#parent.#parts.length : 0;
-	}
-	get hasMagic() {
-		/* c8 ignore start */
-		if (this.#hasMagic !== void 0) return this.#hasMagic;
-		/* c8 ignore stop */
-		for (const p of this.#parts) {
-			if (typeof p === "string") continue;
-			if (p.type || p.hasMagic) return this.#hasMagic = true;
-		}
-		return this.#hasMagic;
-	}
-	toString() {
-		if (this.#toString !== void 0) return this.#toString;
-		if (!this.type) return this.#toString = this.#parts.map((p) => String(p)).join("");
-		else return this.#toString = this.type + "(" + this.#parts.map((p) => String(p)).join("|") + ")";
-	}
-	#fillNegs() {
-		/* c8 ignore start */
-		if (this !== this.#root) throw new Error("should only call on root");
-		if (this.#filledNegs) return this;
-		/* c8 ignore stop */
-		this.toString();
-		this.#filledNegs = true;
-		let n;
-		while (n = this.#negs.pop()) {
-			if (n.type !== "!") continue;
-			let p = n;
-			let pp = p.#parent;
-			while (pp) {
-				for (let i$1 = p.#parentIndex + 1; !pp.type && i$1 < pp.#parts.length; i$1++) for (const part of n.#parts) {
-					/* c8 ignore start */
-					if (typeof part === "string") throw new Error("string part in extglob AST??");
-					/* c8 ignore stop */
-					part.copyIn(pp.#parts[i$1]);
-				}
-				p = pp;
-				pp = p.#parent;
-			}
-		}
-		return this;
-	}
-	push(...parts) {
-		for (const p of parts) {
-			if (p === "") continue;
-			/* c8 ignore start */
-			if (typeof p !== "string" && !(p instanceof _a$1 && p.#parent === this)) throw new Error("invalid part: " + p);
-			/* c8 ignore stop */
-			this.#parts.push(p);
-		}
-	}
-	toJSON() {
-		const ret = this.type === null ? this.#parts.slice().map((p) => typeof p === "string" ? p : p.toJSON()) : [this.type, ...this.#parts.map((p) => p.toJSON())];
-		if (this.isStart() && !this.type) ret.unshift([]);
-		if (this.isEnd() && (this === this.#root || this.#root.#filledNegs && this.#parent?.type === "!")) ret.push({});
-		return ret;
-	}
-	isStart() {
-		if (this.#root === this) return true;
-		if (!this.#parent?.isStart()) return false;
-		if (this.#parentIndex === 0) return true;
-		const p = this.#parent;
-		for (let i$1 = 0; i$1 < this.#parentIndex; i$1++) {
-			const pp = p.#parts[i$1];
-			if (!(pp instanceof _a$1 && pp.type === "!")) return false;
-		}
-		return true;
-	}
-	isEnd() {
-		if (this.#root === this) return true;
-		if (this.#parent?.type === "!") return true;
-		if (!this.#parent?.isEnd()) return false;
-		if (!this.type) return this.#parent?.isEnd();
-		/* c8 ignore start */
-		const pl = this.#parent ? this.#parent.#parts.length : 0;
-		/* c8 ignore stop */
-		return this.#parentIndex === pl - 1;
-	}
-	copyIn(part) {
-		if (typeof part === "string") this.push(part);
-		else this.push(part.clone(this));
-	}
-	clone(parent) {
-		const c = new _a$1(this.type, parent);
-		for (const p of this.#parts) c.copyIn(p);
-		return c;
-	}
-	static #parseAST(str, ast, pos, opt, extDepth) {
-		const maxDepth = opt.maxExtglobRecursion ?? 2;
-		let escaping = false;
-		let inBrace = false;
-		let braceStart = -1;
-		let braceNeg = false;
-		if (ast.type === null) {
-			let i$2 = pos;
-			let acc$1 = "";
-			while (i$2 < str.length) {
-				const c = str.charAt(i$2++);
-				if (escaping || c === "\\") {
-					escaping = !escaping;
-					acc$1 += c;
-					continue;
-				}
-				if (inBrace) {
-					if (i$2 === braceStart + 1) {
-						if (c === "^" || c === "!") braceNeg = true;
-					} else if (c === "]" && !(i$2 === braceStart + 2 && braceNeg)) inBrace = false;
-					acc$1 += c;
-					continue;
-				} else if (c === "[") {
-					inBrace = true;
-					braceStart = i$2;
-					braceNeg = false;
-					acc$1 += c;
-					continue;
-				}
-				const doRecurse = !opt.noext && isExtglobType(c) && str.charAt(i$2) === "(" && extDepth <= maxDepth;
-				if (doRecurse) {
-					ast.push(acc$1);
-					acc$1 = "";
-					const ext$1 = new _a$1(c, ast);
-					i$2 = _a$1.#parseAST(str, ext$1, i$2, opt, extDepth + 1);
-					ast.push(ext$1);
-					continue;
-				}
-				acc$1 += c;
-			}
-			ast.push(acc$1);
-			return i$2;
-		}
-		let i$1 = pos + 1;
-		let part = new _a$1(null, ast);
-		const parts = [];
-		let acc = "";
-		while (i$1 < str.length) {
-			const c = str.charAt(i$1++);
-			if (escaping || c === "\\") {
-				escaping = !escaping;
-				acc += c;
-				continue;
-			}
-			if (inBrace) {
-				if (i$1 === braceStart + 1) {
-					if (c === "^" || c === "!") braceNeg = true;
-				} else if (c === "]" && !(i$1 === braceStart + 2 && braceNeg)) inBrace = false;
-				acc += c;
-				continue;
-			} else if (c === "[") {
-				inBrace = true;
-				braceStart = i$1;
-				braceNeg = false;
-				acc += c;
-				continue;
-			}
-			const doRecurse = !opt.noext && isExtglobType(c) && str.charAt(i$1) === "(" && (extDepth <= maxDepth || ast && ast.#canAdoptType(c));
-			/* c8 ignore stop */
-			if (doRecurse) {
-				const depthAdd = ast && ast.#canAdoptType(c) ? 0 : 1;
-				part.push(acc);
-				acc = "";
-				const ext$1 = new _a$1(c, part);
-				part.push(ext$1);
-				i$1 = _a$1.#parseAST(str, ext$1, i$1, opt, extDepth + depthAdd);
-				continue;
-			}
-			if (c === "|") {
-				part.push(acc);
-				acc = "";
-				parts.push(part);
-				part = new _a$1(null, ast);
-				continue;
-			}
-			if (c === ")") {
-				if (acc === "" && ast.#parts.length === 0) ast.#emptyExt = true;
-				part.push(acc);
-				acc = "";
-				ast.push(...parts, part);
-				return i$1;
-			}
-			acc += c;
-		}
-		ast.type = null;
-		ast.#hasMagic = void 0;
-		ast.#parts = [str.substring(pos - 1)];
-		return i$1;
-	}
-	#canAdoptWithSpace(child$1) {
-		return this.#canAdopt(child$1, adoptionWithSpaceMap);
-	}
-	#canAdopt(child$1, map = adoptionMap) {
-		if (!child$1 || typeof child$1 !== "object" || child$1.type !== null || child$1.#parts.length !== 1 || this.type === null) return false;
-		const gc = child$1.#parts[0];
-		if (!gc || typeof gc !== "object" || gc.type === null) return false;
-		return this.#canAdoptType(gc.type, map);
-	}
-	#canAdoptType(c, map = adoptionAnyMap) {
-		return !!map.get(this.type)?.includes(c);
-	}
-	#adoptWithSpace(child$1, index) {
-		const gc = child$1.#parts[0];
-		const blank = new _a$1(null, gc, this.options);
-		blank.#parts.push("");
-		gc.push(blank);
-		this.#adopt(child$1, index);
-	}
-	#adopt(child$1, index) {
-		const gc = child$1.#parts[0];
-		this.#parts.splice(index, 1, ...gc.#parts);
-		for (const p of gc.#parts) if (typeof p === "object") p.#parent = this;
-		this.#toString = void 0;
-	}
-	#canUsurpType(c) {
-		const m = usurpMap.get(this.type);
-		return !!m?.has(c);
-	}
-	#canUsurp(child$1) {
-		if (!child$1 || typeof child$1 !== "object" || child$1.type !== null || child$1.#parts.length !== 1 || this.type === null || this.#parts.length !== 1) return false;
-		const gc = child$1.#parts[0];
-		if (!gc || typeof gc !== "object" || gc.type === null) return false;
-		return this.#canUsurpType(gc.type);
-	}
-	#usurp(child$1) {
-		const m = usurpMap.get(this.type);
-		const gc = child$1.#parts[0];
-		const nt = m?.get(gc.type);
-		/* c8 ignore start - impossible */
-		if (!nt) return false;
-		/* c8 ignore stop */
-		this.#parts = gc.#parts;
-		for (const p of this.#parts) if (typeof p === "object") p.#parent = this;
-		this.type = nt;
-		this.#toString = void 0;
-		this.#emptyExt = false;
-	}
-	static fromGlob(pattern, options = {}) {
-		const ast = new _a$1(null, void 0, options);
-		_a$1.#parseAST(pattern, ast, 0, options, 0);
-		return ast;
-	}
-	toMMPattern() {
-		/* c8 ignore start */
-		if (this !== this.#root) return this.#root.toMMPattern();
-		/* c8 ignore stop */
-		const glob = this.toString();
-		const [re$1, body, hasMagic, uflag] = this.toRegExpSource();
-		const anyMagic = hasMagic || this.#hasMagic || this.#options.nocase && !this.#options.nocaseMagicOnly && glob.toUpperCase() !== glob.toLowerCase();
-		if (!anyMagic) return body;
-		const flags = (this.#options.nocase ? "i" : "") + (uflag ? "u" : "");
-		return Object.assign(new RegExp(`^${re$1}$`, flags), {
-			_src: re$1,
-			_glob: glob
-		});
-	}
-	get options() {
-		return this.#options;
-	}
-	toRegExpSource(allowDot) {
-		const dot = allowDot ?? !!this.#options.dot;
-		if (this.#root === this) {
-			this.#flatten();
-			this.#fillNegs();
-		}
-		if (!isExtglobAST(this)) {
-			const noEmpty = this.isStart() && this.isEnd() && !this.#parts.some((s) => typeof s !== "string");
-			const src = this.#parts.map((p) => {
-				const [re$1, _, hasMagic, uflag] = typeof p === "string" ? _a$1.#parseGlob(p, this.#hasMagic, noEmpty) : p.toRegExpSource(allowDot);
-				this.#hasMagic = this.#hasMagic || hasMagic;
-				this.#uflag = this.#uflag || uflag;
-				return re$1;
-			}).join("");
-			let start$1 = "";
-			if (this.isStart()) {
-				if (typeof this.#parts[0] === "string") {
-					const dotTravAllowed = this.#parts.length === 1 && justDots.has(this.#parts[0]);
-					if (!dotTravAllowed) {
-						const aps = addPatternStart;
-						const needNoTrav = dot && aps.has(src.charAt(0)) || src.startsWith("\\.") && aps.has(src.charAt(2)) || src.startsWith("\\.\\.") && aps.has(src.charAt(4));
-						const needNoDot = !dot && !allowDot && aps.has(src.charAt(0));
-						start$1 = needNoTrav ? startNoTraversal : needNoDot ? startNoDot : "";
-					}
-				}
-			}
-			let end = "";
-			if (this.isEnd() && this.#root.#filledNegs && this.#parent?.type === "!") end = "(?:$|\\/)";
-			const final$1 = start$1 + src + end;
-			return [
-				final$1,
-				unescape(src),
-				this.#hasMagic = !!this.#hasMagic,
-				this.#uflag
-			];
-		}
-		const repeated = this.type === "*" || this.type === "+";
-		const start = this.type === "!" ? "(?:(?!(?:" : "(?:";
-		let body = this.#partsToRegExp(dot);
-		if (this.isStart() && this.isEnd() && !body && this.type !== "!") {
-			const s = this.toString();
-			const me = this;
-			me.#parts = [s];
-			me.type = null;
-			me.#hasMagic = void 0;
-			return [
-				s,
-				unescape(this.toString()),
-				false,
-				false
-			];
-		}
-		let bodyDotAllowed = !repeated || allowDot || dot || !startNoDot ? "" : this.#partsToRegExp(true);
-		if (bodyDotAllowed === body) bodyDotAllowed = "";
-		if (bodyDotAllowed) body = `(?:${body})(?:${bodyDotAllowed})*?`;
-		let final = "";
-		if (this.type === "!" && this.#emptyExt) final = (this.isStart() && !dot ? startNoDot : "") + starNoEmpty;
-		else {
-			const close = this.type === "!" ? "))" + (this.isStart() && !dot && !allowDot ? startNoDot : "") + star$1 + ")" : this.type === "@" ? ")" : this.type === "?" ? ")?" : this.type === "+" && bodyDotAllowed ? ")" : this.type === "*" && bodyDotAllowed ? `)?` : `)${this.type}`;
-			final = start + body + close;
-		}
-		return [
-			final,
-			unescape(body),
-			this.#hasMagic = !!this.#hasMagic,
-			this.#uflag
-		];
-	}
-	#flatten() {
-		if (!isExtglobAST(this)) {
-			for (const p of this.#parts) if (typeof p === "object") p.#flatten();
-		} else {
-			let iterations = 0;
-			let done = false;
-			do {
-				done = true;
-				for (let i$1 = 0; i$1 < this.#parts.length; i$1++) {
-					const c = this.#parts[i$1];
-					if (typeof c === "object") {
-						c.#flatten();
-						if (this.#canAdopt(c)) {
-							done = false;
-							this.#adopt(c, i$1);
-						} else if (this.#canAdoptWithSpace(c)) {
-							done = false;
-							this.#adoptWithSpace(c, i$1);
-						} else if (this.#canUsurp(c)) {
-							done = false;
-							this.#usurp(c);
-						}
-					}
-				}
-			} while (!done && ++iterations < 10);
-		}
-		this.#toString = void 0;
-	}
-	#partsToRegExp(dot) {
-		return this.#parts.map((p) => {
-			/* c8 ignore start */
-			if (typeof p === "string") throw new Error("string type in extglob ast??");
-			/* c8 ignore stop */
-			const [re$1, _, _hasMagic, uflag] = p.toRegExpSource(dot);
-			this.#uflag = this.#uflag || uflag;
-			return re$1;
-		}).filter((p) => !(this.isStart() && this.isEnd()) || !!p).join("|");
-	}
-	static #parseGlob(glob, hasMagic, noEmpty = false) {
-		let escaping = false;
-		let re$1 = "";
-		let uflag = false;
-		let inStar = false;
-		for (let i$1 = 0; i$1 < glob.length; i$1++) {
-			const c = glob.charAt(i$1);
-			if (escaping) {
-				escaping = false;
-				re$1 += (reSpecials.has(c) ? "\\" : "") + c;
-				continue;
-			}
-			if (c === "*") {
-				if (inStar) continue;
-				inStar = true;
-				re$1 += noEmpty && /^[*]+$/.test(glob) ? starNoEmpty : star$1;
-				hasMagic = true;
-				continue;
-			} else inStar = false;
-			if (c === "\\") {
-				if (i$1 === glob.length - 1) re$1 += "\\\\";
-				else escaping = true;
-				continue;
-			}
-			if (c === "[") {
-				const [src, needUflag, consumed, magic] = parseClass(glob, i$1);
-				if (consumed) {
-					re$1 += src;
-					uflag = uflag || needUflag;
-					i$1 += consumed - 1;
-					hasMagic = hasMagic || magic;
-					continue;
-				}
-			}
-			if (c === "?") {
-				re$1 += qmark$1;
-				hasMagic = true;
-				continue;
-			}
-			re$1 += regExpEscape$1(c);
-		}
-		return [
-			re$1,
-			unescape(glob),
-			!!hasMagic,
-			uflag
-		];
-	}
-};
-_a$1 = AST;
-
-//#endregion
-//#region node_modules/.pnpm/minimatch@10.2.3/node_modules/minimatch/dist/esm/escape.js
-/**
-* Escape all magic characters in a glob pattern.
-*
-* If the {@link MinimatchOptions.windowsPathsNoEscape}
-* option is used, then characters are escaped by wrapping in `[]`, because
-* a magic character wrapped in a character class can only be satisfied by
-* that exact character.  In this mode, `\` is _not_ escaped, because it is
-* not interpreted as a magic character, but instead as a path separator.
-*
-* If the {@link MinimatchOptions.magicalBraces} option is used,
-* then braces (`{` and `}`) will be escaped.
-*/
-const escape = (s, { windowsPathsNoEscape = false, magicalBraces = false } = {}) => {
-	if (magicalBraces) return windowsPathsNoEscape ? s.replace(/[?*()[\]{}]/g, "[$&]") : s.replace(/[?*()[\]\\{}]/g, "\\$&");
-	return windowsPathsNoEscape ? s.replace(/[?*()[\]]/g, "[$&]") : s.replace(/[?*()[\]\\]/g, "\\$&");
-};
-
-//#endregion
-//#region node_modules/.pnpm/minimatch@10.2.3/node_modules/minimatch/dist/esm/index.js
-const minimatch = (p, pattern, options = {}) => {
-	assertValidPattern(pattern);
-	if (!options.nocomment && pattern.charAt(0) === "#") return false;
-	return new Minimatch(pattern, options).match(p);
-};
-const starDotExtRE = /^\*+([^+@!?\*\[\(]*)$/;
-const starDotExtTest = (ext$1) => (f) => !f.startsWith(".") && f.endsWith(ext$1);
-const starDotExtTestDot = (ext$1) => (f) => f.endsWith(ext$1);
-const starDotExtTestNocase = (ext$1) => {
-	ext$1 = ext$1.toLowerCase();
-	return (f) => !f.startsWith(".") && f.toLowerCase().endsWith(ext$1);
-};
-const starDotExtTestNocaseDot = (ext$1) => {
-	ext$1 = ext$1.toLowerCase();
-	return (f) => f.toLowerCase().endsWith(ext$1);
-};
-const starDotStarRE = /^\*+\.\*+$/;
-const starDotStarTest = (f) => !f.startsWith(".") && f.includes(".");
-const starDotStarTestDot = (f) => f !== "." && f !== ".." && f.includes(".");
-const dotStarRE = /^\.\*+$/;
-const dotStarTest = (f) => f !== "." && f !== ".." && f.startsWith(".");
-const starRE = /^\*+$/;
-const starTest = (f) => f.length !== 0 && !f.startsWith(".");
-const starTestDot = (f) => f.length !== 0 && f !== "." && f !== "..";
-const qmarksRE = /^\?+([^+@!?\*\[\(]*)?$/;
-const qmarksTestNocase = ([$0, ext$1 = ""]) => {
-	const noext = qmarksTestNoExt([$0]);
-	if (!ext$1) return noext;
-	ext$1 = ext$1.toLowerCase();
-	return (f) => noext(f) && f.toLowerCase().endsWith(ext$1);
-};
-const qmarksTestNocaseDot = ([$0, ext$1 = ""]) => {
-	const noext = qmarksTestNoExtDot([$0]);
-	if (!ext$1) return noext;
-	ext$1 = ext$1.toLowerCase();
-	return (f) => noext(f) && f.toLowerCase().endsWith(ext$1);
-};
-const qmarksTestDot = ([$0, ext$1 = ""]) => {
-	const noext = qmarksTestNoExtDot([$0]);
-	return !ext$1 ? noext : (f) => noext(f) && f.endsWith(ext$1);
-};
-const qmarksTest = ([$0, ext$1 = ""]) => {
-	const noext = qmarksTestNoExt([$0]);
-	return !ext$1 ? noext : (f) => noext(f) && f.endsWith(ext$1);
-};
-const qmarksTestNoExt = ([$0]) => {
-	const len = $0.length;
-	return (f) => f.length === len && !f.startsWith(".");
-};
-const qmarksTestNoExtDot = ([$0]) => {
-	const len = $0.length;
-	return (f) => f.length === len && f !== "." && f !== "..";
-};
-/* c8 ignore start */
-const defaultPlatform = typeof process === "object" && process ? typeof process.env === "object" && process.env && process.env.__MINIMATCH_TESTING_PLATFORM__ || process.platform : "posix";
-const path = {
-	win32: { sep: "\\" },
-	posix: { sep: "/" }
-};
-/* c8 ignore stop */
-const sep = defaultPlatform === "win32" ? path.win32.sep : path.posix.sep;
-minimatch.sep = sep;
-const GLOBSTAR = Symbol("globstar **");
-minimatch.GLOBSTAR = GLOBSTAR;
-const qmark = "[^/]";
-const star = qmark + "*?";
-const twoStarDot = "(?:(?!(?:\\/|^)(?:\\.{1,2})($|\\/)).)*?";
-const twoStarNoDot = "(?:(?!(?:\\/|^)\\.).)*?";
-const filter = (pattern, options = {}) => (p) => minimatch(p, pattern, options);
-minimatch.filter = filter;
-const ext = (a, b = {}) => Object.assign({}, a, b);
-const defaults = (def) => {
-	if (!def || typeof def !== "object" || !Object.keys(def).length) return minimatch;
-	const orig = minimatch;
-	const m = (p, pattern, options = {}) => orig(p, pattern, ext(def, options));
-	return Object.assign(m, {
-		Minimatch: class Minimatch$1 extends orig.Minimatch {
-			constructor(pattern, options = {}) {
-				super(pattern, ext(def, options));
-			}
-			static defaults(options) {
-				return orig.defaults(ext(def, options)).Minimatch;
-			}
-		},
-		AST: class AST$1 extends orig.AST {
-			/* c8 ignore start */
-			constructor(type, parent, options = {}) {
-				super(type, parent, ext(def, options));
-			}
-			/* c8 ignore stop */
-			static fromGlob(pattern, options = {}) {
-				return orig.AST.fromGlob(pattern, ext(def, options));
-			}
-		},
-		unescape: (s, options = {}) => orig.unescape(s, ext(def, options)),
-		escape: (s, options = {}) => orig.escape(s, ext(def, options)),
-		filter: (pattern, options = {}) => orig.filter(pattern, ext(def, options)),
-		defaults: (options) => orig.defaults(ext(def, options)),
-		makeRe: (pattern, options = {}) => orig.makeRe(pattern, ext(def, options)),
-		braceExpand: (pattern, options = {}) => orig.braceExpand(pattern, ext(def, options)),
-		match: (list, pattern, options = {}) => orig.match(list, pattern, ext(def, options)),
-		sep: orig.sep,
-		GLOBSTAR
-	});
-};
-minimatch.defaults = defaults;
-const braceExpand = (pattern, options = {}) => {
-	assertValidPattern(pattern);
-	if (options.nobrace || !/\{(?:(?!\{).)*\}/.test(pattern)) return [pattern];
-	return expand(pattern, { max: options.braceExpandMax });
-};
-minimatch.braceExpand = braceExpand;
-const makeRe = (pattern, options = {}) => new Minimatch(pattern, options).makeRe();
-minimatch.makeRe = makeRe;
-const match = (list, pattern, options = {}) => {
-	const mm = new Minimatch(pattern, options);
-	list = list.filter((f) => mm.match(f));
-	if (mm.options.nonull && !list.length) list.push(pattern);
-	return list;
-};
-minimatch.match = match;
-const globMagic = /[?*]|[+@!]\(.*?\)|\[|\]/;
-const regExpEscape = (s) => s.replace(/[-[\]{}()*+?.,\\^$|#\s]/g, "\\$&");
-var Minimatch = class {
-	options;
-	set;
-	pattern;
-	windowsPathsNoEscape;
-	nonegate;
-	negate;
-	comment;
-	empty;
-	preserveMultipleSlashes;
-	partial;
-	globSet;
-	globParts;
-	nocase;
-	isWindows;
-	platform;
-	windowsNoMagicRoot;
-	maxGlobstarRecursion;
-	regexp;
-	constructor(pattern, options = {}) {
-		assertValidPattern(pattern);
-		options = options || {};
-		this.options = options;
-		this.maxGlobstarRecursion = options.maxGlobstarRecursion ?? 200;
-		this.pattern = pattern;
-		this.platform = options.platform || defaultPlatform;
-		this.isWindows = this.platform === "win32";
-		const awe = "allowWindowsEscape";
-		this.windowsPathsNoEscape = !!options.windowsPathsNoEscape || options[awe] === false;
-		if (this.windowsPathsNoEscape) this.pattern = this.pattern.replace(/\\/g, "/");
-		this.preserveMultipleSlashes = !!options.preserveMultipleSlashes;
-		this.regexp = null;
-		this.negate = false;
-		this.nonegate = !!options.nonegate;
-		this.comment = false;
-		this.empty = false;
-		this.partial = !!options.partial;
-		this.nocase = !!this.options.nocase;
-		this.windowsNoMagicRoot = options.windowsNoMagicRoot !== void 0 ? options.windowsNoMagicRoot : !!(this.isWindows && this.nocase);
-		this.globSet = [];
-		this.globParts = [];
-		this.set = [];
-		this.make();
-	}
-	hasMagic() {
-		if (this.options.magicalBraces && this.set.length > 1) return true;
-		for (const pattern of this.set) for (const part of pattern) if (typeof part !== "string") return true;
-		return false;
-	}
-	debug(..._) {}
-	make() {
-		const pattern = this.pattern;
-		const options = this.options;
-		if (!options.nocomment && pattern.charAt(0) === "#") {
-			this.comment = true;
-			return;
-		}
-		if (!pattern) {
-			this.empty = true;
-			return;
-		}
-		this.parseNegate();
-		this.globSet = [...new Set(this.braceExpand())];
-		if (options.debug) this.debug = (...args) => console.error(...args);
-		this.debug(this.pattern, this.globSet);
-		const rawGlobParts = this.globSet.map((s) => this.slashSplit(s));
-		this.globParts = this.preprocess(rawGlobParts);
-		this.debug(this.pattern, this.globParts);
-		let set = this.globParts.map((s, _, __) => {
-			if (this.isWindows && this.windowsNoMagicRoot) {
-				const isUNC = s[0] === "" && s[1] === "" && (s[2] === "?" || !globMagic.test(s[2])) && !globMagic.test(s[3]);
-				const isDrive = /^[a-z]:/i.test(s[0]);
-				if (isUNC) return [...s.slice(0, 4), ...s.slice(4).map((ss) => this.parse(ss))];
-				else if (isDrive) return [s[0], ...s.slice(1).map((ss) => this.parse(ss))];
-			}
-			return s.map((ss) => this.parse(ss));
-		});
-		this.debug(this.pattern, set);
-		this.set = set.filter((s) => s.indexOf(false) === -1);
-		if (this.isWindows) for (let i$1 = 0; i$1 < this.set.length; i$1++) {
-			const p = this.set[i$1];
-			if (p[0] === "" && p[1] === "" && this.globParts[i$1][2] === "?" && typeof p[3] === "string" && /^[a-z]:$/i.test(p[3])) p[2] = "?";
-		}
-		this.debug(this.pattern, this.set);
-	}
-	preprocess(globParts) {
-		if (this.options.noglobstar) {
-			for (let i$1 = 0; i$1 < globParts.length; i$1++) for (let j = 0; j < globParts[i$1].length; j++) if (globParts[i$1][j] === "**") globParts[i$1][j] = "*";
-		}
-		const { optimizationLevel = 1 } = this.options;
-		if (optimizationLevel >= 2) {
-			globParts = this.firstPhasePreProcess(globParts);
-			globParts = this.secondPhasePreProcess(globParts);
-		} else if (optimizationLevel >= 1) globParts = this.levelOneOptimize(globParts);
-		else globParts = this.adjascentGlobstarOptimize(globParts);
-		return globParts;
-	}
-	adjascentGlobstarOptimize(globParts) {
-		return globParts.map((parts) => {
-			let gs = -1;
-			while (-1 !== (gs = parts.indexOf("**", gs + 1))) {
-				let i$1 = gs;
-				while (parts[i$1 + 1] === "**") i$1++;
-				if (i$1 !== gs) parts.splice(gs, i$1 - gs);
-			}
-			return parts;
-		});
-	}
-	levelOneOptimize(globParts) {
-		return globParts.map((parts) => {
-			parts = parts.reduce((set, part) => {
-				const prev = set[set.length - 1];
-				if (part === "**" && prev === "**") return set;
-				if (part === "..") {
-					if (prev && prev !== ".." && prev !== "." && prev !== "**") {
-						set.pop();
-						return set;
-					}
-				}
-				set.push(part);
-				return set;
-			}, []);
-			return parts.length === 0 ? [""] : parts;
-		});
-	}
-	levelTwoFileOptimize(parts) {
-		if (!Array.isArray(parts)) parts = this.slashSplit(parts);
-		let didSomething = false;
-		do {
-			didSomething = false;
-			if (!this.preserveMultipleSlashes) {
-				for (let i$1 = 1; i$1 < parts.length - 1; i$1++) {
-					const p = parts[i$1];
-					if (i$1 === 1 && p === "" && parts[0] === "") continue;
-					if (p === "." || p === "") {
-						didSomething = true;
-						parts.splice(i$1, 1);
-						i$1--;
-					}
-				}
-				if (parts[0] === "." && parts.length === 2 && (parts[1] === "." || parts[1] === "")) {
-					didSomething = true;
-					parts.pop();
-				}
-			}
-			let dd = 0;
-			while (-1 !== (dd = parts.indexOf("..", dd + 1))) {
-				const p = parts[dd - 1];
-				if (p && p !== "." && p !== ".." && p !== "**") {
-					didSomething = true;
-					parts.splice(dd - 1, 2);
-					dd -= 2;
-				}
-			}
-		} while (didSomething);
-		return parts.length === 0 ? [""] : parts;
-	}
-	firstPhasePreProcess(globParts) {
-		let didSomething = false;
-		do {
-			didSomething = false;
-			for (let parts of globParts) {
-				let gs = -1;
-				while (-1 !== (gs = parts.indexOf("**", gs + 1))) {
-					let gss = gs;
-					while (parts[gss + 1] === "**") gss++;
-					if (gss > gs) parts.splice(gs + 1, gss - gs);
-					let next = parts[gs + 1];
-					const p = parts[gs + 2];
-					const p2 = parts[gs + 3];
-					if (next !== "..") continue;
-					if (!p || p === "." || p === ".." || !p2 || p2 === "." || p2 === "..") continue;
-					didSomething = true;
-					parts.splice(gs, 1);
-					const other = parts.slice(0);
-					other[gs] = "**";
-					globParts.push(other);
-					gs--;
-				}
-				if (!this.preserveMultipleSlashes) {
-					for (let i$1 = 1; i$1 < parts.length - 1; i$1++) {
-						const p = parts[i$1];
-						if (i$1 === 1 && p === "" && parts[0] === "") continue;
-						if (p === "." || p === "") {
-							didSomething = true;
-							parts.splice(i$1, 1);
-							i$1--;
-						}
-					}
-					if (parts[0] === "." && parts.length === 2 && (parts[1] === "." || parts[1] === "")) {
-						didSomething = true;
-						parts.pop();
-					}
-				}
-				let dd = 0;
-				while (-1 !== (dd = parts.indexOf("..", dd + 1))) {
-					const p = parts[dd - 1];
-					if (p && p !== "." && p !== ".." && p !== "**") {
-						didSomething = true;
-						const needDot = dd === 1 && parts[dd + 1] === "**";
-						const splin = needDot ? ["."] : [];
-						parts.splice(dd - 1, 2, ...splin);
-						if (parts.length === 0) parts.push("");
-						dd -= 2;
-					}
-				}
-			}
-		} while (didSomething);
-		return globParts;
-	}
-	secondPhasePreProcess(globParts) {
-		for (let i$1 = 0; i$1 < globParts.length - 1; i$1++) for (let j = i$1 + 1; j < globParts.length; j++) {
-			const matched = this.partsMatch(globParts[i$1], globParts[j], !this.preserveMultipleSlashes);
-			if (matched) {
-				globParts[i$1] = [];
-				globParts[j] = matched;
-				break;
-			}
-		}
-		return globParts.filter((gs) => gs.length);
-	}
-	partsMatch(a, b, emptyGSMatch = false) {
-		let ai = 0;
-		let bi = 0;
-		let result = [];
-		let which$1 = "";
-		while (ai < a.length && bi < b.length) if (a[ai] === b[bi]) {
-			result.push(which$1 === "b" ? b[bi] : a[ai]);
-			ai++;
-			bi++;
-		} else if (emptyGSMatch && a[ai] === "**" && b[bi] === a[ai + 1]) {
-			result.push(a[ai]);
-			ai++;
-		} else if (emptyGSMatch && b[bi] === "**" && a[ai] === b[bi + 1]) {
-			result.push(b[bi]);
-			bi++;
-		} else if (a[ai] === "*" && b[bi] && (this.options.dot || !b[bi].startsWith(".")) && b[bi] !== "**") {
-			if (which$1 === "b") return false;
-			which$1 = "a";
-			result.push(a[ai]);
-			ai++;
-			bi++;
-		} else if (b[bi] === "*" && a[ai] && (this.options.dot || !a[ai].startsWith(".")) && a[ai] !== "**") {
-			if (which$1 === "a") return false;
-			which$1 = "b";
-			result.push(b[bi]);
-			ai++;
-			bi++;
-		} else return false;
-		return a.length === b.length && result;
-	}
-	parseNegate() {
-		if (this.nonegate) return;
-		const pattern = this.pattern;
-		let negate = false;
-		let negateOffset = 0;
-		for (let i$1 = 0; i$1 < pattern.length && pattern.charAt(i$1) === "!"; i$1++) {
-			negate = !negate;
-			negateOffset++;
-		}
-		if (negateOffset) this.pattern = pattern.slice(negateOffset);
-		this.negate = negate;
-	}
-	matchOne(file, pattern, partial = false) {
-		let fileStartIndex = 0;
-		let patternStartIndex = 0;
-		if (this.isWindows) {
-			const fileDrive = typeof file[0] === "string" && /^[a-z]:$/i.test(file[0]);
-			const fileUNC = !fileDrive && file[0] === "" && file[1] === "" && file[2] === "?" && /^[a-z]:$/i.test(file[3]);
-			const patternDrive = typeof pattern[0] === "string" && /^[a-z]:$/i.test(pattern[0]);
-			const patternUNC = !patternDrive && pattern[0] === "" && pattern[1] === "" && pattern[2] === "?" && typeof pattern[3] === "string" && /^[a-z]:$/i.test(pattern[3]);
-			const fdi = fileUNC ? 3 : fileDrive ? 0 : void 0;
-			const pdi = patternUNC ? 3 : patternDrive ? 0 : void 0;
-			if (typeof fdi === "number" && typeof pdi === "number") {
-				const [fd, pd] = [file[fdi], pattern[pdi]];
-				if (fd.toLowerCase() === pd.toLowerCase()) {
-					pattern[pdi] = fd;
-					patternStartIndex = pdi;
-					fileStartIndex = fdi;
-				}
-			}
-		}
-		const { optimizationLevel = 1 } = this.options;
-		if (optimizationLevel >= 2) file = this.levelTwoFileOptimize(file);
-		if (pattern.includes(GLOBSTAR)) return this.#matchGlobstar(file, pattern, partial, fileStartIndex, patternStartIndex);
-		return this.#matchOne(file, pattern, partial, fileStartIndex, patternStartIndex);
-	}
-	#matchGlobstar(file, pattern, partial, fileIndex, patternIndex) {
-		const firstgs = pattern.indexOf(GLOBSTAR, patternIndex);
-		const lastgs = pattern.lastIndexOf(GLOBSTAR);
-		const [head, body, tail] = [
-			pattern.slice(patternIndex, firstgs),
-			pattern.slice(firstgs + 1, lastgs),
-			pattern.slice(lastgs + 1)
-		];
-		if (head.length) {
-			const fileHead = file.slice(fileIndex, fileIndex + head.length);
-			if (!this.#matchOne(fileHead, head, partial, 0, 0)) return false;
-			fileIndex += head.length;
-			patternIndex += head.length;
-		}
-		let fileTailMatch = 0;
-		if (tail.length) {
-			if (tail.length + fileIndex > file.length) return false;
-			let tailStart = file.length - tail.length;
-			if (this.#matchOne(file, tail, partial, tailStart, 0)) fileTailMatch = tail.length;
-			else {
-				if (file[file.length - 1] !== "" || fileIndex + tail.length === file.length) return false;
-				tailStart--;
-				if (!this.#matchOne(file, tail, partial, tailStart, 0)) return false;
-				fileTailMatch = tail.length + 1;
-			}
-		}
-		if (!body.length) {
-			let sawSome = !!fileTailMatch;
-			for (let i$2 = fileIndex; i$2 < file.length - fileTailMatch; i$2++) {
-				const f = String(file[i$2]);
-				sawSome = true;
-				if (f === "." || f === ".." || !this.options.dot && f.startsWith(".")) return false;
-			}
-			return sawSome;
-		}
-		const bodySegments = [[[], 0]];
-		let currentBody = bodySegments[0];
-		let nonGsParts = 0;
-		const nonGsPartsSums = [0];
-		for (const b of body) if (b === GLOBSTAR) {
-			nonGsPartsSums.push(nonGsParts);
-			currentBody = [[], 0];
-			bodySegments.push(currentBody);
-		} else {
-			currentBody[0].push(b);
-			nonGsParts++;
-		}
-		let i$1 = bodySegments.length - 1;
-		const fileLength = file.length - fileTailMatch;
-		for (const b of bodySegments) b[1] = fileLength - (nonGsPartsSums[i$1--] + b[0].length);
-		return !!this.#matchGlobStarBodySections(file, bodySegments, fileIndex, 0, partial, 0, !!fileTailMatch);
-	}
-	#matchGlobStarBodySections(file, bodySegments, fileIndex, bodyIndex, partial, globStarDepth, sawTail) {
-		const bs = bodySegments[bodyIndex];
-		if (!bs) {
-			for (let i$1 = fileIndex; i$1 < file.length; i$1++) {
-				sawTail = true;
-				const f = file[i$1];
-				if (f === "." || f === ".." || !this.options.dot && f.startsWith(".")) return false;
-			}
-			return sawTail;
-		}
-		const [body, after] = bs;
-		while (fileIndex <= after) {
-			const m = this.#matchOne(file.slice(0, fileIndex + body.length), body, partial, fileIndex, 0);
-			if (m && globStarDepth < this.maxGlobstarRecursion) {
-				const sub = this.#matchGlobStarBodySections(file, bodySegments, fileIndex + body.length, bodyIndex + 1, partial, globStarDepth + 1, sawTail);
-				if (sub !== false) return sub;
-			}
-			const f = file[fileIndex];
-			if (f === "." || f === ".." || !this.options.dot && f.startsWith(".")) return false;
-			fileIndex++;
-		}
+function readFileSafe(filePath) {
+	try {
+		const stat = node_fs.statSync(filePath);
+		if (!stat.isFile() || stat.size > MAX_SKILL_FILE_BYTES) return null;
+		return node_fs.readFileSync(filePath, "utf-8");
+	} catch {
 		return null;
 	}
-	#matchOne(file, pattern, partial, fileIndex, patternIndex) {
-		let fi;
-		let pi;
-		let pl;
-		let fl;
-		for (fi = fileIndex, pi = patternIndex, fl = file.length, pl = pattern.length; fi < fl && pi < pl; fi++, pi++) {
-			this.debug("matchOne loop");
-			let p = pattern[pi];
-			let f = file[fi];
-			this.debug(pattern, p, f);
-			/* c8 ignore start */
-			if (p === false || p === GLOBSTAR) return false;
-			/* c8 ignore stop */
-			let hit;
-			if (typeof p === "string") {
-				hit = f === p;
-				this.debug("string match", p, f, hit);
-			} else {
-				hit = p.test(f);
-				this.debug("pattern match", p, f, hit);
-			}
-			if (!hit) return false;
-		}
-		if (fi === fl && pi === pl) return true;
-		else if (fi === fl) return partial;
-		else if (pi === pl) return fi === fl - 1 && file[fi] === "";
-		else throw new Error("wtf?");
-		/* c8 ignore stop */
+}
+function parseSkillDir(dirPath, stem) {
+	const raw = readFileSafe(node_path.join(dirPath, "SKILL.md"));
+	if (!raw) return null;
+	const parsed = (0, import_gray_matter.default)(raw);
+	const fm = parsed.data;
+	const refsDir = node_path.join(dirPath, "references");
+	const refs = [];
+	if (node_fs.existsSync(refsDir)) for (const entry of node_fs.readdirSync(refsDir)) {
+		if (!entry.endsWith(".md")) continue;
+		refs.push({
+			filename: entry,
+			filePath: node_path.join(refsDir, entry)
+		});
 	}
-	braceExpand() {
-		return braceExpand(this.pattern, this.options);
+	return {
+		name: typeof fm["name"] === "string" ? fm["name"] : stem,
+		description: typeof fm["description"] === "string" ? fm["description"] : "",
+		appliesTo: Array.isArray(fm["applies-to"]) ? fm["applies-to"] : [],
+		content: parsed.content.trim(),
+		stem,
+		refs
+	};
+}
+function parseSkillFile(filePath, stem) {
+	const raw = readFileSafe(filePath);
+	if (!raw) return null;
+	const parsed = (0, import_gray_matter.default)(raw);
+	const fm = parsed.data;
+	return {
+		name: typeof fm["name"] === "string" ? fm["name"] : stem,
+		description: typeof fm["description"] === "string" ? fm["description"] : "",
+		appliesTo: Array.isArray(fm["applies-to"]) ? fm["applies-to"] : [],
+		content: parsed.content.trim(),
+		stem,
+		refs: []
+	};
+}
+function inlineRefs(skill, filenames) {
+	const selected = skill.refs.filter((r) => filenames.includes(r.filename));
+	const sections$1 = selected.map((r) => readFileSafe(r.filePath)?.trim()).filter(Boolean);
+	return {
+		name: skill.name,
+		description: skill.description,
+		appliesTo: skill.appliesTo,
+		content: sections$1.length > 0 ? skill.content + "\n\n---\n\n" + sections$1.join("\n\n---\n\n") : skill.content,
+		stem: skill.stem
+	};
+}
+function loadSkillsFromDirectory(skillsDir) {
+	if (!node_fs.existsSync(skillsDir)) return [];
+	const skills = [];
+	for (const entry of node_fs.readdirSync(skillsDir, { withFileTypes: true })) if (entry.isDirectory()) {
+		const skill = parseSkillDir(node_path.join(skillsDir, entry.name), entry.name);
+		if (skill) skills.push(skill);
+	} else if (entry.isFile() && entry.name.endsWith(".md")) {
+		const stem = node_path.basename(entry.name, ".md");
+		const skill = parseSkillFile(node_path.join(skillsDir, entry.name), stem);
+		if (skill) skills.push(skill);
 	}
-	parse(pattern) {
-		assertValidPattern(pattern);
-		const options = this.options;
-		if (pattern === "**") return GLOBSTAR;
-		if (pattern === "") return "";
-		let m;
-		let fastTest = null;
-		if (m = pattern.match(starRE)) fastTest = options.dot ? starTestDot : starTest;
-		else if (m = pattern.match(starDotExtRE)) fastTest = (options.nocase ? options.dot ? starDotExtTestNocaseDot : starDotExtTestNocase : options.dot ? starDotExtTestDot : starDotExtTest)(m[1]);
-		else if (m = pattern.match(qmarksRE)) fastTest = (options.nocase ? options.dot ? qmarksTestNocaseDot : qmarksTestNocase : options.dot ? qmarksTestDot : qmarksTest)(m);
-		else if (m = pattern.match(starDotStarRE)) fastTest = options.dot ? starDotStarTestDot : starDotStarTest;
-		else if (m = pattern.match(dotStarRE)) fastTest = dotStarTest;
-		const re$1 = AST.fromGlob(pattern, this.options).toMMPattern();
-		if (fastTest && typeof re$1 === "object") Reflect.defineProperty(re$1, "test", { value: fastTest });
-		return re$1;
-	}
-	makeRe() {
-		if (this.regexp || this.regexp === false) return this.regexp;
-		const set = this.set;
-		if (!set.length) {
-			this.regexp = false;
-			return this.regexp;
-		}
-		const options = this.options;
-		const twoStar = options.noglobstar ? star : options.dot ? twoStarDot : twoStarNoDot;
-		const flags = new Set(options.nocase ? ["i"] : []);
-		let re$1 = set.map((pattern) => {
-			const pp = pattern.map((p) => {
-				if (p instanceof RegExp) for (const f of p.flags.split("")) flags.add(f);
-				return typeof p === "string" ? regExpEscape(p) : p === GLOBSTAR ? GLOBSTAR : p._src;
-			});
-			pp.forEach((p, i$1) => {
-				const next = pp[i$1 + 1];
-				const prev = pp[i$1 - 1];
-				if (p !== GLOBSTAR || prev === GLOBSTAR) return;
-				if (prev === void 0) if (next !== void 0 && next !== GLOBSTAR) pp[i$1 + 1] = "(?:\\/|" + twoStar + "\\/)?" + next;
-				else pp[i$1] = twoStar;
-				else if (next === void 0) pp[i$1 - 1] = prev + "(?:\\/|\\/" + twoStar + ")?";
-				else if (next !== GLOBSTAR) {
-					pp[i$1 - 1] = prev + "(?:\\/|\\/" + twoStar + "\\/)" + next;
-					pp[i$1 + 1] = GLOBSTAR;
-				}
-			});
-			const filtered = pp.filter((p) => p !== GLOBSTAR);
-			if (this.partial && filtered.length >= 1) {
-				const prefixes = [];
-				for (let i$1 = 1; i$1 <= filtered.length; i$1++) prefixes.push(filtered.slice(0, i$1).join("/"));
-				return "(?:" + prefixes.join("|") + ")";
-			}
-			return filtered.join("/");
-		}).join("|");
-		const [open, close] = set.length > 1 ? ["(?:", ")"] : ["", ""];
-		re$1 = "^" + open + re$1 + close + "$";
-		if (this.partial) re$1 = "^(?:\\/|" + open + re$1.slice(1, -1) + close + ")$";
-		if (this.negate) re$1 = "^(?!" + re$1 + ").+$";
-		try {
-			this.regexp = new RegExp(re$1, [...flags].join(""));
-		} catch (ex) {
-			this.regexp = false;
-		}
-		/* c8 ignore stop */
-		return this.regexp;
-	}
-	slashSplit(p) {
-		if (this.preserveMultipleSlashes) return p.split("/");
-		else if (this.isWindows && /^\/\/[^\/]+/.test(p)) return ["", ...p.split(/\/+/)];
-		else return p.split(/\/+/);
-	}
-	match(f, partial = this.partial) {
-		this.debug("match", f, this.pattern);
-		if (this.comment) return false;
-		if (this.empty) return f === "";
-		if (f === "/" && partial) return true;
-		const options = this.options;
-		if (this.isWindows) f = f.split("\\").join("/");
-		const ff = this.slashSplit(f);
-		this.debug(this.pattern, "split", ff);
-		const set = this.set;
-		this.debug(this.pattern, "set", set);
-		let filename = ff[ff.length - 1];
-		if (!filename) for (let i$1 = ff.length - 2; !filename && i$1 >= 0; i$1--) filename = ff[i$1];
-		for (let i$1 = 0; i$1 < set.length; i$1++) {
-			const pattern = set[i$1];
-			let file = ff;
-			if (options.matchBase && pattern.length === 1) file = [filename];
-			const hit = this.matchOne(file, pattern, partial);
-			if (hit) {
-				if (options.flipNegate) return true;
-				return !this.negate;
-			}
-		}
-		if (options.flipNegate) return false;
-		return this.negate;
-	}
-	static defaults(def) {
-		return minimatch.defaults(def).Minimatch;
-	}
-};
-/* c8 ignore stop */
-minimatch.AST = AST;
-minimatch.Minimatch = Minimatch;
-minimatch.escape = escape;
-minimatch.unescape = unescape;
-
-//#endregion
-//#region src/skills/matcher.ts
-/**
-* Filter skills whose appliesTo patterns match any of the changed filenames.
-* Skills with an empty appliesTo array (or missing) apply globally.
-*/
-function matchSkills(skills, filenames) {
-	return skills.filter((skill) => {
-		if (skill.appliesTo.length === 0) return true;
-		if (skill.appliesTo.includes("*")) return true;
-		return skill.appliesTo.some((pattern) => filenames.some((filename) => minimatch(filename, pattern, { matchBase: true })));
-	});
+	return skills;
+}
+async function loadSkills(repoSkillsPath) {
+	const bundledDir = node_path.join(__dirname, "../skills");
+	const skillMap = new Map();
+	for (const skill of loadSkillsFromDirectory(bundledDir)) skillMap.set(skill.stem, skill);
+	const workspace = process.env["GITHUB_WORKSPACE"] ?? process.cwd();
+	const resolvedPath = node_path.resolve(workspace, repoSkillsPath);
+	if (!resolvedPath.startsWith(workspace + node_path.sep) && resolvedPath !== workspace) throw new Error(`skills-path "${repoSkillsPath}" resolves outside the workspace. Use a relative path within the repository.`);
+	if (node_fs.existsSync(resolvedPath)) for (const skill of loadSkillsFromDirectory(resolvedPath)) skillMap.set(skill.stem, skill);
+	return Array.from(skillMap.values());
 }
 
 //#endregion
@@ -35729,13 +34223,13 @@ function parseUnionDef(def, refs) {
 	if (refs.target === "openApi3") return asAnyOf(def, refs);
 	const options = def.options instanceof Map ? Array.from(def.options.values()) : def.options;
 	if (options.every((x) => x._def.typeName in primitiveMappings && (!x._def.checks || !x._def.checks.length))) {
-		const types$6 = options.reduce((types$7, x) => {
+		const types$5 = options.reduce((types$6, x) => {
 			const type = primitiveMappings[x._def.typeName];
-			return type && !types$7.includes(type) ? [...types$7, type] : types$7;
+			return type && !types$6.includes(type) ? [...types$6, type] : types$6;
 		}, []);
-		return { type: types$6.length > 1 ? types$6 : types$6[0] };
+		return { type: types$5.length > 1 ? types$5 : types$5[0] };
 	} else if (options.every((x) => x._def.typeName === "ZodLiteral" && !x.description)) {
-		const types$6 = options.reduce((acc, x) => {
+		const types$5 = options.reduce((acc, x) => {
 			const type = typeof x._def.value;
 			switch (type) {
 				case "string":
@@ -35749,8 +34243,8 @@ function parseUnionDef(def, refs) {
 				default: return acc;
 			}
 		}, []);
-		if (types$6.length === options.length) {
-			const uniqueTypes = types$6.filter((x, i$1, a) => a.indexOf(x) === i$1);
+		if (types$5.length === options.length) {
+			const uniqueTypes = types$5.filter((x, i$1, a) => a.indexOf(x) === i$1);
 			return {
 				type: uniqueTypes.length > 1 ? uniqueTypes : uniqueTypes[0],
 				enum: options.reduce((acc, x) => {
@@ -36802,8 +35296,8 @@ function formatDataStreamPart(type, value) {
 var NEWLINE = "\n".charCodeAt(0);
 var NEWLINE2 = "\n".charCodeAt(0);
 function zodSchema(zodSchema2, options) {
-	var _a$4;
-	const useReferences = (_a$4 = options == null ? void 0 : options.useReferences) != null ? _a$4 : false;
+	var _a$3;
+	const useReferences = (_a$3 = options == null ? void 0 : options.useReferences) != null ? _a$3 : false;
 	return jsonSchema(esm_default(zodSchema2, {
 		$refStrategy: useReferences ? "root" : "none",
 		target: "jsonSchema7"
@@ -36993,8 +35487,8 @@ var require_global_utils = __commonJS({ "node_modules/.pnpm/@opentelemetry+api@1
 	const GLOBAL_OPENTELEMETRY_API_KEY = Symbol.for(`opentelemetry.js.api.${major}`);
 	const _global = platform_1._globalThis;
 	function registerGlobal(type, instance, diag$1, allowOverride = false) {
-		var _a$4;
-		const api$1 = _global[GLOBAL_OPENTELEMETRY_API_KEY] = (_a$4 = _global[GLOBAL_OPENTELEMETRY_API_KEY]) !== null && _a$4 !== void 0 ? _a$4 : { version: version_1.VERSION };
+		var _a$3;
+		const api$1 = _global[GLOBAL_OPENTELEMETRY_API_KEY] = (_a$3 = _global[GLOBAL_OPENTELEMETRY_API_KEY]) !== null && _a$3 !== void 0 ? _a$3 : { version: version_1.VERSION };
 		if (!allowOverride && api$1[type]) {
 			const err = new Error(`@opentelemetry/api: Attempted duplicate registration of API: ${type}`);
 			diag$1.error(err.stack || err.message);
@@ -37011,8 +35505,8 @@ var require_global_utils = __commonJS({ "node_modules/.pnpm/@opentelemetry+api@1
 	}
 	exports.registerGlobal = registerGlobal;
 	function getGlobal(type) {
-		var _a$4, _b;
-		const globalVersion = (_a$4 = _global[GLOBAL_OPENTELEMETRY_API_KEY]) === null || _a$4 === void 0 ? void 0 : _a$4.version;
+		var _a$3, _b;
+		const globalVersion = (_a$3 = _global[GLOBAL_OPENTELEMETRY_API_KEY]) === null || _a$3 === void 0 ? void 0 : _a$3.version;
 		if (!globalVersion || !(0, semver_1.isCompatible)(globalVersion)) return;
 		return (_b = _global[GLOBAL_OPENTELEMETRY_API_KEY]) === null || _b === void 0 ? void 0 : _b[type];
 	}
@@ -37156,10 +35650,10 @@ var require_diag = __commonJS({ "node_modules/.pnpm/@opentelemetry+api@1.9.0/nod
 			}
 			const self = this;
 			const setLogger = (logger, optionsOrLogLevel = { logLevel: types_1$1.DiagLogLevel.INFO }) => {
-				var _a$4, _b, _c;
+				var _a$3, _b, _c;
 				if (logger === self) {
 					const err = new Error("Cannot use diag as the logger for itself. Please use a DiagLogger implementation like ConsoleDiagLogger or a custom implementation");
-					self.error((_a$4 = err.stack) !== null && _a$4 !== void 0 ? _a$4 : err.message);
+					self.error((_a$3 = err.stack) !== null && _a$3 !== void 0 ? _a$3 : err.message);
 					return false;
 				}
 				if (typeof optionsOrLogLevel === "number") optionsOrLogLevel = { logLevel: optionsOrLogLevel };
@@ -37745,8 +36239,8 @@ var require_context_utils = __commonJS({ "node_modules/.pnpm/@opentelemetry+api@
 	* @param context context to get values from
 	*/
 	function getSpanContext(context) {
-		var _a$4;
-		return (_a$4 = getSpan(context)) === null || _a$4 === void 0 ? void 0 : _a$4.spanContext();
+		var _a$3;
+		return (_a$3 = getSpan(context)) === null || _a$3 === void 0 ? void 0 : _a$3.spanContext();
 	}
 	exports.getSpanContext = getSpanContext;
 } });
@@ -37915,12 +36409,12 @@ var require_ProxyTracerProvider = __commonJS({ "node_modules/.pnpm/@opentelemetr
 		* Get a {@link ProxyTracer}
 		*/
 		getTracer(name$2, version, options) {
-			var _a$4;
-			return (_a$4 = this.getDelegateTracer(name$2, version, options)) !== null && _a$4 !== void 0 ? _a$4 : new ProxyTracer_1$1.ProxyTracer(this, name$2, version, options);
+			var _a$3;
+			return (_a$3 = this.getDelegateTracer(name$2, version, options)) !== null && _a$3 !== void 0 ? _a$3 : new ProxyTracer_1$1.ProxyTracer(this, name$2, version, options);
 		}
 		getDelegate() {
-			var _a$4;
-			return (_a$4 = this._delegate) !== null && _a$4 !== void 0 ? _a$4 : NOOP_TRACER_PROVIDER;
+			var _a$3;
+			return (_a$3 = this._delegate) !== null && _a$3 !== void 0 ? _a$3 : NOOP_TRACER_PROVIDER;
 		}
 		/**
 		* Set the delegate tracer provider
@@ -37929,8 +36423,8 @@ var require_ProxyTracerProvider = __commonJS({ "node_modules/.pnpm/@opentelemetr
 			this._delegate = delegate;
 		}
 		getDelegateTracer(name$2, version, options) {
-			var _a$4;
-			return (_a$4 = this._delegate) === null || _a$4 === void 0 ? void 0 : _a$4.getTracer(name$2, version, options);
+			var _a$3;
+			return (_a$3 = this._delegate) === null || _a$3 === void 0 ? void 0 : _a$3.getTracer(name$2, version, options);
 		}
 	};
 	exports.ProxyTracerProvider = ProxyTracerProvider;
@@ -41022,6 +39516,76 @@ function trimStartOfStream() {
 var HANGING_STREAM_WARNING_TIME_MS = 15 * 1e3;
 
 //#endregion
+//#region src/skills/selector.ts
+const SelectionSchema = objectType({ selected: arrayType(stringType()).describe("Stems of the skills that are relevant to this pull request") });
+const RefsSchema = objectType({ filenames: arrayType(stringType()).describe("Filenames of the reference files needed for this PR (e.g. \"command-based.md\")") });
+/**
+* Uses the model to select which skills are relevant to the PR based on their descriptions.
+* Skills without a description apply globally and are always included.
+*/
+async function selectSkills(model, summary, skills) {
+	const globalSkills = skills.filter((s) => !s.description);
+	const selectableSkills = skills.filter((s) => s.description);
+	if (selectableSkills.length === 0) return skills;
+	const skillList = selectableSkills.map((s) => `- **${s.stem}**: ${s.description}`).join("\n");
+	const fileSummaries = summary.files.map((f) => `- ${f.filename}: ${f.summary}`).join("\n");
+	const { object: object$1 } = await generateObject({
+		model,
+		mode: "json",
+		schema: SelectionSchema,
+		system: `You are selecting which code review skills to apply to a pull request.
+Only select skills that are genuinely relevant based on what the PR is doing.
+Return an empty array if no skills apply.`,
+		prompt: `## PR Goal
+${summary.prGoal}
+
+## Changed Files
+${fileSummaries}
+
+## Available Skills
+${skillList}
+
+Which skills are relevant to this PR? Return the stems of applicable skills.`
+	});
+	const selectedStems = new Set(object$1.selected);
+	const selected = selectableSkills.filter((s) => selectedStems.has(s.stem));
+	return [...globalSkills, ...selected];
+}
+/**
+* For each selected skill that has reference files, asks the model which references
+* are needed for this PR and inlines only those into the skill content.
+*/
+async function resolveReferences(model, summary, skills) {
+	return Promise.all(skills.map(async (skill) => {
+		if (skill.refs.length === 0) return inlineRefs(skill, []);
+		const refList = skill.refs.map((r) => `- ${r.filename}`).join("\n");
+		const fileSummaries = summary.files.map((f) => `- ${f.filename}: ${f.summary}`).join("\n");
+		const { object: object$1 } = await generateObject({
+			model,
+			mode: "json",
+			schema: RefsSchema,
+			system: `You are selecting which reference files to load for a code review skill.
+Read the skill's index and select only the references relevant to this pull request.
+Return an empty array if no references are needed beyond the skill's main content.`,
+			prompt: `## PR Goal
+${summary.prGoal}
+
+## Changed Files
+${fileSummaries}
+
+## Skill: ${skill.name}
+${skill.content}
+
+## Available References
+${refList}
+
+Which reference files are needed to review this PR? Return only the filenames.`
+		});
+		return inlineRefs(skill, object$1.filenames);
+	}));
+}
+
+//#endregion
 //#region src/passes/summarize.ts
 const SummarySchema = objectType({
 	prGoal: stringType().describe("One or two sentence description of what this PR is trying to accomplish"),
@@ -41193,12 +39757,12 @@ async function runPipeline(inputs) {
 		return;
 	}
 	const allSkills = await loadSkills(skillsPath);
-	const filenames = filesToReview.map((f) => f.filename);
-	const relevantSkills = matchSkills(allSkills, filenames);
-	import_core$1.info(`Using ${relevantSkills.length} relevant skills`);
 	const summarizeModel = getProvider(gateway, apiKey, fastModel ?? model);
 	import_core$1.info("Pass 1: Summarizing PR...");
 	const summary = await summarizePR(summarizeModel, filesToReview);
+	const selectedSkills = await selectSkills(summarizeModel, summary, allSkills);
+	const relevantSkills = await resolveReferences(summarizeModel, summary, selectedSkills);
+	import_core$1.info(`Using ${relevantSkills.length} relevant skills`);
 	const significantFiles = summary.files.filter((f) => f.architecturallySignificant);
 	const fileContents = new Map();
 	await Promise.all(significantFiles.map(async (f) => {
