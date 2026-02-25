@@ -41038,6 +41038,7 @@ async function summarizePR(model, files) {
 	}).join("\n\n");
 	const { object: object$1 } = await generateObject({
 		model,
+		mode: "json",
 		schema: SummarySchema,
 		system: `You are a senior FRC (FIRST Robotics Competition) software mentor reviewing a pull request.
 Your task is to understand what this PR is trying to accomplish and summarize each file change.
@@ -41085,6 +41086,7 @@ async function reviewPR(model, summary, files, fileContents, skills) {
 	const fileSummaries = summary.files.map((f) => `- **${f.filename}**: ${f.summary}${f.architecturallySignificant ? " ⭐" : ""}`).join("\n");
 	const { object: object$1 } = await generateObject({
 		model,
+		mode: "json",
 		schema: CandidateSchema,
 		system: `You are a senior FRC (FIRST Robotics Competition) software mentor performing a detailed code review.
 You review robot code written in Java/Kotlin using WPILib, command-based architecture, and FRC-specific frameworks.
@@ -41130,6 +41132,7 @@ async function verifyIssue(model, issue$1, fileContent) {
 	const fileContext = fileContent ? `\`\`\`\n${fileContent}\n\`\`\`` : "(file content not available)";
 	const { object: object$1 } = await generateObject({
 		model,
+		mode: "json",
 		schema: VerifySchema,
 		system: `You are a senior FRC software mentor verifying whether a reported code issue is real.
 Be skeptical — only confirm issues that are genuinely present and problematic.`,
