@@ -1,4 +1,4 @@
-import { generateObject } from 'ai'
+import { generateText, Output } from 'ai'
 import { z } from 'zod'
 import type { LanguageModel } from 'ai'
 import type { Issue } from './review.js'
@@ -17,9 +17,9 @@ async function verifyIssue(
     ? `\`\`\`\n${fileContent}\n\`\`\``
     : '(file content not available)'
 
-  const { object } = await generateObject({
+  const { output } = await generateText({
     model,
-    schema: VerifySchema,
+    output: Output.object({ schema: VerifySchema }),
     system: `You are a senior FRC software mentor verifying whether a reported code issue is real.
 Be skeptical — only confirm issues that are genuinely present and problematic.`,
     prompt: `## Issue to Verify
@@ -42,7 +42,8 @@ Is this issue genuinely present at line ${issue.line} in the file?
 Confirm only if the code at that line clearly exhibits the reported problem.`,
   })
 
-  return { issue, confirmed: object.confirmed, reason: object.reason }
+  if (!output) throw new Error(`No output from verify pass for issue in ${issue.file}:${issue.line}`)
+  return { issue, confirmed: output.confirmed, reason: output.reason }
 }
 
 export async function verifyIssues(

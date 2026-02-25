@@ -917,7 +917,7 @@ var require_util$6 = require_token_error$1.__commonJS({ "node_modules/.pnpm/undi
 	function deepClone(obj) {
 		return JSON.parse(JSON.stringify(obj));
 	}
-	function isAsyncIterable(obj) {
+	function isAsyncIterable$1(obj) {
 		return !!(obj != null && typeof obj[Symbol.asyncIterator] === "function");
 	}
 	function isIterable(obj) {
@@ -1119,7 +1119,7 @@ var require_util$6 = require_token_error$1.__commonJS({ "node_modules/.pnpm/undi
 		getServerName,
 		isStream,
 		isIterable,
-		isAsyncIterable,
+		isAsyncIterable: isAsyncIterable$1,
 		isDestroyed,
 		headerNameToString,
 		parseRawHeaders,
@@ -22676,18 +22676,6 @@ var UnsupportedFunctionalityError = class extends (_b14 = AISDKError, _a14$1 = s
 		return AISDKError.hasMarker(error$1, marker14$1);
 	}
 };
-function isJSONValue(value) {
-	if (value === null || typeof value === "string" || typeof value === "number" || typeof value === "boolean") return true;
-	if (Array.isArray(value)) return value.every(isJSONValue);
-	if (typeof value === "object") return Object.entries(value).every(([key, val]) => typeof key === "string" && (val === void 0 || isJSONValue(val)));
-	return false;
-}
-function isJSONArray(value) {
-	return Array.isArray(value) && value.every(isJSONValue);
-}
-function isJSONObject(value) {
-	return value != null && typeof value === "object" && Object.entries(value).every(([key, val]) => typeof key === "string" && (val === void 0 || isJSONValue(val)));
-}
 
 //#endregion
 //#region node_modules/.pnpm/zod@3.25.76/node_modules/zod/v4/core/core.js
@@ -32074,6 +32062,29 @@ var createBinaryResponseHandler = () => async ({ response, url, requestBodyValue
 };
 function withoutTrailingSlash(url) {
 	return url == null ? void 0 : url.replace(/\/$/, "");
+}
+function isAsyncIterable(obj) {
+	return obj != null && typeof obj[Symbol.asyncIterator] === "function";
+}
+async function* executeTool({ execute, input, options }) {
+	const result = execute(input, options);
+	if (isAsyncIterable(result)) {
+		let lastOutput;
+		for await (const output of result) {
+			lastOutput = output;
+			yield {
+				type: "preliminary",
+				output
+			};
+		}
+		yield {
+			type: "final",
+			output: lastOutput
+		};
+	} else yield {
+		type: "final",
+		output: await result
+	};
 }
 
 //#endregion
@@ -41913,8 +41924,7 @@ function getProvider(gateway$1, apiKey, model) {
 		case "digitalocean": return createOpenAICompatible({
 			name: "digitalocean",
 			apiKey,
-			baseURL: "https://inference.do-ai.run/v1",
-			supportsStructuredOutputs: true
+			baseURL: "https://inference.do-ai.run/v1"
 		})(model);
 		case "vercel": return createOpenAICompatible({
 			name: "vercel",
@@ -46253,9 +46263,9 @@ function createGatewayProvider(options = {}) {
 	};
 	const getAvailableModels = async () => {
 		var _a10$1, _b10, _c;
-		const now = (_c = (_b10 = (_a10$1 = options._internal) == null ? void 0 : _a10$1.currentDate) == null ? void 0 : _b10.call(_a10$1).getTime()) != null ? _c : Date.now();
-		if (!pendingMetadata || now - lastFetchTime > cacheRefreshMillis) {
-			lastFetchTime = now;
+		const now$1 = (_c = (_b10 = (_a10$1 = options._internal) == null ? void 0 : _a10$1.currentDate) == null ? void 0 : _b10.call(_a10$1).getTime()) != null ? _c : Date.now();
+		if (!pendingMetadata || now$1 - lastFetchTime > cacheRefreshMillis) {
+			lastFetchTime = now$1;
 			pendingMetadata = new GatewayFetchMetadata({
 				baseURL,
 				headers: getHeaders,
@@ -48213,16 +48223,58 @@ var name3 = "AI_InvalidToolApprovalError";
 var marker3 = `vercel.ai.error.${name3}`;
 var symbol3 = Symbol.for(marker3);
 var _a3;
+var InvalidToolApprovalError = class extends AISDKError {
+	constructor({ approvalId }) {
+		super({
+			name: name3,
+			message: `Tool approval response references unknown approvalId: "${approvalId}". No matching tool-approval-request found in message history.`
+		});
+		this[_a3] = true;
+		this.approvalId = approvalId;
+	}
+	static isInstance(error$1) {
+		return AISDKError.hasMarker(error$1, marker3);
+	}
+};
 _a3 = symbol3;
 var name4 = "AI_InvalidToolInputError";
 var marker4 = `vercel.ai.error.${name4}`;
 var symbol4 = Symbol.for(marker4);
 var _a4;
+var InvalidToolInputError = class extends AISDKError {
+	constructor({ toolInput, toolName, cause, message = `Invalid input for tool ${toolName}: ${getErrorMessage$1(cause)}` }) {
+		super({
+			name: name4,
+			message,
+			cause
+		});
+		this[_a4] = true;
+		this.toolInput = toolInput;
+		this.toolName = toolName;
+	}
+	static isInstance(error$1) {
+		return AISDKError.hasMarker(error$1, marker4);
+	}
+};
 _a4 = symbol4;
 var name5 = "AI_ToolCallNotFoundForApprovalError";
 var marker5 = `vercel.ai.error.${name5}`;
 var symbol5 = Symbol.for(marker5);
 var _a5;
+var ToolCallNotFoundForApprovalError = class extends AISDKError {
+	constructor({ toolCallId, approvalId }) {
+		super({
+			name: name5,
+			message: `Tool call "${toolCallId}" not found for approval request "${approvalId}".`
+		});
+		this[_a5] = true;
+		this.toolCallId = toolCallId;
+		this.approvalId = approvalId;
+	}
+	static isInstance(error$1) {
+		return AISDKError.hasMarker(error$1, marker5);
+	}
+};
 _a5 = symbol5;
 var name6 = "AI_MissingToolResultsError";
 var marker6 = `vercel.ai.error.${name6}`;
@@ -48273,6 +48325,19 @@ var name9 = "AI_NoOutputGeneratedError";
 var marker9 = `vercel.ai.error.${name9}`;
 var symbol9 = Symbol.for(marker9);
 var _a9;
+var NoOutputGeneratedError = class extends AISDKError {
+	constructor({ message = "No output generated.", cause } = {}) {
+		super({
+			name: name9,
+			message,
+			cause
+		});
+		this[_a9] = true;
+	}
+	static isInstance(error$1) {
+		return AISDKError.hasMarker(error$1, marker9);
+	}
+};
 _a9 = symbol9;
 var name10 = "AI_NoSpeechGeneratedError";
 var marker10 = `vercel.ai.error.${name10}`;
@@ -48293,11 +48358,39 @@ var name13 = "AI_NoSuchToolError";
 var marker13 = `vercel.ai.error.${name13}`;
 var symbol13 = Symbol.for(marker13);
 var _a13;
+var NoSuchToolError = class extends AISDKError {
+	constructor({ toolName, availableTools = void 0, message = `Model tried to call unavailable tool '${toolName}'. ${availableTools === void 0 ? "No tools are available." : `Available tools: ${availableTools.join(", ")}.`}` }) {
+		super({
+			name: name13,
+			message
+		});
+		this[_a13] = true;
+		this.toolName = toolName;
+		this.availableTools = availableTools;
+	}
+	static isInstance(error$1) {
+		return AISDKError.hasMarker(error$1, marker13);
+	}
+};
 _a13 = symbol13;
 var name14 = "AI_ToolCallRepairError";
 var marker14 = `vercel.ai.error.${name14}`;
 var symbol14 = Symbol.for(marker14);
 var _a14;
+var ToolCallRepairError = class extends AISDKError {
+	constructor({ cause, originalError, message = `Error repairing tool call: ${getErrorMessage$1(cause)}` }) {
+		super({
+			name: name14,
+			message,
+			cause
+		});
+		this[_a14] = true;
+		this.originalError = originalError;
+	}
+	static isInstance(error$1) {
+		return AISDKError.hasMarker(error$1, marker14);
+	}
+};
 _a14 = symbol14;
 var UnsupportedModelVersionError = class extends AISDKError {
 	constructor(options) {
@@ -48498,6 +48591,10 @@ function getTotalTimeoutMs(timeout) {
 	if (timeout == null) return void 0;
 	if (typeof timeout === "number") return timeout;
 	return timeout.totalMs;
+}
+function getStepTimeoutMs(timeout) {
+	if (timeout == null || typeof timeout === "number") return void 0;
+	return timeout.stepMs;
 }
 var imageMediaTypeSignatures = [
 	{
@@ -48958,6 +49055,31 @@ function mapToolResultOutput(output) {
 		})
 	};
 }
+async function createToolModelOutput({ toolCallId, input, output, tool: tool2, errorMode }) {
+	if (errorMode === "text") return {
+		type: "error-text",
+		value: getErrorMessage$1(output)
+	};
+	else if (errorMode === "json") return {
+		type: "error-json",
+		value: toJSONValue(output)
+	};
+	if (tool2 == null ? void 0 : tool2.toModelOutput) return await tool2.toModelOutput({
+		toolCallId,
+		input,
+		output
+	});
+	return typeof output === "string" ? {
+		type: "text",
+		value: output
+	} : {
+		type: "json",
+		value: toJSONValue(output)
+	};
+}
+function toJSONValue(value) {
+	return value === void 0 ? null : value;
+}
 function prepareCallSettings({ maxOutputTokens, temperature, topP, topK, presencePenalty, frequencyPenalty, seed, stopSequences }) {
 	if (maxOutputTokens != null) {
 		if (!Number.isInteger(maxOutputTokens)) throw new InvalidArgumentError({
@@ -49022,6 +49144,54 @@ function prepareCallSettings({ maxOutputTokens, temperature, topP, topK, presenc
 		frequencyPenalty,
 		stopSequences,
 		seed
+	};
+}
+function isNonEmptyObject(object2) {
+	return object2 != null && Object.keys(object2).length > 0;
+}
+async function prepareToolsAndToolChoice({ tools, toolChoice, activeTools }) {
+	if (!isNonEmptyObject(tools)) return {
+		tools: void 0,
+		toolChoice: void 0
+	};
+	const filteredTools = activeTools != null ? Object.entries(tools).filter(([name21]) => activeTools.includes(name21)) : Object.entries(tools);
+	const languageModelTools = [];
+	for (const [name21, tool2] of filteredTools) {
+		const toolType = tool2.type;
+		switch (toolType) {
+			case void 0:
+			case "dynamic":
+			case "function":
+				languageModelTools.push({
+					type: "function",
+					name: name21,
+					description: tool2.description,
+					inputSchema: await asSchema(tool2.inputSchema).jsonSchema,
+					...tool2.inputExamples != null ? { inputExamples: tool2.inputExamples } : {},
+					providerOptions: tool2.providerOptions,
+					...tool2.strict != null ? { strict: tool2.strict } : {}
+				});
+				break;
+			case "provider":
+				languageModelTools.push({
+					type: "provider",
+					name: name21,
+					id: tool2.id,
+					args: tool2.args
+				});
+				break;
+			default: {
+				const exhaustiveCheck = toolType;
+				throw new Error(`Unsupported tool type: ${exhaustiveCheck}`);
+			}
+		}
+	}
+	return {
+		tools: languageModelTools,
+		toolChoice: toolChoice == null ? { type: "auto" } : typeof toolChoice === "string" ? { type: toolChoice } : {
+			type: "tool",
+			toolName: toolChoice.toolName
+		}
 	};
 }
 var jsonValueSchema = lazy(() => union([
@@ -49422,8 +49592,43 @@ function asLanguageModelUsage(usage) {
 		cachedInputTokens: usage.inputTokens.cacheRead
 	};
 }
+function addLanguageModelUsage(usage1, usage2) {
+	var _a21, _b$3, _c, _d, _e, _f, _g, _h, _i, _j;
+	return {
+		inputTokens: addTokenCounts(usage1.inputTokens, usage2.inputTokens),
+		inputTokenDetails: {
+			noCacheTokens: addTokenCounts((_a21 = usage1.inputTokenDetails) == null ? void 0 : _a21.noCacheTokens, (_b$3 = usage2.inputTokenDetails) == null ? void 0 : _b$3.noCacheTokens),
+			cacheReadTokens: addTokenCounts((_c = usage1.inputTokenDetails) == null ? void 0 : _c.cacheReadTokens, (_d = usage2.inputTokenDetails) == null ? void 0 : _d.cacheReadTokens),
+			cacheWriteTokens: addTokenCounts((_e = usage1.inputTokenDetails) == null ? void 0 : _e.cacheWriteTokens, (_f = usage2.inputTokenDetails) == null ? void 0 : _f.cacheWriteTokens)
+		},
+		outputTokens: addTokenCounts(usage1.outputTokens, usage2.outputTokens),
+		outputTokenDetails: {
+			textTokens: addTokenCounts((_g = usage1.outputTokenDetails) == null ? void 0 : _g.textTokens, (_h = usage2.outputTokenDetails) == null ? void 0 : _h.textTokens),
+			reasoningTokens: addTokenCounts((_i = usage1.outputTokenDetails) == null ? void 0 : _i.reasoningTokens, (_j = usage2.outputTokenDetails) == null ? void 0 : _j.reasoningTokens)
+		},
+		totalTokens: addTokenCounts(usage1.totalTokens, usage2.totalTokens),
+		reasoningTokens: addTokenCounts(usage1.reasoningTokens, usage2.reasoningTokens),
+		cachedInputTokens: addTokenCounts(usage1.cachedInputTokens, usage2.cachedInputTokens)
+	};
+}
 function addTokenCounts(tokenCount1, tokenCount2) {
 	return tokenCount1 == null && tokenCount2 == null ? void 0 : (tokenCount1 != null ? tokenCount1 : 0) + (tokenCount2 != null ? tokenCount2 : 0);
+}
+function mergeObjects(base, overrides) {
+	if (base === void 0 && overrides === void 0) return void 0;
+	if (base === void 0) return overrides;
+	if (overrides === void 0) return base;
+	const result = { ...base };
+	for (const key in overrides) if (Object.prototype.hasOwnProperty.call(overrides, key)) {
+		const overridesValue = overrides[key];
+		if (overridesValue === void 0) continue;
+		const baseValue = key in base ? base[key] : void 0;
+		const isSourceObject = overridesValue !== null && typeof overridesValue === "object" && !Array.isArray(overridesValue) && !(overridesValue instanceof Date) && !(overridesValue instanceof RegExp);
+		const isTargetObject = baseValue !== null && baseValue !== void 0 && typeof baseValue === "object" && !Array.isArray(baseValue) && !(baseValue instanceof Date) && !(baseValue instanceof RegExp);
+		if (isSourceObject && isTargetObject) result[key] = mergeObjects(baseValue, overridesValue);
+		else result[key] = overridesValue;
+	}
+	return result;
 }
 function getRetryDelayInMs({ error: error$1, exponentialBackoffDelay }) {
 	const headers = error$1.responseHeaders;
@@ -49505,6 +49710,154 @@ function prepareRetries({ maxRetries, abortSignal }) {
 		})
 	};
 }
+function collectToolApprovals({ messages }) {
+	const lastMessage = messages.at(-1);
+	if ((lastMessage == null ? void 0 : lastMessage.role) != "tool") return {
+		approvedToolApprovals: [],
+		deniedToolApprovals: []
+	};
+	const toolCallsByToolCallId = {};
+	for (const message of messages) if (message.role === "assistant" && typeof message.content !== "string") {
+		const content = message.content;
+		for (const part of content) if (part.type === "tool-call") toolCallsByToolCallId[part.toolCallId] = part;
+	}
+	const toolApprovalRequestsByApprovalId = {};
+	for (const message of messages) if (message.role === "assistant" && typeof message.content !== "string") {
+		const content = message.content;
+		for (const part of content) if (part.type === "tool-approval-request") toolApprovalRequestsByApprovalId[part.approvalId] = part;
+	}
+	const toolResults = {};
+	for (const part of lastMessage.content) if (part.type === "tool-result") toolResults[part.toolCallId] = part;
+	const approvedToolApprovals = [];
+	const deniedToolApprovals = [];
+	const approvalResponses = lastMessage.content.filter((part) => part.type === "tool-approval-response");
+	for (const approvalResponse of approvalResponses) {
+		const approvalRequest = toolApprovalRequestsByApprovalId[approvalResponse.approvalId];
+		if (approvalRequest == null) throw new InvalidToolApprovalError({ approvalId: approvalResponse.approvalId });
+		if (toolResults[approvalRequest.toolCallId] != null) continue;
+		const toolCall = toolCallsByToolCallId[approvalRequest.toolCallId];
+		if (toolCall == null) throw new ToolCallNotFoundForApprovalError({
+			toolCallId: approvalRequest.toolCallId,
+			approvalId: approvalRequest.approvalId
+		});
+		const approval = {
+			approvalRequest,
+			approvalResponse,
+			toolCall
+		};
+		if (approvalResponse.approved) approvedToolApprovals.push(approval);
+		else deniedToolApprovals.push(approval);
+	}
+	return {
+		approvedToolApprovals,
+		deniedToolApprovals
+	};
+}
+function now() {
+	var _a21, _b$3;
+	return (_b$3 = (_a21 = globalThis == null ? void 0 : globalThis.performance) == null ? void 0 : _a21.now()) != null ? _b$3 : Date.now();
+}
+async function executeToolCall({ toolCall, tools, tracer, telemetry, messages, abortSignal, experimental_context, stepNumber, model, onPreliminaryToolResult, onToolCallStart, onToolCallFinish }) {
+	const { toolName, toolCallId, input } = toolCall;
+	const tool2 = tools == null ? void 0 : tools[toolName];
+	if ((tool2 == null ? void 0 : tool2.execute) == null) return void 0;
+	const baseCallbackEvent = {
+		stepNumber,
+		model,
+		toolCall,
+		messages,
+		abortSignal,
+		functionId: telemetry == null ? void 0 : telemetry.functionId,
+		metadata: telemetry == null ? void 0 : telemetry.metadata,
+		experimental_context
+	};
+	return recordSpan({
+		name: "ai.toolCall",
+		attributes: selectTelemetryAttributes({
+			telemetry,
+			attributes: {
+				...assembleOperationName({
+					operationId: "ai.toolCall",
+					telemetry
+				}),
+				"ai.toolCall.name": toolName,
+				"ai.toolCall.id": toolCallId,
+				"ai.toolCall.args": { output: () => JSON.stringify(input) }
+			}
+		}),
+		tracer,
+		fn: async (span) => {
+			let output;
+			try {
+				await (onToolCallStart == null ? void 0 : onToolCallStart(baseCallbackEvent));
+			} catch (_ignored) {}
+			const startTime = now();
+			try {
+				const stream$2 = executeTool({
+					execute: tool2.execute.bind(tool2),
+					input,
+					options: {
+						toolCallId,
+						messages,
+						abortSignal,
+						experimental_context
+					}
+				});
+				for await (const part of stream$2) if (part.type === "preliminary") onPreliminaryToolResult?.({
+					...toolCall,
+					type: "tool-result",
+					output: part.output,
+					preliminary: true
+				});
+				else output = part.output;
+			} catch (error$1) {
+				const durationMs2 = now() - startTime;
+				try {
+					await (onToolCallFinish == null ? void 0 : onToolCallFinish({
+						...baseCallbackEvent,
+						success: false,
+						error: error$1,
+						durationMs: durationMs2
+					}));
+				} catch (_ignored) {}
+				recordErrorOnSpan(span, error$1);
+				return {
+					type: "tool-error",
+					toolCallId,
+					toolName,
+					input,
+					error: error$1,
+					dynamic: tool2.type === "dynamic",
+					...toolCall.providerMetadata != null ? { providerMetadata: toolCall.providerMetadata } : {}
+				};
+			}
+			const durationMs = now() - startTime;
+			try {
+				await (onToolCallFinish == null ? void 0 : onToolCallFinish({
+					...baseCallbackEvent,
+					success: true,
+					output,
+					durationMs
+				}));
+			} catch (_ignored) {}
+			try {
+				span.setAttributes(await selectTelemetryAttributes({
+					telemetry,
+					attributes: { "ai.toolCall.result": { output: () => JSON.stringify(output) } }
+				}));
+			} catch (ignored) {}
+			return {
+				type: "tool-result",
+				toolCallId,
+				toolName,
+				input,
+				output,
+				dynamic: tool2.type === "dynamic",
+				...toolCall.providerMetadata != null ? { providerMetadata: toolCall.providerMetadata } : {}
+			};
+		}
+	});
+}
 function extractReasoningContent(content) {
 	const parts = content.filter((content2) => content2.type === "reasoning");
 	return parts.length === 0 ? void 0 : parts.map((content2) => content2.text).join("\n");
@@ -49513,6 +49866,31 @@ function extractTextContent(content) {
 	const parts = content.filter((content2) => content2.type === "text");
 	if (parts.length === 0) return void 0;
 	return parts.map((content2) => content2.text).join("");
+}
+var DefaultGeneratedFile = class {
+	constructor({ data, mediaType }) {
+		const isUint8Array$2 = data instanceof Uint8Array;
+		this.base64Data = isUint8Array$2 ? void 0 : data;
+		this.uint8ArrayData = isUint8Array$2 ? data : void 0;
+		this.mediaType = mediaType;
+	}
+	get base64() {
+		if (this.base64Data == null) this.base64Data = convertUint8ArrayToBase64(this.uint8ArrayData);
+		return this.base64Data;
+	}
+	get uint8Array() {
+		if (this.uint8ArrayData == null) this.uint8ArrayData = convertBase64ToUint8Array(this.base64Data);
+		return this.uint8ArrayData;
+	}
+};
+async function isApprovalNeeded({ tool: tool2, toolCall, messages, experimental_context }) {
+	if (tool2.needsApproval == null) return false;
+	if (typeof tool2.needsApproval === "boolean") return tool2.needsApproval;
+	return await tool2.needsApproval(toolCall.input, {
+		toolCallId: toolCall.toolCallId,
+		messages,
+		experimental_context
+	});
 }
 var output_exports = {};
 __export(output_exports, {
@@ -50082,14 +50460,966 @@ var json = ({ name: name21, description } = {}) => {
 		}
 	};
 };
+async function parseToolCall({ toolCall, tools, repairToolCall, system, messages }) {
+	var _a21;
+	try {
+		if (tools == null) {
+			if (toolCall.providerExecuted && toolCall.dynamic) return await parseProviderExecutedDynamicToolCall(toolCall);
+			throw new NoSuchToolError({ toolName: toolCall.toolName });
+		}
+		try {
+			return await doParseToolCall({
+				toolCall,
+				tools
+			});
+		} catch (error$1) {
+			if (repairToolCall == null || !(NoSuchToolError.isInstance(error$1) || InvalidToolInputError.isInstance(error$1))) throw error$1;
+			let repairedToolCall = null;
+			try {
+				repairedToolCall = await repairToolCall({
+					toolCall,
+					tools,
+					inputSchema: async ({ toolName }) => {
+						const { inputSchema } = tools[toolName];
+						return await asSchema(inputSchema).jsonSchema;
+					},
+					system,
+					messages,
+					error: error$1
+				});
+			} catch (repairError) {
+				throw new ToolCallRepairError({
+					cause: repairError,
+					originalError: error$1
+				});
+			}
+			if (repairedToolCall == null) throw error$1;
+			return await doParseToolCall({
+				toolCall: repairedToolCall,
+				tools
+			});
+		}
+	} catch (error$1) {
+		const parsedInput = await safeParseJSON({ text: toolCall.input });
+		const input = parsedInput.success ? parsedInput.value : toolCall.input;
+		return {
+			type: "tool-call",
+			toolCallId: toolCall.toolCallId,
+			toolName: toolCall.toolName,
+			input,
+			dynamic: true,
+			invalid: true,
+			error: error$1,
+			title: (_a21 = tools == null ? void 0 : tools[toolCall.toolName]) == null ? void 0 : _a21.title,
+			providerExecuted: toolCall.providerExecuted,
+			providerMetadata: toolCall.providerMetadata
+		};
+	}
+}
+async function parseProviderExecutedDynamicToolCall(toolCall) {
+	const parseResult = toolCall.input.trim() === "" ? {
+		success: true,
+		value: {}
+	} : await safeParseJSON({ text: toolCall.input });
+	if (parseResult.success === false) throw new InvalidToolInputError({
+		toolName: toolCall.toolName,
+		toolInput: toolCall.input,
+		cause: parseResult.error
+	});
+	return {
+		type: "tool-call",
+		toolCallId: toolCall.toolCallId,
+		toolName: toolCall.toolName,
+		input: parseResult.value,
+		providerExecuted: true,
+		dynamic: true,
+		providerMetadata: toolCall.providerMetadata
+	};
+}
+async function doParseToolCall({ toolCall, tools }) {
+	const toolName = toolCall.toolName;
+	const tool2 = tools[toolName];
+	if (tool2 == null) {
+		if (toolCall.providerExecuted && toolCall.dynamic) return await parseProviderExecutedDynamicToolCall(toolCall);
+		throw new NoSuchToolError({
+			toolName: toolCall.toolName,
+			availableTools: Object.keys(tools)
+		});
+	}
+	const schema = asSchema(tool2.inputSchema);
+	const parseResult = toolCall.input.trim() === "" ? await safeValidateTypes({
+		value: {},
+		schema
+	}) : await safeParseJSON({
+		text: toolCall.input,
+		schema
+	});
+	if (parseResult.success === false) throw new InvalidToolInputError({
+		toolName,
+		toolInput: toolCall.input,
+		cause: parseResult.error
+	});
+	return tool2.type === "dynamic" ? {
+		type: "tool-call",
+		toolCallId: toolCall.toolCallId,
+		toolName: toolCall.toolName,
+		input: parseResult.value,
+		providerExecuted: toolCall.providerExecuted,
+		providerMetadata: toolCall.providerMetadata,
+		dynamic: true,
+		title: tool2.title
+	} : {
+		type: "tool-call",
+		toolCallId: toolCall.toolCallId,
+		toolName,
+		input: parseResult.value,
+		providerExecuted: toolCall.providerExecuted,
+		providerMetadata: toolCall.providerMetadata,
+		title: tool2.title
+	};
+}
+var DefaultStepResult = class {
+	constructor({ stepNumber, model, functionId, metadata, experimental_context, content, finishReason, rawFinishReason, usage, warnings, request: request$3, response, providerMetadata }) {
+		this.stepNumber = stepNumber;
+		this.model = model;
+		this.functionId = functionId;
+		this.metadata = metadata;
+		this.experimental_context = experimental_context;
+		this.content = content;
+		this.finishReason = finishReason;
+		this.rawFinishReason = rawFinishReason;
+		this.usage = usage;
+		this.warnings = warnings;
+		this.request = request$3;
+		this.response = response;
+		this.providerMetadata = providerMetadata;
+	}
+	get text() {
+		return this.content.filter((part) => part.type === "text").map((part) => part.text).join("");
+	}
+	get reasoning() {
+		return this.content.filter((part) => part.type === "reasoning");
+	}
+	get reasoningText() {
+		return this.reasoning.length === 0 ? void 0 : this.reasoning.map((part) => part.text).join("");
+	}
+	get files() {
+		return this.content.filter((part) => part.type === "file").map((part) => part.file);
+	}
+	get sources() {
+		return this.content.filter((part) => part.type === "source");
+	}
+	get toolCalls() {
+		return this.content.filter((part) => part.type === "tool-call");
+	}
+	get staticToolCalls() {
+		return this.toolCalls.filter((toolCall) => toolCall.dynamic !== true);
+	}
+	get dynamicToolCalls() {
+		return this.toolCalls.filter((toolCall) => toolCall.dynamic === true);
+	}
+	get toolResults() {
+		return this.content.filter((part) => part.type === "tool-result");
+	}
+	get staticToolResults() {
+		return this.toolResults.filter((toolResult) => toolResult.dynamic !== true);
+	}
+	get dynamicToolResults() {
+		return this.toolResults.filter((toolResult) => toolResult.dynamic === true);
+	}
+};
+function stepCountIs(stepCount) {
+	return ({ steps }) => steps.length === stepCount;
+}
+async function isStopConditionMet({ stopConditions, steps }) {
+	return (await Promise.all(stopConditions.map((condition) => condition({ steps })))).some((result) => result);
+}
+async function toResponseMessages({ content: inputContent, tools }) {
+	const responseMessages = [];
+	const content = [];
+	for (const part of inputContent) {
+		if (part.type === "source") continue;
+		if ((part.type === "tool-result" || part.type === "tool-error") && !part.providerExecuted) continue;
+		if (part.type === "text" && part.text.length === 0) continue;
+		switch (part.type) {
+			case "text":
+				content.push({
+					type: "text",
+					text: part.text,
+					providerOptions: part.providerMetadata
+				});
+				break;
+			case "reasoning":
+				content.push({
+					type: "reasoning",
+					text: part.text,
+					providerOptions: part.providerMetadata
+				});
+				break;
+			case "file":
+				content.push({
+					type: "file",
+					data: part.file.base64,
+					mediaType: part.file.mediaType,
+					providerOptions: part.providerMetadata
+				});
+				break;
+			case "tool-call":
+				content.push({
+					type: "tool-call",
+					toolCallId: part.toolCallId,
+					toolName: part.toolName,
+					input: part.input,
+					providerExecuted: part.providerExecuted,
+					providerOptions: part.providerMetadata
+				});
+				break;
+			case "tool-result": {
+				const output = await createToolModelOutput({
+					toolCallId: part.toolCallId,
+					input: part.input,
+					tool: tools == null ? void 0 : tools[part.toolName],
+					output: part.output,
+					errorMode: "none"
+				});
+				content.push({
+					type: "tool-result",
+					toolCallId: part.toolCallId,
+					toolName: part.toolName,
+					output,
+					providerOptions: part.providerMetadata
+				});
+				break;
+			}
+			case "tool-error": {
+				const output = await createToolModelOutput({
+					toolCallId: part.toolCallId,
+					input: part.input,
+					tool: tools == null ? void 0 : tools[part.toolName],
+					output: part.error,
+					errorMode: "json"
+				});
+				content.push({
+					type: "tool-result",
+					toolCallId: part.toolCallId,
+					toolName: part.toolName,
+					output,
+					providerOptions: part.providerMetadata
+				});
+				break;
+			}
+			case "tool-approval-request":
+				content.push({
+					type: "tool-approval-request",
+					approvalId: part.approvalId,
+					toolCallId: part.toolCall.toolCallId
+				});
+				break;
+		}
+	}
+	if (content.length > 0) responseMessages.push({
+		role: "assistant",
+		content
+	});
+	const toolResultContent = [];
+	for (const part of inputContent) {
+		if (!(part.type === "tool-result" || part.type === "tool-error") || part.providerExecuted) continue;
+		const output = await createToolModelOutput({
+			toolCallId: part.toolCallId,
+			input: part.input,
+			tool: tools == null ? void 0 : tools[part.toolName],
+			output: part.type === "tool-result" ? part.output : part.error,
+			errorMode: part.type === "tool-error" ? "text" : "none"
+		});
+		toolResultContent.push({
+			type: "tool-result",
+			toolCallId: part.toolCallId,
+			toolName: part.toolName,
+			output,
+			...part.providerMetadata != null ? { providerOptions: part.providerMetadata } : {}
+		});
+	}
+	if (toolResultContent.length > 0) responseMessages.push({
+		role: "tool",
+		content: toolResultContent
+	});
+	return responseMessages;
+}
+function mergeAbortSignals(...signals) {
+	const validSignals = signals.filter((signal) => signal != null);
+	if (validSignals.length === 0) return void 0;
+	if (validSignals.length === 1) return validSignals[0];
+	const controller = new AbortController();
+	for (const signal of validSignals) {
+		if (signal.aborted) {
+			controller.abort(signal.reason);
+			return controller.signal;
+		}
+		signal.addEventListener("abort", () => {
+			controller.abort(signal.reason);
+		}, { once: true });
+	}
+	return controller.signal;
+}
 var originalGenerateId = createIdGenerator({
 	prefix: "aitxt",
 	size: 24
 });
-function prepareHeaders(headers, defaultHeaders) {
-	const responseHeaders = new Headers(headers != null ? headers : {});
-	for (const [key, value] of Object.entries(defaultHeaders)) if (!responseHeaders.has(key)) responseHeaders.set(key, value);
-	return responseHeaders;
+async function generateText({ model: modelArg, tools, toolChoice, system, prompt, messages, maxRetries: maxRetriesArg, abortSignal, timeout, headers, stopWhen = stepCountIs(1), experimental_output, output = experimental_output, experimental_telemetry: telemetry, providerOptions, experimental_activeTools, activeTools = experimental_activeTools, experimental_prepareStep, prepareStep = experimental_prepareStep, experimental_repairToolCall: repairToolCall, experimental_download: download2, experimental_context, experimental_include: include, _internal: { generateId: generateId2 = originalGenerateId } = {}, experimental_onStart: onStart, experimental_onStepStart: onStepStart, experimental_onToolCallStart: onToolCallStart, experimental_onToolCallFinish: onToolCallFinish, onStepFinish, onFinish,...settings }) {
+	const model = resolveLanguageModel(modelArg);
+	const stopConditions = asArray(stopWhen);
+	const totalTimeoutMs = getTotalTimeoutMs(timeout);
+	const stepTimeoutMs = getStepTimeoutMs(timeout);
+	const stepAbortController = stepTimeoutMs != null ? new AbortController() : void 0;
+	const mergedAbortSignal = mergeAbortSignals(abortSignal, totalTimeoutMs != null ? AbortSignal.timeout(totalTimeoutMs) : void 0, stepAbortController == null ? void 0 : stepAbortController.signal);
+	const { maxRetries, retry } = prepareRetries({
+		maxRetries: maxRetriesArg,
+		abortSignal: mergedAbortSignal
+	});
+	const callSettings = prepareCallSettings(settings);
+	const headersWithUserAgent = withUserAgentSuffix(headers != null ? headers : {}, `ai/${VERSION}`);
+	const baseTelemetryAttributes = getBaseTelemetryAttributes({
+		model,
+		telemetry,
+		headers: headersWithUserAgent,
+		settings: {
+			...callSettings,
+			maxRetries
+		}
+	});
+	const modelInfo = {
+		provider: model.provider,
+		modelId: model.modelId
+	};
+	const initialPrompt = await standardizePrompt({
+		system,
+		prompt,
+		messages
+	});
+	try {
+		await (onStart == null ? void 0 : onStart({
+			model: modelInfo,
+			system,
+			prompt,
+			messages,
+			tools,
+			toolChoice,
+			activeTools,
+			maxOutputTokens: callSettings.maxOutputTokens,
+			temperature: callSettings.temperature,
+			topP: callSettings.topP,
+			topK: callSettings.topK,
+			presencePenalty: callSettings.presencePenalty,
+			frequencyPenalty: callSettings.frequencyPenalty,
+			stopSequences: callSettings.stopSequences,
+			seed: callSettings.seed,
+			maxRetries,
+			timeout,
+			headers,
+			providerOptions,
+			stopWhen,
+			output,
+			abortSignal,
+			include,
+			functionId: telemetry == null ? void 0 : telemetry.functionId,
+			metadata: telemetry == null ? void 0 : telemetry.metadata,
+			experimental_context
+		}));
+	} catch (_ignored) {}
+	const tracer = getTracer(telemetry);
+	try {
+		return await recordSpan({
+			name: "ai.generateText",
+			attributes: selectTelemetryAttributes({
+				telemetry,
+				attributes: {
+					...assembleOperationName({
+						operationId: "ai.generateText",
+						telemetry
+					}),
+					...baseTelemetryAttributes,
+					"ai.model.provider": model.provider,
+					"ai.model.id": model.modelId,
+					"ai.prompt": { input: () => JSON.stringify({
+						system,
+						prompt,
+						messages
+					}) }
+				}
+			}),
+			tracer,
+			fn: async (span) => {
+				var _a21, _b$3, _c, _d, _e, _f, _g, _h, _i, _j, _k, _l, _m;
+				const initialMessages = initialPrompt.messages;
+				const responseMessages = [];
+				const { approvedToolApprovals, deniedToolApprovals } = collectToolApprovals({ messages: initialMessages });
+				const localApprovedToolApprovals = approvedToolApprovals.filter((toolApproval) => !toolApproval.toolCall.providerExecuted);
+				if (deniedToolApprovals.length > 0 || localApprovedToolApprovals.length > 0) {
+					const toolOutputs = await executeTools({
+						toolCalls: localApprovedToolApprovals.map((toolApproval) => toolApproval.toolCall),
+						tools,
+						tracer,
+						telemetry,
+						messages: initialMessages,
+						abortSignal: mergedAbortSignal,
+						experimental_context,
+						stepNumber: 0,
+						model: modelInfo,
+						onToolCallStart,
+						onToolCallFinish
+					});
+					const toolContent = [];
+					for (const output2 of toolOutputs) {
+						const modelOutput = await createToolModelOutput({
+							toolCallId: output2.toolCallId,
+							input: output2.input,
+							tool: tools == null ? void 0 : tools[output2.toolName],
+							output: output2.type === "tool-result" ? output2.output : output2.error,
+							errorMode: output2.type === "tool-error" ? "json" : "none"
+						});
+						toolContent.push({
+							type: "tool-result",
+							toolCallId: output2.toolCallId,
+							toolName: output2.toolName,
+							output: modelOutput
+						});
+					}
+					for (const toolApproval of deniedToolApprovals) toolContent.push({
+						type: "tool-result",
+						toolCallId: toolApproval.toolCall.toolCallId,
+						toolName: toolApproval.toolCall.toolName,
+						output: {
+							type: "execution-denied",
+							reason: toolApproval.approvalResponse.reason,
+							...toolApproval.toolCall.providerExecuted && { providerOptions: { openai: { approvalId: toolApproval.approvalResponse.approvalId } } }
+						}
+					});
+					responseMessages.push({
+						role: "tool",
+						content: toolContent
+					});
+				}
+				const providerExecutedToolApprovals = [...approvedToolApprovals, ...deniedToolApprovals].filter((toolApproval) => toolApproval.toolCall.providerExecuted);
+				if (providerExecutedToolApprovals.length > 0) responseMessages.push({
+					role: "tool",
+					content: providerExecutedToolApprovals.map((toolApproval) => ({
+						type: "tool-approval-response",
+						approvalId: toolApproval.approvalResponse.approvalId,
+						approved: toolApproval.approvalResponse.approved,
+						reason: toolApproval.approvalResponse.reason,
+						providerExecuted: true
+					}))
+				});
+				const callSettings2 = prepareCallSettings(settings);
+				let currentModelResponse;
+				let clientToolCalls = [];
+				let clientToolOutputs = [];
+				const steps = [];
+				const pendingDeferredToolCalls = /* @__PURE__ */ new Map();
+				do {
+					const stepTimeoutId = stepTimeoutMs != null ? setTimeout(() => stepAbortController.abort(), stepTimeoutMs) : void 0;
+					try {
+						const stepInputMessages = [...initialMessages, ...responseMessages];
+						const prepareStepResult = await (prepareStep == null ? void 0 : prepareStep({
+							model,
+							steps,
+							stepNumber: steps.length,
+							messages: stepInputMessages,
+							experimental_context
+						}));
+						const stepModel = resolveLanguageModel((_a21 = prepareStepResult == null ? void 0 : prepareStepResult.model) != null ? _a21 : model);
+						const stepModelInfo = {
+							provider: stepModel.provider,
+							modelId: stepModel.modelId
+						};
+						const promptMessages = await convertToLanguageModelPrompt({
+							prompt: {
+								system: (_b$3 = prepareStepResult == null ? void 0 : prepareStepResult.system) != null ? _b$3 : initialPrompt.system,
+								messages: (_c = prepareStepResult == null ? void 0 : prepareStepResult.messages) != null ? _c : stepInputMessages
+							},
+							supportedUrls: await stepModel.supportedUrls,
+							download: download2
+						});
+						experimental_context = (_d = prepareStepResult == null ? void 0 : prepareStepResult.experimental_context) != null ? _d : experimental_context;
+						const stepActiveTools = (_e = prepareStepResult == null ? void 0 : prepareStepResult.activeTools) != null ? _e : activeTools;
+						const { toolChoice: stepToolChoice, tools: stepTools } = await prepareToolsAndToolChoice({
+							tools,
+							toolChoice: (_f = prepareStepResult == null ? void 0 : prepareStepResult.toolChoice) != null ? _f : toolChoice,
+							activeTools: stepActiveTools
+						});
+						const stepMessages = (_g = prepareStepResult == null ? void 0 : prepareStepResult.messages) != null ? _g : stepInputMessages;
+						const stepSystem = (_h = prepareStepResult == null ? void 0 : prepareStepResult.system) != null ? _h : initialPrompt.system;
+						const stepProviderOptions = mergeObjects(providerOptions, prepareStepResult == null ? void 0 : prepareStepResult.providerOptions);
+						try {
+							await (onStepStart == null ? void 0 : onStepStart({
+								stepNumber: steps.length,
+								model: stepModelInfo,
+								system: stepSystem,
+								messages: stepMessages,
+								tools,
+								toolChoice: stepToolChoice,
+								activeTools: stepActiveTools,
+								steps: [...steps],
+								providerOptions: stepProviderOptions,
+								timeout,
+								headers,
+								stopWhen,
+								output,
+								abortSignal,
+								include,
+								functionId: telemetry == null ? void 0 : telemetry.functionId,
+								metadata: telemetry == null ? void 0 : telemetry.metadata,
+								experimental_context
+							}));
+						} catch (_ignored) {}
+						currentModelResponse = await retry(() => {
+							var _a22;
+							return recordSpan({
+								name: "ai.generateText.doGenerate",
+								attributes: selectTelemetryAttributes({
+									telemetry,
+									attributes: {
+										...assembleOperationName({
+											operationId: "ai.generateText.doGenerate",
+											telemetry
+										}),
+										...baseTelemetryAttributes,
+										"ai.model.provider": stepModel.provider,
+										"ai.model.id": stepModel.modelId,
+										"ai.prompt.messages": { input: () => stringifyForTelemetry(promptMessages) },
+										"ai.prompt.tools": { input: () => stepTools == null ? void 0 : stepTools.map((tool2) => JSON.stringify(tool2)) },
+										"ai.prompt.toolChoice": { input: () => stepToolChoice != null ? JSON.stringify(stepToolChoice) : void 0 },
+										"gen_ai.system": stepModel.provider,
+										"gen_ai.request.model": stepModel.modelId,
+										"gen_ai.request.frequency_penalty": settings.frequencyPenalty,
+										"gen_ai.request.max_tokens": settings.maxOutputTokens,
+										"gen_ai.request.presence_penalty": settings.presencePenalty,
+										"gen_ai.request.stop_sequences": settings.stopSequences,
+										"gen_ai.request.temperature": (_a22 = settings.temperature) != null ? _a22 : void 0,
+										"gen_ai.request.top_k": settings.topK,
+										"gen_ai.request.top_p": settings.topP
+									}
+								}),
+								tracer,
+								fn: async (span2) => {
+									var _a23, _b2$2, _c2, _d2, _e2, _f2, _g2, _h2;
+									const result = await stepModel.doGenerate({
+										...callSettings2,
+										tools: stepTools,
+										toolChoice: stepToolChoice,
+										responseFormat: await (output == null ? void 0 : output.responseFormat),
+										prompt: promptMessages,
+										providerOptions: stepProviderOptions,
+										abortSignal: mergedAbortSignal,
+										headers: headersWithUserAgent
+									});
+									const responseData = {
+										id: (_b2$2 = (_a23 = result.response) == null ? void 0 : _a23.id) != null ? _b2$2 : generateId2(),
+										timestamp: (_d2 = (_c2 = result.response) == null ? void 0 : _c2.timestamp) != null ? _d2 : /* @__PURE__ */ new Date(),
+										modelId: (_f2 = (_e2 = result.response) == null ? void 0 : _e2.modelId) != null ? _f2 : stepModel.modelId,
+										headers: (_g2 = result.response) == null ? void 0 : _g2.headers,
+										body: (_h2 = result.response) == null ? void 0 : _h2.body
+									};
+									span2.setAttributes(await selectTelemetryAttributes({
+										telemetry,
+										attributes: {
+											"ai.response.finishReason": result.finishReason.unified,
+											"ai.response.text": { output: () => extractTextContent(result.content) },
+											"ai.response.reasoning": { output: () => extractReasoningContent(result.content) },
+											"ai.response.toolCalls": { output: () => {
+												const toolCalls = asToolCalls(result.content);
+												return toolCalls == null ? void 0 : JSON.stringify(toolCalls);
+											} },
+											"ai.response.id": responseData.id,
+											"ai.response.model": responseData.modelId,
+											"ai.response.timestamp": responseData.timestamp.toISOString(),
+											"ai.response.providerMetadata": JSON.stringify(result.providerMetadata),
+											"ai.usage.promptTokens": result.usage.inputTokens.total,
+											"ai.usage.completionTokens": result.usage.outputTokens.total,
+											"gen_ai.response.finish_reasons": [result.finishReason.unified],
+											"gen_ai.response.id": responseData.id,
+											"gen_ai.response.model": responseData.modelId,
+											"gen_ai.usage.input_tokens": result.usage.inputTokens.total,
+											"gen_ai.usage.output_tokens": result.usage.outputTokens.total
+										}
+									}));
+									return {
+										...result,
+										response: responseData
+									};
+								}
+							});
+						});
+						const stepToolCalls = await Promise.all(currentModelResponse.content.filter((part) => part.type === "tool-call").map((toolCall) => parseToolCall({
+							toolCall,
+							tools,
+							repairToolCall,
+							system,
+							messages: stepInputMessages
+						})));
+						const toolApprovalRequests = {};
+						for (const toolCall of stepToolCalls) {
+							if (toolCall.invalid) continue;
+							const tool2 = tools == null ? void 0 : tools[toolCall.toolName];
+							if (tool2 == null) continue;
+							if ((tool2 == null ? void 0 : tool2.onInputAvailable) != null) await tool2.onInputAvailable({
+								input: toolCall.input,
+								toolCallId: toolCall.toolCallId,
+								messages: stepInputMessages,
+								abortSignal: mergedAbortSignal,
+								experimental_context
+							});
+							if (await isApprovalNeeded({
+								tool: tool2,
+								toolCall,
+								messages: stepInputMessages,
+								experimental_context
+							})) toolApprovalRequests[toolCall.toolCallId] = {
+								type: "tool-approval-request",
+								approvalId: generateId2(),
+								toolCall
+							};
+						}
+						const invalidToolCalls = stepToolCalls.filter((toolCall) => toolCall.invalid && toolCall.dynamic);
+						clientToolOutputs = [];
+						for (const toolCall of invalidToolCalls) clientToolOutputs.push({
+							type: "tool-error",
+							toolCallId: toolCall.toolCallId,
+							toolName: toolCall.toolName,
+							input: toolCall.input,
+							error: getErrorMessage(toolCall.error),
+							dynamic: true
+						});
+						clientToolCalls = stepToolCalls.filter((toolCall) => !toolCall.providerExecuted);
+						if (tools != null) clientToolOutputs.push(...await executeTools({
+							toolCalls: clientToolCalls.filter((toolCall) => !toolCall.invalid && toolApprovalRequests[toolCall.toolCallId] == null),
+							tools,
+							tracer,
+							telemetry,
+							messages: stepInputMessages,
+							abortSignal: mergedAbortSignal,
+							experimental_context,
+							stepNumber: steps.length,
+							model: stepModelInfo,
+							onToolCallStart,
+							onToolCallFinish
+						}));
+						for (const toolCall of stepToolCalls) {
+							if (!toolCall.providerExecuted) continue;
+							const tool2 = tools == null ? void 0 : tools[toolCall.toolName];
+							if ((tool2 == null ? void 0 : tool2.type) === "provider" && tool2.supportsDeferredResults) {
+								const hasResultInResponse = currentModelResponse.content.some((part) => part.type === "tool-result" && part.toolCallId === toolCall.toolCallId);
+								if (!hasResultInResponse) pendingDeferredToolCalls.set(toolCall.toolCallId, { toolName: toolCall.toolName });
+							}
+						}
+						for (const part of currentModelResponse.content) if (part.type === "tool-result") pendingDeferredToolCalls.delete(part.toolCallId);
+						const stepContent = asContent({
+							content: currentModelResponse.content,
+							toolCalls: stepToolCalls,
+							toolOutputs: clientToolOutputs,
+							toolApprovalRequests: Object.values(toolApprovalRequests),
+							tools
+						});
+						responseMessages.push(...await toResponseMessages({
+							content: stepContent,
+							tools
+						}));
+						const stepRequest = ((_i = include == null ? void 0 : include.requestBody) != null ? _i : true) ? (_j = currentModelResponse.request) != null ? _j : {} : {
+							...currentModelResponse.request,
+							body: void 0
+						};
+						const stepResponse = {
+							...currentModelResponse.response,
+							messages: structuredClone(responseMessages),
+							body: ((_k = include == null ? void 0 : include.responseBody) != null ? _k : true) ? (_l = currentModelResponse.response) == null ? void 0 : _l.body : void 0
+						};
+						const stepNumber = steps.length;
+						const currentStepResult = new DefaultStepResult({
+							stepNumber,
+							model: stepModelInfo,
+							functionId: telemetry == null ? void 0 : telemetry.functionId,
+							metadata: telemetry == null ? void 0 : telemetry.metadata,
+							experimental_context,
+							content: stepContent,
+							finishReason: currentModelResponse.finishReason.unified,
+							rawFinishReason: currentModelResponse.finishReason.raw,
+							usage: asLanguageModelUsage(currentModelResponse.usage),
+							warnings: currentModelResponse.warnings,
+							providerMetadata: currentModelResponse.providerMetadata,
+							request: stepRequest,
+							response: stepResponse
+						});
+						logWarnings({
+							warnings: (_m = currentModelResponse.warnings) != null ? _m : [],
+							provider: stepModelInfo.provider,
+							model: stepModelInfo.modelId
+						});
+						steps.push(currentStepResult);
+						await (onStepFinish == null ? void 0 : onStepFinish(currentStepResult));
+					} finally {
+						if (stepTimeoutId != null) clearTimeout(stepTimeoutId);
+					}
+				} while ((clientToolCalls.length > 0 && clientToolOutputs.length === clientToolCalls.length || pendingDeferredToolCalls.size > 0) && !await isStopConditionMet({
+					stopConditions,
+					steps
+				}));
+				span.setAttributes(await selectTelemetryAttributes({
+					telemetry,
+					attributes: {
+						"ai.response.finishReason": currentModelResponse.finishReason.unified,
+						"ai.response.text": { output: () => extractTextContent(currentModelResponse.content) },
+						"ai.response.reasoning": { output: () => extractReasoningContent(currentModelResponse.content) },
+						"ai.response.toolCalls": { output: () => {
+							const toolCalls = asToolCalls(currentModelResponse.content);
+							return toolCalls == null ? void 0 : JSON.stringify(toolCalls);
+						} },
+						"ai.response.providerMetadata": JSON.stringify(currentModelResponse.providerMetadata),
+						"ai.usage.promptTokens": currentModelResponse.usage.inputTokens.total,
+						"ai.usage.completionTokens": currentModelResponse.usage.outputTokens.total
+					}
+				}));
+				const lastStep = steps[steps.length - 1];
+				const totalUsage = steps.reduce((totalUsage2, step) => {
+					return addLanguageModelUsage(totalUsage2, step.usage);
+				}, {
+					inputTokens: void 0,
+					outputTokens: void 0,
+					totalTokens: void 0,
+					reasoningTokens: void 0,
+					cachedInputTokens: void 0
+				});
+				await (onFinish == null ? void 0 : onFinish({
+					stepNumber: lastStep.stepNumber,
+					model: lastStep.model,
+					functionId: lastStep.functionId,
+					metadata: lastStep.metadata,
+					experimental_context: lastStep.experimental_context,
+					finishReason: lastStep.finishReason,
+					rawFinishReason: lastStep.rawFinishReason,
+					usage: lastStep.usage,
+					content: lastStep.content,
+					text: lastStep.text,
+					reasoningText: lastStep.reasoningText,
+					reasoning: lastStep.reasoning,
+					files: lastStep.files,
+					sources: lastStep.sources,
+					toolCalls: lastStep.toolCalls,
+					staticToolCalls: lastStep.staticToolCalls,
+					dynamicToolCalls: lastStep.dynamicToolCalls,
+					toolResults: lastStep.toolResults,
+					staticToolResults: lastStep.staticToolResults,
+					dynamicToolResults: lastStep.dynamicToolResults,
+					request: lastStep.request,
+					response: lastStep.response,
+					warnings: lastStep.warnings,
+					providerMetadata: lastStep.providerMetadata,
+					steps,
+					totalUsage
+				}));
+				let resolvedOutput;
+				if (lastStep.finishReason === "stop") {
+					const outputSpecification = output != null ? output : text();
+					resolvedOutput = await outputSpecification.parseCompleteOutput({ text: lastStep.text }, {
+						response: lastStep.response,
+						usage: lastStep.usage,
+						finishReason: lastStep.finishReason
+					});
+				}
+				return new DefaultGenerateTextResult({
+					steps,
+					totalUsage,
+					output: resolvedOutput
+				});
+			}
+		});
+	} catch (error$1) {
+		throw wrapGatewayError(error$1);
+	}
+}
+async function executeTools({ toolCalls, tools, tracer, telemetry, messages, abortSignal, experimental_context, stepNumber, model, onToolCallStart, onToolCallFinish }) {
+	const toolOutputs = await Promise.all(toolCalls.map(async (toolCall) => executeToolCall({
+		toolCall,
+		tools,
+		tracer,
+		telemetry,
+		messages,
+		abortSignal,
+		experimental_context,
+		stepNumber,
+		model,
+		onToolCallStart,
+		onToolCallFinish
+	})));
+	return toolOutputs.filter((output) => output != null);
+}
+var DefaultGenerateTextResult = class {
+	constructor(options) {
+		this.steps = options.steps;
+		this._output = options.output;
+		this.totalUsage = options.totalUsage;
+	}
+	get finalStep() {
+		return this.steps[this.steps.length - 1];
+	}
+	get content() {
+		return this.finalStep.content;
+	}
+	get text() {
+		return this.finalStep.text;
+	}
+	get files() {
+		return this.finalStep.files;
+	}
+	get reasoningText() {
+		return this.finalStep.reasoningText;
+	}
+	get reasoning() {
+		return this.finalStep.reasoning;
+	}
+	get toolCalls() {
+		return this.finalStep.toolCalls;
+	}
+	get staticToolCalls() {
+		return this.finalStep.staticToolCalls;
+	}
+	get dynamicToolCalls() {
+		return this.finalStep.dynamicToolCalls;
+	}
+	get toolResults() {
+		return this.finalStep.toolResults;
+	}
+	get staticToolResults() {
+		return this.finalStep.staticToolResults;
+	}
+	get dynamicToolResults() {
+		return this.finalStep.dynamicToolResults;
+	}
+	get sources() {
+		return this.finalStep.sources;
+	}
+	get finishReason() {
+		return this.finalStep.finishReason;
+	}
+	get rawFinishReason() {
+		return this.finalStep.rawFinishReason;
+	}
+	get warnings() {
+		return this.finalStep.warnings;
+	}
+	get providerMetadata() {
+		return this.finalStep.providerMetadata;
+	}
+	get response() {
+		return this.finalStep.response;
+	}
+	get request() {
+		return this.finalStep.request;
+	}
+	get usage() {
+		return this.finalStep.usage;
+	}
+	get experimental_output() {
+		return this.output;
+	}
+	get output() {
+		if (this._output == null) throw new NoOutputGeneratedError();
+		return this._output;
+	}
+};
+function asToolCalls(content) {
+	const parts = content.filter((part) => part.type === "tool-call");
+	if (parts.length === 0) return void 0;
+	return parts.map((toolCall) => ({
+		toolCallId: toolCall.toolCallId,
+		toolName: toolCall.toolName,
+		input: toolCall.input
+	}));
+}
+function asContent({ content, toolCalls, toolOutputs, toolApprovalRequests, tools }) {
+	const contentParts = [];
+	for (const part of content) switch (part.type) {
+		case "text":
+		case "reasoning":
+		case "source":
+			contentParts.push(part);
+			break;
+		case "file": {
+			contentParts.push({
+				type: "file",
+				file: new DefaultGeneratedFile(part),
+				...part.providerMetadata != null ? { providerMetadata: part.providerMetadata } : {}
+			});
+			break;
+		}
+		case "tool-call": {
+			contentParts.push(toolCalls.find((toolCall) => toolCall.toolCallId === part.toolCallId));
+			break;
+		}
+		case "tool-result": {
+			const toolCall = toolCalls.find((toolCall2) => toolCall2.toolCallId === part.toolCallId);
+			if (toolCall == null) {
+				const tool2 = tools == null ? void 0 : tools[part.toolName];
+				const supportsDeferredResults = (tool2 == null ? void 0 : tool2.type) === "provider" && tool2.supportsDeferredResults;
+				if (!supportsDeferredResults) throw new Error(`Tool call ${part.toolCallId} not found.`);
+				if (part.isError) contentParts.push({
+					type: "tool-error",
+					toolCallId: part.toolCallId,
+					toolName: part.toolName,
+					input: void 0,
+					error: part.result,
+					providerExecuted: true,
+					dynamic: part.dynamic
+				});
+				else contentParts.push({
+					type: "tool-result",
+					toolCallId: part.toolCallId,
+					toolName: part.toolName,
+					input: void 0,
+					output: part.result,
+					providerExecuted: true,
+					dynamic: part.dynamic
+				});
+				break;
+			}
+			if (part.isError) contentParts.push({
+				type: "tool-error",
+				toolCallId: part.toolCallId,
+				toolName: part.toolName,
+				input: toolCall.input,
+				error: part.result,
+				providerExecuted: true,
+				dynamic: toolCall.dynamic
+			});
+			else contentParts.push({
+				type: "tool-result",
+				toolCallId: part.toolCallId,
+				toolName: part.toolName,
+				input: toolCall.input,
+				output: part.result,
+				providerExecuted: true,
+				dynamic: toolCall.dynamic
+			});
+			break;
+		}
+		case "tool-approval-request": {
+			const toolCall = toolCalls.find((toolCall2) => toolCall2.toolCallId === part.toolCallId);
+			if (toolCall == null) throw new ToolCallNotFoundForApprovalError({
+				toolCallId: part.toolCallId,
+				approvalId: part.approvalId
+			});
+			contentParts.push({
+				type: "tool-approval-request",
+				approvalId: part.approvalId,
+				toolCall
+			});
+			break;
+		}
+	}
+	return [
+		...contentParts,
+		...toolOutputs,
+		...toolApprovalRequests
+	];
 }
 var uiMessageChunkSchema = lazySchema(() => zodSchema(union([
 	strictObject({
@@ -50242,57 +51572,6 @@ var uiMessageChunkSchema = lazySchema(() => zodSchema(union([
 		messageMetadata: unknown()
 	})
 ])));
-function createAsyncIterableStream(source) {
-	const stream$2 = source.pipeThrough(new TransformStream());
-	stream$2[Symbol.asyncIterator] = function() {
-		const reader = this.getReader();
-		let finished$1 = false;
-		async function cleanup(cancelStream) {
-			var _a21;
-			if (finished$1) return;
-			finished$1 = true;
-			try {
-				if (cancelStream) await ((_a21 = reader.cancel) == null ? void 0 : _a21.call(reader));
-			} finally {
-				try {
-					reader.releaseLock();
-				} catch (e) {}
-			}
-		}
-		return {
-			async next() {
-				if (finished$1) return {
-					done: true,
-					value: void 0
-				};
-				const { done, value } = await reader.read();
-				if (done) {
-					await cleanup(true);
-					return {
-						done: true,
-						value: void 0
-					};
-				}
-				return {
-					done: false,
-					value
-				};
-			},
-			async return() {
-				await cleanup(true);
-				return {
-					done: true,
-					value: void 0
-				};
-			},
-			async throw(err) {
-				await cleanup(true);
-				throw err;
-			}
-		};
-	};
-	return stream$2;
-}
 var originalGenerateId2 = createIdGenerator({
 	prefix: "aitxt",
 	size: 24
@@ -50553,569 +51832,10 @@ var uiMessagesSchema = lazySchema(() => zodSchema(array$1(object$1({
 		})
 	])).nonempty("Message must contain at least one part")
 })).nonempty("Messages array must not be empty")));
-var noSchemaOutputStrategy = {
-	type: "no-schema",
-	jsonSchema: async () => void 0,
-	async validatePartialResult({ value, textDelta }) {
-		return {
-			success: true,
-			value: {
-				partial: value,
-				textDelta
-			}
-		};
-	},
-	async validateFinalResult(value, context2) {
-		return value === void 0 ? {
-			success: false,
-			error: new NoObjectGeneratedError({
-				message: "No object generated: response did not match schema.",
-				text: context2.text,
-				response: context2.response,
-				usage: context2.usage,
-				finishReason: context2.finishReason
-			})
-		} : {
-			success: true,
-			value
-		};
-	},
-	createElementStream() {
-		throw new UnsupportedFunctionalityError({ functionality: "element streams in no-schema mode" });
-	}
-};
-var objectOutputStrategy = (schema) => ({
-	type: "object",
-	jsonSchema: async () => await schema.jsonSchema,
-	async validatePartialResult({ value, textDelta }) {
-		return {
-			success: true,
-			value: {
-				partial: value,
-				textDelta
-			}
-		};
-	},
-	async validateFinalResult(value) {
-		return safeValidateTypes({
-			value,
-			schema
-		});
-	},
-	createElementStream() {
-		throw new UnsupportedFunctionalityError({ functionality: "element streams in object mode" });
-	}
-});
-var arrayOutputStrategy = (schema) => {
-	return {
-		type: "array",
-		jsonSchema: async () => {
-			const { $schema,...itemSchema } = await schema.jsonSchema;
-			return {
-				$schema: "http://json-schema.org/draft-07/schema#",
-				type: "object",
-				properties: { elements: {
-					type: "array",
-					items: itemSchema
-				} },
-				required: ["elements"],
-				additionalProperties: false
-			};
-		},
-		async validatePartialResult({ value, latestObject, isFirstDelta, isFinalDelta }) {
-			var _a21;
-			if (!isJSONObject(value) || !isJSONArray(value.elements)) return {
-				success: false,
-				error: new TypeValidationError({
-					value,
-					cause: "value must be an object that contains an array of elements"
-				})
-			};
-			const inputArray = value.elements;
-			const resultArray = [];
-			for (let i$1 = 0; i$1 < inputArray.length; i$1++) {
-				const element = inputArray[i$1];
-				const result = await safeValidateTypes({
-					value: element,
-					schema
-				});
-				if (i$1 === inputArray.length - 1 && !isFinalDelta) continue;
-				if (!result.success) return result;
-				resultArray.push(result.value);
-			}
-			const publishedElementCount = (_a21 = latestObject == null ? void 0 : latestObject.length) != null ? _a21 : 0;
-			let textDelta = "";
-			if (isFirstDelta) textDelta += "[";
-			if (publishedElementCount > 0) textDelta += ",";
-			textDelta += resultArray.slice(publishedElementCount).map((element) => JSON.stringify(element)).join(",");
-			if (isFinalDelta) textDelta += "]";
-			return {
-				success: true,
-				value: {
-					partial: resultArray,
-					textDelta
-				}
-			};
-		},
-		async validateFinalResult(value) {
-			if (!isJSONObject(value) || !isJSONArray(value.elements)) return {
-				success: false,
-				error: new TypeValidationError({
-					value,
-					cause: "value must be an object that contains an array of elements"
-				})
-			};
-			const inputArray = value.elements;
-			for (const element of inputArray) {
-				const result = await safeValidateTypes({
-					value: element,
-					schema
-				});
-				if (!result.success) return result;
-			}
-			return {
-				success: true,
-				value: inputArray
-			};
-		},
-		createElementStream(originalStream) {
-			let publishedElements = 0;
-			return createAsyncIterableStream(originalStream.pipeThrough(new TransformStream({ transform(chunk, controller) {
-				switch (chunk.type) {
-					case "object": {
-						const array2 = chunk.object;
-						for (; publishedElements < array2.length; publishedElements++) controller.enqueue(array2[publishedElements]);
-						break;
-					}
-					case "text-delta":
-					case "finish":
-					case "error": break;
-					default: {
-						const _exhaustiveCheck = chunk;
-						throw new Error(`Unsupported chunk type: ${_exhaustiveCheck}`);
-					}
-				}
-			} })));
-		}
-	};
-};
-var enumOutputStrategy = (enumValues) => {
-	return {
-		type: "enum",
-		jsonSchema: async () => ({
-			$schema: "http://json-schema.org/draft-07/schema#",
-			type: "object",
-			properties: { result: {
-				type: "string",
-				enum: enumValues
-			} },
-			required: ["result"],
-			additionalProperties: false
-		}),
-		async validateFinalResult(value) {
-			if (!isJSONObject(value) || typeof value.result !== "string") return {
-				success: false,
-				error: new TypeValidationError({
-					value,
-					cause: "value must be an object that contains a string in the \"result\" property."
-				})
-			};
-			const result = value.result;
-			return enumValues.includes(result) ? {
-				success: true,
-				value: result
-			} : {
-				success: false,
-				error: new TypeValidationError({
-					value,
-					cause: "value must be a string in the enum"
-				})
-			};
-		},
-		async validatePartialResult({ value, textDelta }) {
-			if (!isJSONObject(value) || typeof value.result !== "string") return {
-				success: false,
-				error: new TypeValidationError({
-					value,
-					cause: "value must be an object that contains a string in the \"result\" property."
-				})
-			};
-			const result = value.result;
-			const possibleEnumValues = enumValues.filter((enumValue) => enumValue.startsWith(result));
-			if (value.result.length === 0 || possibleEnumValues.length === 0) return {
-				success: false,
-				error: new TypeValidationError({
-					value,
-					cause: "value must be a string in the enum"
-				})
-			};
-			return {
-				success: true,
-				value: {
-					partial: possibleEnumValues.length > 1 ? result : possibleEnumValues[0],
-					textDelta
-				}
-			};
-		},
-		createElementStream() {
-			throw new UnsupportedFunctionalityError({ functionality: "element streams in enum mode" });
-		}
-	};
-};
-function getOutputStrategy({ output, schema, enumValues }) {
-	switch (output) {
-		case "object": return objectOutputStrategy(asSchema(schema));
-		case "array": return arrayOutputStrategy(asSchema(schema));
-		case "enum": return enumOutputStrategy(enumValues);
-		case "no-schema": return noSchemaOutputStrategy;
-		default: {
-			const _exhaustiveCheck = output;
-			throw new Error(`Unsupported output: ${_exhaustiveCheck}`);
-		}
-	}
-}
-async function parseAndValidateObjectResult(result, outputStrategy, context2) {
-	const parseResult = await safeParseJSON({ text: result });
-	if (!parseResult.success) throw new NoObjectGeneratedError({
-		message: "No object generated: could not parse the response.",
-		cause: parseResult.error,
-		text: result,
-		response: context2.response,
-		usage: context2.usage,
-		finishReason: context2.finishReason
-	});
-	const validationResult = await outputStrategy.validateFinalResult(parseResult.value, {
-		text: result,
-		response: context2.response,
-		usage: context2.usage
-	});
-	if (!validationResult.success) throw new NoObjectGeneratedError({
-		message: "No object generated: response did not match schema.",
-		cause: validationResult.error,
-		text: result,
-		response: context2.response,
-		usage: context2.usage,
-		finishReason: context2.finishReason
-	});
-	return validationResult.value;
-}
-async function parseAndValidateObjectResultWithRepair(result, outputStrategy, repairText, context2) {
-	try {
-		return await parseAndValidateObjectResult(result, outputStrategy, context2);
-	} catch (error$1) {
-		if (repairText != null && NoObjectGeneratedError.isInstance(error$1) && (JSONParseError.isInstance(error$1.cause) || TypeValidationError.isInstance(error$1.cause))) {
-			const repairedText = await repairText({
-				text: result,
-				error: error$1.cause
-			});
-			if (repairedText === null) throw error$1;
-			return await parseAndValidateObjectResult(repairedText, outputStrategy, context2);
-		}
-		throw error$1;
-	}
-}
-function validateObjectGenerationInput({ output, schema, schemaName, schemaDescription, enumValues }) {
-	if (output != null && output !== "object" && output !== "array" && output !== "enum" && output !== "no-schema") throw new InvalidArgumentError({
-		parameter: "output",
-		value: output,
-		message: "Invalid output type."
-	});
-	if (output === "no-schema") {
-		if (schema != null) throw new InvalidArgumentError({
-			parameter: "schema",
-			value: schema,
-			message: "Schema is not supported for no-schema output."
-		});
-		if (schemaDescription != null) throw new InvalidArgumentError({
-			parameter: "schemaDescription",
-			value: schemaDescription,
-			message: "Schema description is not supported for no-schema output."
-		});
-		if (schemaName != null) throw new InvalidArgumentError({
-			parameter: "schemaName",
-			value: schemaName,
-			message: "Schema name is not supported for no-schema output."
-		});
-		if (enumValues != null) throw new InvalidArgumentError({
-			parameter: "enumValues",
-			value: enumValues,
-			message: "Enum values are not supported for no-schema output."
-		});
-	}
-	if (output === "object") {
-		if (schema == null) throw new InvalidArgumentError({
-			parameter: "schema",
-			value: schema,
-			message: "Schema is required for object output."
-		});
-		if (enumValues != null) throw new InvalidArgumentError({
-			parameter: "enumValues",
-			value: enumValues,
-			message: "Enum values are not supported for object output."
-		});
-	}
-	if (output === "array") {
-		if (schema == null) throw new InvalidArgumentError({
-			parameter: "schema",
-			value: schema,
-			message: "Element schema is required for array output."
-		});
-		if (enumValues != null) throw new InvalidArgumentError({
-			parameter: "enumValues",
-			value: enumValues,
-			message: "Enum values are not supported for array output."
-		});
-	}
-	if (output === "enum") {
-		if (schema != null) throw new InvalidArgumentError({
-			parameter: "schema",
-			value: schema,
-			message: "Schema is not supported for enum output."
-		});
-		if (schemaDescription != null) throw new InvalidArgumentError({
-			parameter: "schemaDescription",
-			value: schemaDescription,
-			message: "Schema description is not supported for enum output."
-		});
-		if (schemaName != null) throw new InvalidArgumentError({
-			parameter: "schemaName",
-			value: schemaName,
-			message: "Schema name is not supported for enum output."
-		});
-		if (enumValues == null) throw new InvalidArgumentError({
-			parameter: "enumValues",
-			value: enumValues,
-			message: "Enum values are required for enum output."
-		});
-		for (const value of enumValues) if (typeof value !== "string") throw new InvalidArgumentError({
-			parameter: "enumValues",
-			value,
-			message: "Enum values must be strings."
-		});
-	}
-}
 var originalGenerateId3 = createIdGenerator({
 	prefix: "aiobj",
 	size: 24
 });
-async function generateObject(options) {
-	const { model: modelArg, output = "object", system, prompt, messages, maxRetries: maxRetriesArg, abortSignal, headers, experimental_repairText: repairText, experimental_telemetry: telemetry, experimental_download: download2, providerOptions, _internal: { generateId: generateId2 = originalGenerateId3, currentDate = () => /* @__PURE__ */ new Date() } = {},...settings } = options;
-	const model = resolveLanguageModel(modelArg);
-	const enumValues = "enum" in options ? options.enum : void 0;
-	const { schema: inputSchema, schemaDescription, schemaName } = "schema" in options ? options : {};
-	validateObjectGenerationInput({
-		output,
-		schema: inputSchema,
-		schemaName,
-		schemaDescription,
-		enumValues
-	});
-	const { maxRetries, retry } = prepareRetries({
-		maxRetries: maxRetriesArg,
-		abortSignal
-	});
-	const outputStrategy = getOutputStrategy({
-		output,
-		schema: inputSchema,
-		enumValues
-	});
-	const callSettings = prepareCallSettings(settings);
-	const headersWithUserAgent = withUserAgentSuffix(headers != null ? headers : {}, `ai/${VERSION}`);
-	const baseTelemetryAttributes = getBaseTelemetryAttributes({
-		model,
-		telemetry,
-		headers: headersWithUserAgent,
-		settings: {
-			...callSettings,
-			maxRetries
-		}
-	});
-	const tracer = getTracer(telemetry);
-	const jsonSchema2 = await outputStrategy.jsonSchema();
-	try {
-		return await recordSpan({
-			name: "ai.generateObject",
-			attributes: selectTelemetryAttributes({
-				telemetry,
-				attributes: {
-					...assembleOperationName({
-						operationId: "ai.generateObject",
-						telemetry
-					}),
-					...baseTelemetryAttributes,
-					"ai.prompt": { input: () => JSON.stringify({
-						system,
-						prompt,
-						messages
-					}) },
-					"ai.schema": jsonSchema2 != null ? { input: () => JSON.stringify(jsonSchema2) } : void 0,
-					"ai.schema.name": schemaName,
-					"ai.schema.description": schemaDescription,
-					"ai.settings.output": outputStrategy.type
-				}
-			}),
-			tracer,
-			fn: async (span) => {
-				var _a21;
-				let result;
-				let finishReason;
-				let usage;
-				let warnings;
-				let response;
-				let request$3;
-				let resultProviderMetadata;
-				let reasoning;
-				const standardizedPrompt = await standardizePrompt({
-					system,
-					prompt,
-					messages
-				});
-				const promptMessages = await convertToLanguageModelPrompt({
-					prompt: standardizedPrompt,
-					supportedUrls: await model.supportedUrls,
-					download: download2
-				});
-				const generateResult = await retry(() => recordSpan({
-					name: "ai.generateObject.doGenerate",
-					attributes: selectTelemetryAttributes({
-						telemetry,
-						attributes: {
-							...assembleOperationName({
-								operationId: "ai.generateObject.doGenerate",
-								telemetry
-							}),
-							...baseTelemetryAttributes,
-							"ai.prompt.messages": { input: () => stringifyForTelemetry(promptMessages) },
-							"gen_ai.system": model.provider,
-							"gen_ai.request.model": model.modelId,
-							"gen_ai.request.frequency_penalty": callSettings.frequencyPenalty,
-							"gen_ai.request.max_tokens": callSettings.maxOutputTokens,
-							"gen_ai.request.presence_penalty": callSettings.presencePenalty,
-							"gen_ai.request.temperature": callSettings.temperature,
-							"gen_ai.request.top_k": callSettings.topK,
-							"gen_ai.request.top_p": callSettings.topP
-						}
-					}),
-					tracer,
-					fn: async (span2) => {
-						var _a22, _b$3, _c, _d, _e, _f, _g, _h;
-						const result2 = await model.doGenerate({
-							responseFormat: {
-								type: "json",
-								schema: jsonSchema2,
-								name: schemaName,
-								description: schemaDescription
-							},
-							...prepareCallSettings(settings),
-							prompt: promptMessages,
-							providerOptions,
-							abortSignal,
-							headers: headersWithUserAgent
-						});
-						const responseData = {
-							id: (_b$3 = (_a22 = result2.response) == null ? void 0 : _a22.id) != null ? _b$3 : generateId2(),
-							timestamp: (_d = (_c = result2.response) == null ? void 0 : _c.timestamp) != null ? _d : currentDate(),
-							modelId: (_f = (_e = result2.response) == null ? void 0 : _e.modelId) != null ? _f : model.modelId,
-							headers: (_g = result2.response) == null ? void 0 : _g.headers,
-							body: (_h = result2.response) == null ? void 0 : _h.body
-						};
-						const text2 = extractTextContent(result2.content);
-						const reasoning2 = extractReasoningContent(result2.content);
-						if (text2 === void 0) throw new NoObjectGeneratedError({
-							message: "No object generated: the model did not return a response.",
-							response: responseData,
-							usage: asLanguageModelUsage(result2.usage),
-							finishReason: result2.finishReason.unified
-						});
-						span2.setAttributes(await selectTelemetryAttributes({
-							telemetry,
-							attributes: {
-								"ai.response.finishReason": result2.finishReason.unified,
-								"ai.response.object": { output: () => text2 },
-								"ai.response.id": responseData.id,
-								"ai.response.model": responseData.modelId,
-								"ai.response.timestamp": responseData.timestamp.toISOString(),
-								"ai.response.providerMetadata": JSON.stringify(result2.providerMetadata),
-								"ai.usage.promptTokens": result2.usage.inputTokens.total,
-								"ai.usage.completionTokens": result2.usage.outputTokens.total,
-								"gen_ai.response.finish_reasons": [result2.finishReason.unified],
-								"gen_ai.response.id": responseData.id,
-								"gen_ai.response.model": responseData.modelId,
-								"gen_ai.usage.input_tokens": result2.usage.inputTokens.total,
-								"gen_ai.usage.output_tokens": result2.usage.outputTokens.total
-							}
-						}));
-						return {
-							...result2,
-							objectText: text2,
-							reasoning: reasoning2,
-							responseData
-						};
-					}
-				}));
-				result = generateResult.objectText;
-				finishReason = generateResult.finishReason.unified;
-				usage = asLanguageModelUsage(generateResult.usage);
-				warnings = generateResult.warnings;
-				resultProviderMetadata = generateResult.providerMetadata;
-				request$3 = (_a21 = generateResult.request) != null ? _a21 : {};
-				response = generateResult.responseData;
-				reasoning = generateResult.reasoning;
-				logWarnings({
-					warnings,
-					provider: model.provider,
-					model: model.modelId
-				});
-				const object2 = await parseAndValidateObjectResultWithRepair(result, outputStrategy, repairText, {
-					response,
-					usage,
-					finishReason
-				});
-				span.setAttributes(await selectTelemetryAttributes({
-					telemetry,
-					attributes: {
-						"ai.response.finishReason": finishReason,
-						"ai.response.object": { output: () => JSON.stringify(object2) },
-						"ai.response.providerMetadata": JSON.stringify(resultProviderMetadata),
-						"ai.usage.promptTokens": usage.inputTokens,
-						"ai.usage.completionTokens": usage.outputTokens
-					}
-				}));
-				return new DefaultGenerateObjectResult({
-					object: object2,
-					reasoning,
-					finishReason,
-					usage,
-					warnings,
-					request: request$3,
-					response,
-					providerMetadata: resultProviderMetadata
-				});
-			}
-		});
-	} catch (error$1) {
-		throw wrapGatewayError(error$1);
-	}
-}
-var DefaultGenerateObjectResult = class {
-	constructor(options) {
-		this.object = options.object;
-		this.finishReason = options.finishReason;
-		this.usage = options.usage;
-		this.warnings = options.warnings;
-		this.providerMetadata = options.providerMetadata;
-		this.response = options.response;
-		this.request = options.request;
-		this.reasoning = options.reasoning;
-	}
-	toJsonResponse(init) {
-		var _a21;
-		return new Response(JSON.stringify(this.object), {
-			status: (_a21 = init == null ? void 0 : init.status) != null ? _a21 : 200,
-			headers: prepareHeaders(init == null ? void 0 : init.headers, { "content-type": "application/json; charset=utf-8" })
-		});
-	}
-};
 function createDownload(options) {
 	return ({ url, abortSignal }) => download({
 		url,
@@ -51149,9 +51869,9 @@ async function selectSkills(model, summary, skills) {
 	if (selectableSkills.length === 0) return skills;
 	const skillList = selectableSkills.map((s) => `- **${s.stem}**: ${s.description}`).join("\n");
 	const fileSummaries = summary.files.map((f) => `- ${f.filename}: ${f.summary}`).join("\n");
-	const { object: object$2 } = await generateObject({
+	const { output } = await generateText({
 		model,
-		schema: SelectionSchema,
+		output: output_exports.object({ schema: SelectionSchema }),
 		system: `You are selecting which code review skills to apply to a pull request.
 Only select skills that are genuinely relevant based on what the PR is doing.
 Return an empty array if no skills apply.`,
@@ -51166,7 +51886,8 @@ ${skillList}
 
 Which skills are relevant to this PR? Return the stems of applicable skills.`
 	});
-	const selectedStems = new Set(object$2.selected);
+	if (!output) return [...globalSkills, ...selectableSkills];
+	const selectedStems = new Set(output.selected);
 	const selected = selectableSkills.filter((s) => selectedStems.has(s.stem));
 	return [...globalSkills, ...selected];
 }
@@ -51179,9 +51900,9 @@ async function resolveReferences(model, summary, skills) {
 		if (skill.refs.length === 0) return inlineRefs(skill, []);
 		const refList = skill.refs.map((r) => `- ${r.filename}`).join("\n");
 		const fileSummaries = summary.files.map((f) => `- ${f.filename}: ${f.summary}`).join("\n");
-		const { object: object$2 } = await generateObject({
+		const { output } = await generateText({
 			model,
-			schema: RefsSchema,
+			output: output_exports.object({ schema: RefsSchema }),
 			system: `You are selecting which reference files to load for a code review skill.
 Read the skill's index and select only the references relevant to this pull request.
 Return an empty array if no references are needed beyond the skill's main content.`,
@@ -51199,7 +51920,7 @@ ${refList}
 
 Which reference files are needed to review this PR? Return only the filenames.`
 		});
-		return inlineRefs(skill, object$2.filenames);
+		return inlineRefs(skill, output?.filenames ?? []);
 	}));
 }
 
@@ -51218,9 +51939,9 @@ async function summarizePR(model, files) {
 		const patch = f.patch ? `\n\`\`\`diff\n${f.patch}\n\`\`\`` : " (no diff available)";
 		return `### ${f.filename} (${f.status})${patch}`;
 	}).join("\n\n");
-	const { object: object$2 } = await generateObject({
+	const { output } = await generateText({
 		model,
-		schema: SummarySchema,
+		output: output_exports.object({ schema: SummarySchema }),
 		system: `You are a senior FRC (FIRST Robotics Competition) software mentor reviewing a pull request.
 Your task is to understand what this PR is trying to accomplish and summarize each file change.
 Focus on robot code — Java/Kotlin files using WPILib, command-based architecture, and FRC-specific frameworks.
@@ -51239,7 +51960,8 @@ Identify:
 2. A brief summary of each file's changes
 3. Which files are architecturally significant (contain meaningful robot logic changes)`
 	});
-	return object$2;
+	if (!output) throw new Error("No output from summarize pass");
+	return output;
 }
 
 //#endregion
@@ -51265,9 +51987,9 @@ async function reviewPR(model, summary, files, fileContents, skills) {
 	}).join("\n\n");
 	const fullFileText = Array.from(fileContents.entries()).map(([filename, content]) => `### ${filename} (full file)\n\`\`\`\n${content}\n\`\`\``).join("\n\n");
 	const fileSummaries = summary.files.map((f) => `- **${f.filename}**: ${f.summary}${f.architecturallySignificant ? " ⭐" : ""}`).join("\n");
-	const { object: object$2 } = await generateObject({
+	const { output } = await generateText({
 		model,
-		schema: CandidateSchema,
+		output: output_exports.object({ schema: CandidateSchema }),
 		system: `You are a senior FRC (FIRST Robotics Competition) software mentor performing a detailed code review.
 You review robot code written in Java/Kotlin using WPILib, command-based architecture, and FRC-specific frameworks.
 Your job is to find real, actionable issues — not nitpicks. Focus on correctness, safety, and FRC best practices.
@@ -51299,7 +52021,8 @@ Review the code above against the FRC skills and rules. For each real issue foun
 
 Only report issues that are clearly present in the changed code. Do not invent issues.`
 	});
-	return object$2.issues;
+	if (!output) throw new Error("No output from review pass");
+	return output.issues;
 }
 
 //#endregion
@@ -51310,9 +52033,9 @@ const VerifySchema = objectType({
 });
 async function verifyIssue(model, issue$2, fileContent) {
 	const fileContext = fileContent ? `\`\`\`\n${fileContent}\n\`\`\`` : "(file content not available)";
-	const { object: object$2 } = await generateObject({
+	const { output } = await generateText({
 		model,
-		schema: VerifySchema,
+		output: output_exports.object({ schema: VerifySchema }),
 		system: `You are a senior FRC software mentor verifying whether a reported code issue is real.
 Be skeptical — only confirm issues that are genuinely present and problematic.`,
 		prompt: `## Issue to Verify
@@ -51334,10 +52057,11 @@ ${fileContext}
 Is this issue genuinely present at line ${issue$2.line} in the file?
 Confirm only if the code at that line clearly exhibits the reported problem.`
 	});
+	if (!output) throw new Error(`No output from verify pass for issue in ${issue$2.file}:${issue$2.line}`);
 	return {
 		issue: issue$2,
-		confirmed: object$2.confirmed,
-		reason: object$2.reason
+		confirmed: output.confirmed,
+		reason: output.reason
 	};
 }
 async function verifyIssues(model, issues, fileContents) {

@@ -1,4 +1,4 @@
-import { generateObject } from 'ai'
+import { generateText, Output } from 'ai'
 import { z } from 'zod'
 import type { LanguageModel } from 'ai'
 import type { PRSummary } from '../passes/summarize.js'
@@ -34,9 +34,9 @@ export async function selectSkills(
   const skillList = selectableSkills.map((s) => `- **${s.stem}**: ${s.description}`).join('\n')
   const fileSummaries = summary.files.map((f) => `- ${f.filename}: ${f.summary}`).join('\n')
 
-  const { object } = await generateObject({
+  const { output } = await generateText({
     model,
-    schema: SelectionSchema,
+    output: Output.object({ schema: SelectionSchema }),
     system: `You are selecting which code review skills to apply to a pull request.
 Only select skills that are genuinely relevant based on what the PR is doing.
 Return an empty array if no skills apply.`,
@@ -52,7 +52,9 @@ ${skillList}
 Which skills are relevant to this PR? Return the stems of applicable skills.`,
   })
 
-  const selectedStems = new Set(object.selected)
+  if (!output) return [...globalSkills, ...selectableSkills]
+
+  const selectedStems = new Set(output.selected)
   const selected = selectableSkills.filter((s) => selectedStems.has(s.stem))
   return [...globalSkills, ...selected]
 }
@@ -73,9 +75,9 @@ export async function resolveReferences(
       const refList = skill.refs.map((r) => `- ${r.filename}`).join('\n')
       const fileSummaries = summary.files.map((f) => `- ${f.filename}: ${f.summary}`).join('\n')
 
-      const { object } = await generateObject({
+      const { output } = await generateText({
         model,
-        schema: RefsSchema,
+        output: Output.object({ schema: RefsSchema }),
         system: `You are selecting which reference files to load for a code review skill.
 Read the skill's index and select only the references relevant to this pull request.
 Return an empty array if no references are needed beyond the skill's main content.`,
@@ -94,7 +96,7 @@ ${refList}
 Which reference files are needed to review this PR? Return only the filenames.`,
       })
 
-      return inlineRefs(skill, object.filenames)
+      return inlineRefs(skill, output?.filenames ?? [])
     }),
   )
 }

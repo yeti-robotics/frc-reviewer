@@ -1,4 +1,4 @@
-import { generateObject } from 'ai'
+import { generateText, Output } from 'ai'
 import { z } from 'zod'
 import type { LanguageModel } from 'ai'
 import type { PRSummary } from './summarize.js'
@@ -46,9 +46,9 @@ export async function reviewPR(
     .map((f) => `- **${f.filename}**: ${f.summary}${f.architecturallySignificant ? ' ⭐' : ''}`)
     .join('\n')
 
-  const { object } = await generateObject({
+  const { output } = await generateText({
     model,
-    schema: CandidateSchema,
+    output: Output.object({ schema: CandidateSchema }),
     system: `You are a senior FRC (FIRST Robotics Competition) software mentor performing a detailed code review.
 You review robot code written in Java/Kotlin using WPILib, command-based architecture, and FRC-specific frameworks.
 Your job is to find real, actionable issues — not nitpicks. Focus on correctness, safety, and FRC best practices.
@@ -81,5 +81,6 @@ Review the code above against the FRC skills and rules. For each real issue foun
 Only report issues that are clearly present in the changed code. Do not invent issues.`,
   })
 
-  return object.issues
+  if (!output) throw new Error('No output from review pass')
+  return output.issues
 }

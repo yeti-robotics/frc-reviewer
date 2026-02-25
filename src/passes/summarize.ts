@@ -1,4 +1,4 @@
-import { generateObject } from 'ai'
+import { generateText, Output } from 'ai'
 import { z } from 'zod'
 import type { LanguageModel } from 'ai'
 import type { PRFile } from '../github/diff.js'
@@ -31,9 +31,9 @@ export async function summarizePR(
     })
     .join('\n\n')
 
-  const { object } = await generateObject({
+  const { output } = await generateText({
     model,
-    schema: SummarySchema,
+    output: Output.object({ schema: SummarySchema }),
     system: `You are a senior FRC (FIRST Robotics Competition) software mentor reviewing a pull request.
 Your task is to understand what this PR is trying to accomplish and summarize each file change.
 Focus on robot code — Java/Kotlin files using WPILib, command-based architecture, and FRC-specific frameworks.
@@ -53,5 +53,6 @@ Identify:
 3. Which files are architecturally significant (contain meaningful robot logic changes)`,
   })
 
-  return object
+  if (!output) throw new Error('No output from summarize pass')
+  return output
 }
