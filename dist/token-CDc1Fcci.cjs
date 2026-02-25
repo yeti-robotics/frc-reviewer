@@ -1,5 +1,5 @@
-const require_token_error$1 = require('./token-error-BoMmUjyL.js');
-const require_token_util$1 = require('./token-util-CXD9lnJM.js');
+const require_token_error$1 = require('./token-error-B8nziUNm.cjs');
+const require_token_util$1 = require('./token-util-IMPlJVZN.cjs');
 
 //#region node_modules/.pnpm/@vercel+oidc@3.1.0/node_modules/@vercel/oidc/dist/token.js
 var require_token = require_token_error$1.__commonJS({ "node_modules/.pnpm/@vercel+oidc@3.1.0/node_modules/@vercel/oidc/dist/token.js"(exports, module) {
@@ -51,4 +51,4 @@ Object.defineProperty(exports, 'default', {
     return require_token();
   }
 });
-//# sourceMappingURL=token-BLPgJb0S.js.map
+//# sourceMappingURL=token-CDc1Fcci.cjs.map

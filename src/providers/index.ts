@@ -10,6 +10,7 @@ export function getProvider(gateway: string, apiKey: string, model: string): Lan
         name: 'digitalocean',
         apiKey,
         baseURL: 'https://inference.do-ai.run/v1',
+        supportsStructuredOutputs: true,
       })(model)
     case 'vercel':
       return createOpenAICompatible({

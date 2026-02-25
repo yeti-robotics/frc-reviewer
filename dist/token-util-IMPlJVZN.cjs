@@ -1,4 +1,4 @@
-const require_token_error$1 = require('./token-error-BoMmUjyL.js');
+const require_token_error$1 = require('./token-error-B8nziUNm.cjs');
 
 //#region node_modules/.pnpm/@vercel+oidc@3.1.0/node_modules/@vercel/oidc/dist/token-io.js
 var require_token_io = require_token_error$1.__commonJS({ "node_modules/.pnpm/@vercel+oidc@3.1.0/node_modules/@vercel/oidc/dist/token-io.js"(exports, module) {
@@ -359,4 +359,4 @@ Object.defineProperty(exports, 'require_token_util', {
     return require_token_util;
   }
 });
-//# sourceMappingURL=token-util-CXD9lnJM.js.map
+//# sourceMappingURL=token-util-IMPlJVZN.cjs.map

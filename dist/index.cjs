@@ -1,4 +1,4 @@
-const require_token_error$1 = require('./token-error-BoMmUjyL.js');
+const require_token_error$1 = require('./token-error-B8nziUNm.cjs');
 const node_fs = require_token_error$1.__toESM(require("node:fs"));
 const node_path = require_token_error$1.__toESM(require("node:path"));
 
@@ -41913,7 +41913,8 @@ function getProvider(gateway$1, apiKey, model) {
 		case "digitalocean": return createOpenAICompatible({
 			name: "digitalocean",
 			apiKey,
-			baseURL: "https://inference.do-ai.run/v1"
+			baseURL: "https://inference.do-ai.run/v1",
+			supportsStructuredOutputs: true
 		})(model);
 		case "vercel": return createOpenAICompatible({
 			name: "vercel",
@@ -45016,7 +45017,7 @@ var require_gray_matter = require_token_error$1.__commonJS({ "node_modules/.pnpm
 
 //#endregion
 //#region src/skills/loader.ts
-var import_gray_matter = require_token_error$1.__toESM(require_gray_matter());
+var import_gray_matter = require_token_error$1.__toESM(require_gray_matter(), 1);
 const MAX_SKILL_FILE_BYTES = 512 * 1024;
 function readFileSafe(filePath) {
 	try {
@@ -45176,9 +45177,9 @@ var require_get_vercel_oidc_token = require_token_error$1.__commonJS({ "node_mod
 		}
 		try {
 			const [{ getTokenPayload, isExpired }, { refreshToken }] = await Promise.all([await Promise.resolve().then(function() {
-				return require("./token-util-wpOs2b5t.js");
+				return require("./token-util-7AJnLK9F.cjs");
 			}), await Promise.resolve().then(function() {
-				return require("./token-BLPgJb0S.js");
+				return require("./token-CDc1Fcci.cjs");
 			})]);
 			if (!token || isExpired(getTokenPayload(token))) {
 				await refreshToken();
@@ -51346,7 +51347,7 @@ async function verifyIssues(model, issues, fileContents) {
 
 //#endregion
 //#region src/pipeline.ts
-var import_core$1 = require_token_error$1.__toESM(require_core$1());
+var import_core$1 = require_token_error$1.__toESM(require_core$1(), 1);
 async function runPipeline(inputs) {
 	const { octokit, context: context$1, apiKey, gateway: gateway$1, model, fastModel, skillsPath, failOnCritical } = inputs;
 	const { owner, repo } = context$1.repo;
@@ -51447,8 +51448,8 @@ async function getFilesChangedSince(octokit, owner, repo, baseSHA, headSHA, allF
 
 //#endregion
 //#region src/index.ts
-var import_core = require_token_error$1.__toESM(require_core$1());
-var import_github = require_token_error$1.__toESM(require_github());
+var import_core = require_token_error$1.__toESM(require_core$1(), 1);
+var import_github = require_token_error$1.__toESM(require_github(), 1);
 const PERMISSION_RANK = {
 	none: 0,
 	read: 1,
@@ -51552,4 +51553,4 @@ async function run() {
 run();
 
 //#endregion
-//# sourceMappingURL=index.js.map
+//# sourceMappingURL=index.cjs.map
