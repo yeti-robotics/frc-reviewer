@@ -1,0 +1,53 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Typecheck, Build, and Commit dist
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Need full history for auto-commit to work correctly
+          fetch-depth: 0
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: pnpm
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Typecheck
+        run: pnpm typecheck
+
+      - name: Build
+        run: pnpm build
+
+      - name: Commit dist (push to main only)
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          commit_message: 'chore: rebuild dist [skip ci]'
+          file_pattern: dist/
+
+      - name: Verify dist is up to date (on PRs)
+        if: github.event_name == 'pull_request'
+        run: |
+          if ! git diff --quiet dist/; then
+            echo "::error::dist/ is out of sync with source. Run 'pnpm build' and commit the result."
+            git diff dist/
+            exit 1
+          fi

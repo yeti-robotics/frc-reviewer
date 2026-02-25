@@ -1,0 +1,51 @@
+name: FRC Code Reviewer
+description: AI-powered code review for FRC teams
+author: yeti-robotics
+
+inputs:
+  api-key:
+    description: API key for the AI gateway
+    required: true
+  gateway:
+    description: AI gateway (digitalocean, openai, anthropic, vercel)
+    default: digitalocean
+  model:
+    description: Model name supported by the gateway
+    default: gpt-4o
+  fast-model:
+    description: Optional cheaper model for the summarize pass (pass 1). Defaults to model if not set.
+    required: false
+  skills-path:
+    description: Path to team-local skills directory
+    default: .agents/skills
+  fail-on-critical:
+    description: Set exit code 1 if critical issues are found
+    default: "false"
+  trigger:
+    description: "When to run: 'comment' (on @reviewer mention) or 'auto' (every PR push)"
+    default: comment
+  trigger-phrase:
+    description: Phrase that triggers a comment-based review (e.g. @frc-reviewer)
+    default: "@frc-reviewer"
+  minimum-role:
+    description: >
+      Minimum repository role required to trigger a comment-based review.
+      Accepted values: 'write' (default), 'triage', 'read'.
+      Bot accounts are always blocked regardless of this setting.
+      Has no effect when trigger is 'auto'.
+    default: write
+  github-token:
+    description: >
+      GitHub token used for all API calls (posting comments, reading PR data).
+      For the bot to post as your GitHub App, generate a token with
+      actions/create-github-app-token before calling this action and pass it here.
+      Defaults to the built-in GITHUB_TOKEN.
+    default: ${{ github.token }}
+
+runs:
+  using: node24
+  main: dist/index.js
+
+branding:
+  icon: eye
+  color: yellow

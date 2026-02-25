@@ -1,0 +1,48 @@
+# Copy this file to your team's repo at .github/workflows/frc-reviewer.yml
+#
+# Prerequisites:
+#   1. Install the YETI FRC Reviewer GitHub App on your repo (link TBD)
+#   2. Add the following repository secrets:
+#        APP_ID          — GitHub App ID (from the app settings page)
+#        APP_PRIVATE_KEY — GitHub App private key (.pem contents)
+#        DO_API_KEY      — DigitalOcean AI inference API key
+
+name: FRC Code Reviewer
+
+on:
+  issue_comment:
+    types: [created] # comment trigger: @frc-reviewer
+  pull_request:
+    types: [opened, synchronize] # auto trigger (if trigger: auto)
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  review:
+    # For comment trigger: only run when the phrase appears in a PR comment
+    if: |
+      (github.event_name == 'pull_request') ||
+      (github.event_name == 'issue_comment' &&
+       github.event.issue.pull_request != null &&
+       contains(github.event.comment.body, '@frc-reviewer'))
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v2
+        with:
+          app-id: ${{ secrets.APP_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+
+      - name: Run FRC Reviewer
+        uses: yeti-robotics/frc-reviewer@v1
+        with:
+          github-token: ${{ steps.app-token.outputs.token }}
+          api-key: ${{ secrets.DO_API_KEY }}
+          gateway: digitalocean
+          model: anthropic/claude-sonnet-4-5
+          trigger: comment
+          trigger-phrase: "@frc-reviewer"
