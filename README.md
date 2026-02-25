@@ -24,20 +24,16 @@ Reviews are **incremental**: if you trigger the reviewer twice on the same PR, t
 
 ### 1. Install the GitHub App
 
-Install the **YETI FRC Reviewer** GitHub App on your repository. This gives the bot its own identity so review comments show up as `frc-reviewer[bot]` rather than `github-actions[bot]`.
+Install the **YETI FRC Reviewer** GitHub App on your repository. This gives the bot its own identity so review comments show up as `frc-reviewer[bot]`.
 
-> App link TBD — contact YETI or check the GitHub Marketplace listing.
+> [Install the YETI FRC Reviewer app →](https://github.com/apps/frc-reviewer)
 
-After installing, go to the app's settings page and note your **App ID**. Download a **private key** (.pem file).
-
-### 2. Add secrets to your repository
+### 2. Add your API key
 
 In your repo: **Settings → Secrets and variables → Actions → New repository secret**
 
 | Secret | Value |
 |---|---|
-| `APP_ID` | The numeric App ID from the GitHub App settings page |
-| `APP_PRIVATE_KEY` | The full contents of the `.pem` private key file |
 | `DO_API_KEY` | Your DigitalOcean AI inference API key |
 
 For the DigitalOcean key: go to [cloud.digitalocean.com](https://cloud.digitalocean.com), navigate to **AI → API Keys**, and generate a key.
@@ -65,17 +61,9 @@ jobs:
       contains(github.event.comment.body, '@frc-reviewer')
     runs-on: ubuntu-latest
     steps:
-      - name: Generate GitHub App token
-        id: app-token
-        uses: actions/create-github-app-token@v2
-        with:
-          app-id: ${{ secrets.APP_ID }}
-          private-key: ${{ secrets.APP_PRIVATE_KEY }}
-
       - name: Run FRC Reviewer
         uses: yeti-robotics/frc-reviewer@v1
         with:
-          github-token: ${{ steps.app-token.outputs.token }}
           api-key: ${{ secrets.DO_API_KEY }}
           gateway: digitalocean
           model: anthropic/claude-sonnet-4-5
@@ -123,7 +111,7 @@ All inputs are optional except `api-key`.
 | `gateway` | `digitalocean` | Which AI provider to use. Options: `digitalocean`, `openai`, `anthropic`, `vercel` |
 | `model` | `gpt-4o` | Model name. Must be valid for the chosen gateway |
 | `fast-model` | _(same as model)_ | A cheaper model to use for pass 1 (summarize). Pass 2 and 3 always use `model` |
-| `github-token` | `${{ github.token }}` | GitHub token for API calls. Pass a GitHub App token here for bot identity |
+| `github-token` | `${{ github.token }}` | GitHub token for API calls. Defaults to the token provided by the installed GitHub App |
 | `trigger` | `comment` | `comment` runs on @mention, `auto` runs on every PR push |
 | `trigger-phrase` | `@frc-reviewer` | The phrase that triggers a comment-based review |
 | `minimum-role` | `write` | Minimum repository role required to trigger a comment-based review. Options: `read`, `triage`, `write`. Bot accounts are always blocked. |
@@ -207,7 +195,7 @@ The action needs these permissions on whatever token you pass as `github-token`:
 - `issues: write` — to post the summary comment and reactions
 - `contents: read` — to read file contents at the PR's head SHA
 
-The default `${{ github.token }}` has all of these. If you're generating a GitHub App token via `actions/create-github-app-token`, make sure the app has the same permissions.
+When the YETI FRC Reviewer GitHub App is installed, `${{ github.token }}` is automatically scoped to the app's identity and has all of these permissions.
 
 The `api-key` is the DigitalOcean (or other gateway) key. It never touches GitHub — it's only used for AI inference calls. It won't appear in logs.
 
