@@ -1,9 +1,9 @@
-import { generateText, Output } from 'ai'
 import { z } from 'zod'
 import type { LanguageModel } from 'ai'
 import type { PRSummary } from './summarize.js'
 import type { Skill } from '../skills/loader.js'
 import type { PRFile } from '../github/diff.js'
+import { generateJson } from '../generateJson.js'
 
 export const IssueSchema = z.object({
   file: z.string().describe('Relative path to the file containing the issue'),
@@ -46,9 +46,7 @@ export async function reviewPR(
     .map((f) => `- **${f.filename}**: ${f.summary}${f.architecturallySignificant ? ' ⭐' : ''}`)
     .join('\n')
 
-  const { output } = await generateText({
-    model,
-    output: Output.object({ schema: CandidateSchema }),
+  const result = await generateJson(model, CandidateSchema, {
     system: `You are a senior FRC (FIRST Robotics Competition) software mentor performing a detailed code review.
 You review robot code written in Java/Kotlin using WPILib, command-based architecture, and FRC-specific frameworks.
 Your job is to find real, actionable issues — not nitpicks. Focus on correctness, safety, and FRC best practices.
@@ -78,9 +76,11 @@ ${fullFileText ? `## Full File Contents (architecturally significant files)\n${f
 
 Review the code above against the FRC skills and rules. For each real issue found, report it with the file path, exact line number, severity, which skill it violates, your reasoning, and a helpful review comment.
 
-Only report issues that are clearly present in the changed code. Do not invent issues.`,
+Only report issues that are clearly present in the changed code. Do not invent issues.
+
+Respond with ONLY a JSON object (no markdown, no explanation):
+{"issues":[{"file":"...","line":1,"severity":"warning","skill":"...","reasoning":"...","message":"..."}]}`,
   })
 
-  if (!output) throw new Error('No output from review pass')
-  return output.issues
+  return result.issues
 }

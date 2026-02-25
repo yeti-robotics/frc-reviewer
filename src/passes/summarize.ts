@@ -1,7 +1,7 @@
-import { generateText, Output } from 'ai'
 import { z } from 'zod'
 import type { LanguageModel } from 'ai'
 import type { PRFile } from '../github/diff.js'
+import { generateJson } from '../generateJson.js'
 
 export const SummarySchema = z.object({
   prGoal: z.string().describe('One or two sentence description of what this PR is trying to accomplish'),
@@ -31,9 +31,7 @@ export async function summarizePR(
     })
     .join('\n\n')
 
-  const { output } = await generateText({
-    model,
-    output: Output.object({ schema: SummarySchema }),
+  return generateJson(model, SummarySchema, {
     system: `You are a senior FRC (FIRST Robotics Competition) software mentor reviewing a pull request.
 Your task is to understand what this PR is trying to accomplish and summarize each file change.
 Focus on robot code — Java/Kotlin files using WPILib, command-based architecture, and FRC-specific frameworks.
@@ -50,9 +48,9 @@ ${diffText}
 Identify:
 1. The overall goal of this PR (what robot behavior or system is being added/fixed/refactored?)
 2. A brief summary of each file's changes
-3. Which files are architecturally significant (contain meaningful robot logic changes)`,
-  })
+3. Which files are architecturally significant (contain meaningful robot logic changes)
 
-  if (!output) throw new Error('No output from summarize pass')
-  return output
+Respond with ONLY a JSON object matching this structure (no markdown, no explanation):
+{"prGoal":"...","files":[{"filename":"...","summary":"...","architecturallySignificant":true}]}`,
+  })
 }

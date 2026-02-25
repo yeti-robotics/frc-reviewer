@@ -1,7 +1,7 @@
-import { generateText, Output } from 'ai'
 import { z } from 'zod'
 import type { LanguageModel } from 'ai'
 import type { Issue } from './review.js'
+import { generateJson } from '../generateJson.js'
 
 const VerifySchema = z.object({
   confirmed: z.boolean().describe('True if the issue is real and present in the code'),
@@ -17,9 +17,7 @@ async function verifyIssue(
     ? `\`\`\`\n${fileContent}\n\`\`\``
     : '(file content not available)'
 
-  const { output } = await generateText({
-    model,
-    output: Output.object({ schema: VerifySchema }),
+  const output = await generateJson(model, VerifySchema, {
     system: `You are a senior FRC software mentor verifying whether a reported code issue is real.
 Be skeptical — only confirm issues that are genuinely present and problematic.`,
     prompt: `## Issue to Verify
@@ -39,10 +37,12 @@ ${fileContext}
 </user-content>
 
 Is this issue genuinely present at line ${issue.line} in the file?
-Confirm only if the code at that line clearly exhibits the reported problem.`,
+Confirm only if the code at that line clearly exhibits the reported problem.
+
+Respond with ONLY a JSON object (no markdown, no explanation):
+{"confirmed":true,"reason":"..."}`,
   })
 
-  if (!output) throw new Error(`No output from verify pass for issue in ${issue.file}:${issue.line}`)
   return { issue, confirmed: output.confirmed, reason: output.reason }
 }
 

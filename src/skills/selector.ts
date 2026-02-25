@@ -1,9 +1,9 @@
-import { generateText, Output } from 'ai'
 import { z } from 'zod'
 import type { LanguageModel } from 'ai'
 import type { PRSummary } from '../passes/summarize.js'
 import type { Skill, SkillWithRefs } from './loader.js'
 import { inlineRefs } from './loader.js'
+import { generateJson } from '../generateJson.js'
 
 const SelectionSchema = z.object({
   selected: z
@@ -34,13 +34,13 @@ export async function selectSkills(
   const skillList = selectableSkills.map((s) => `- **${s.stem}**: ${s.description}`).join('\n')
   const fileSummaries = summary.files.map((f) => `- ${f.filename}: ${f.summary}`).join('\n')
 
-  const { output } = await generateText({
-    model,
-    output: Output.object({ schema: SelectionSchema }),
-    system: `You are selecting which code review skills to apply to a pull request.
+  let output: { selected: string[] }
+  try {
+    output = await generateJson(model, SelectionSchema, {
+      system: `You are selecting which code review skills to apply to a pull request.
 Only select skills that are genuinely relevant based on what the PR is doing.
 Return an empty array if no skills apply.`,
-    prompt: `## PR Goal
+      prompt: `## PR Goal
 ${summary.prGoal}
 
 ## Changed Files
@@ -49,10 +49,14 @@ ${fileSummaries}
 ## Available Skills
 ${skillList}
 
-Which skills are relevant to this PR? Return the stems of applicable skills.`,
-  })
+Which skills are relevant to this PR? Return the stems of applicable skills.
 
-  if (!output) return [...globalSkills, ...selectableSkills]
+Respond with ONLY a JSON object (no markdown, no explanation):
+{"selected":["skill-stem-1","skill-stem-2"]}`,
+    })
+  } catch {
+    return [...globalSkills, ...selectableSkills]
+  }
 
   const selectedStems = new Set(output.selected)
   const selected = selectableSkills.filter((s) => selectedStems.has(s.stem))
@@ -75,13 +79,13 @@ export async function resolveReferences(
       const refList = skill.refs.map((r) => `- ${r.filename}`).join('\n')
       const fileSummaries = summary.files.map((f) => `- ${f.filename}: ${f.summary}`).join('\n')
 
-      const { output } = await generateText({
-        model,
-        output: Output.object({ schema: RefsSchema }),
-        system: `You are selecting which reference files to load for a code review skill.
+      let refOutput: { filenames: string[] }
+      try {
+        refOutput = await generateJson(model, RefsSchema, {
+          system: `You are selecting which reference files to load for a code review skill.
 Read the skill's index and select only the references relevant to this pull request.
 Return an empty array if no references are needed beyond the skill's main content.`,
-        prompt: `## PR Goal
+          prompt: `## PR Goal
 ${summary.prGoal}
 
 ## Changed Files
@@ -93,10 +97,16 @@ ${skill.content}
 ## Available References
 ${refList}
 
-Which reference files are needed to review this PR? Return only the filenames.`,
-      })
+Which reference files are needed to review this PR? Return only the filenames.
 
-      return inlineRefs(skill, output?.filenames ?? [])
+Respond with ONLY a JSON object (no markdown, no explanation):
+{"filenames":["file1.md","file2.md"]}`,
+        })
+      } catch {
+        refOutput = { filenames: [] }
+      }
+
+      return inlineRefs(skill, refOutput.filenames)
     }),
   )
 }

@@ -51856,6 +51856,29 @@ _a20 = symbol20;
 var defaultDownload2 = createDownload();
 
 //#endregion
+//#region src/generateJson.ts
+/**
+* Calls generateText and parses the response as JSON, validated against the given Zod schema.
+* Strips markdown code fences (```json ... ```) if present.
+* Use this instead of generateObject / Output.object() for models that don't support response_format.
+*/
+async function generateJson(model, schema, options) {
+	const result = await generateText({
+		model,
+		...options
+	});
+	const raw = result.text.trim();
+	const stripped = raw.startsWith("```") ? raw.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/, "") : raw;
+	let parsed;
+	try {
+		parsed = JSON.parse(stripped);
+	} catch {
+		throw new Error(`Failed to parse JSON from model response:\n${raw}`);
+	}
+	return schema.parse(parsed);
+}
+
+//#endregion
 //#region src/skills/selector.ts
 const SelectionSchema = objectType({ selected: arrayType(stringType()).describe("Stems of the skills that are relevant to this pull request") });
 const RefsSchema = objectType({ filenames: arrayType(stringType()).describe("Filenames of the reference files needed for this PR (e.g. \"command-based.md\")") });
@@ -51869,13 +51892,13 @@ async function selectSkills(model, summary, skills) {
 	if (selectableSkills.length === 0) return skills;
 	const skillList = selectableSkills.map((s) => `- **${s.stem}**: ${s.description}`).join("\n");
 	const fileSummaries = summary.files.map((f) => `- ${f.filename}: ${f.summary}`).join("\n");
-	const { output } = await generateText({
-		model,
-		output: output_exports.object({ schema: SelectionSchema }),
-		system: `You are selecting which code review skills to apply to a pull request.
+	let output;
+	try {
+		output = await generateJson(model, SelectionSchema, {
+			system: `You are selecting which code review skills to apply to a pull request.
 Only select skills that are genuinely relevant based on what the PR is doing.
 Return an empty array if no skills apply.`,
-		prompt: `## PR Goal
+			prompt: `## PR Goal
 ${summary.prGoal}
 
 ## Changed Files
@@ -51884,9 +51907,14 @@ ${fileSummaries}
 ## Available Skills
 ${skillList}
 
-Which skills are relevant to this PR? Return the stems of applicable skills.`
-	});
-	if (!output) return [...globalSkills, ...selectableSkills];
+Which skills are relevant to this PR? Return the stems of applicable skills.
+
+Respond with ONLY a JSON object (no markdown, no explanation):
+{"selected":["skill-stem-1","skill-stem-2"]}`
+		});
+	} catch {
+		return [...globalSkills, ...selectableSkills];
+	}
 	const selectedStems = new Set(output.selected);
 	const selected = selectableSkills.filter((s) => selectedStems.has(s.stem));
 	return [...globalSkills, ...selected];
@@ -51900,13 +51928,13 @@ async function resolveReferences(model, summary, skills) {
 		if (skill.refs.length === 0) return inlineRefs(skill, []);
 		const refList = skill.refs.map((r) => `- ${r.filename}`).join("\n");
 		const fileSummaries = summary.files.map((f) => `- ${f.filename}: ${f.summary}`).join("\n");
-		const { output } = await generateText({
-			model,
-			output: output_exports.object({ schema: RefsSchema }),
-			system: `You are selecting which reference files to load for a code review skill.
+		let refOutput;
+		try {
+			refOutput = await generateJson(model, RefsSchema, {
+				system: `You are selecting which reference files to load for a code review skill.
 Read the skill's index and select only the references relevant to this pull request.
 Return an empty array if no references are needed beyond the skill's main content.`,
-			prompt: `## PR Goal
+				prompt: `## PR Goal
 ${summary.prGoal}
 
 ## Changed Files
@@ -51918,9 +51946,15 @@ ${skill.content}
 ## Available References
 ${refList}
 
-Which reference files are needed to review this PR? Return only the filenames.`
-		});
-		return inlineRefs(skill, output?.filenames ?? []);
+Which reference files are needed to review this PR? Return only the filenames.
+
+Respond with ONLY a JSON object (no markdown, no explanation):
+{"filenames":["file1.md","file2.md"]}`
+			});
+		} catch {
+			refOutput = { filenames: [] };
+		}
+		return inlineRefs(skill, refOutput.filenames);
 	}));
 }
 
@@ -51939,9 +51973,7 @@ async function summarizePR(model, files) {
 		const patch = f.patch ? `\n\`\`\`diff\n${f.patch}\n\`\`\`` : " (no diff available)";
 		return `### ${f.filename} (${f.status})${patch}`;
 	}).join("\n\n");
-	const { output } = await generateText({
-		model,
-		output: output_exports.object({ schema: SummarySchema }),
+	return generateJson(model, SummarySchema, {
 		system: `You are a senior FRC (FIRST Robotics Competition) software mentor reviewing a pull request.
 Your task is to understand what this PR is trying to accomplish and summarize each file change.
 Focus on robot code — Java/Kotlin files using WPILib, command-based architecture, and FRC-specific frameworks.
@@ -51958,10 +51990,11 @@ ${diffText}
 Identify:
 1. The overall goal of this PR (what robot behavior or system is being added/fixed/refactored?)
 2. A brief summary of each file's changes
-3. Which files are architecturally significant (contain meaningful robot logic changes)`
+3. Which files are architecturally significant (contain meaningful robot logic changes)
+
+Respond with ONLY a JSON object matching this structure (no markdown, no explanation):
+{"prGoal":"...","files":[{"filename":"...","summary":"...","architecturallySignificant":true}]}`
 	});
-	if (!output) throw new Error("No output from summarize pass");
-	return output;
 }
 
 //#endregion
@@ -51987,9 +52020,7 @@ async function reviewPR(model, summary, files, fileContents, skills) {
 	}).join("\n\n");
 	const fullFileText = Array.from(fileContents.entries()).map(([filename, content]) => `### ${filename} (full file)\n\`\`\`\n${content}\n\`\`\``).join("\n\n");
 	const fileSummaries = summary.files.map((f) => `- **${f.filename}**: ${f.summary}${f.architecturallySignificant ? " ⭐" : ""}`).join("\n");
-	const { output } = await generateText({
-		model,
-		output: output_exports.object({ schema: CandidateSchema }),
+	const result = await generateJson(model, CandidateSchema, {
 		system: `You are a senior FRC (FIRST Robotics Competition) software mentor performing a detailed code review.
 You review robot code written in Java/Kotlin using WPILib, command-based architecture, and FRC-specific frameworks.
 Your job is to find real, actionable issues — not nitpicks. Focus on correctness, safety, and FRC best practices.
@@ -52019,10 +52050,12 @@ ${fullFileText ? `## Full File Contents (architecturally significant files)\n${f
 
 Review the code above against the FRC skills and rules. For each real issue found, report it with the file path, exact line number, severity, which skill it violates, your reasoning, and a helpful review comment.
 
-Only report issues that are clearly present in the changed code. Do not invent issues.`
+Only report issues that are clearly present in the changed code. Do not invent issues.
+
+Respond with ONLY a JSON object (no markdown, no explanation):
+{"issues":[{"file":"...","line":1,"severity":"warning","skill":"...","reasoning":"...","message":"..."}]}`
 	});
-	if (!output) throw new Error("No output from review pass");
-	return output.issues;
+	return result.issues;
 }
 
 //#endregion
@@ -52033,9 +52066,7 @@ const VerifySchema = objectType({
 });
 async function verifyIssue(model, issue$2, fileContent) {
 	const fileContext = fileContent ? `\`\`\`\n${fileContent}\n\`\`\`` : "(file content not available)";
-	const { output } = await generateText({
-		model,
-		output: output_exports.object({ schema: VerifySchema }),
+	const output = await generateJson(model, VerifySchema, {
 		system: `You are a senior FRC software mentor verifying whether a reported code issue is real.
 Be skeptical — only confirm issues that are genuinely present and problematic.`,
 		prompt: `## Issue to Verify
@@ -52055,9 +52086,11 @@ ${fileContext}
 </user-content>
 
 Is this issue genuinely present at line ${issue$2.line} in the file?
-Confirm only if the code at that line clearly exhibits the reported problem.`
+Confirm only if the code at that line clearly exhibits the reported problem.
+
+Respond with ONLY a JSON object (no markdown, no explanation):
+{"confirmed":true,"reason":"..."}`
 	});
-	if (!output) throw new Error(`No output from verify pass for issue in ${issue$2.file}:${issue$2.line}`);
 	return {
 		issue: issue$2,
 		confirmed: output.confirmed,
