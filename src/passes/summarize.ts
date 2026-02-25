@@ -33,7 +33,6 @@ export async function summarizePR(
 
   const { object } = await generateObject({
     model,
-    mode: 'json',
     schema: SummarySchema,
     system: `You are a senior FRC (FIRST Robotics Competition) software mentor reviewing a pull request.
 Your task is to understand what this PR is trying to accomplish and summarize each file change.

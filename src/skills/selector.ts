@@ -36,7 +36,6 @@ export async function selectSkills(
 
   const { object } = await generateObject({
     model,
-    mode: 'json',
     schema: SelectionSchema,
     system: `You are selecting which code review skills to apply to a pull request.
 Only select skills that are genuinely relevant based on what the PR is doing.
@@ -76,7 +75,6 @@ export async function resolveReferences(
 
       const { object } = await generateObject({
         model,
-        mode: 'json',
         schema: RefsSchema,
         system: `You are selecting which reference files to load for a code review skill.
 Read the skill's index and select only the references relevant to this pull request.

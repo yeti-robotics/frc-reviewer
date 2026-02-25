@@ -19,7 +19,6 @@ async function verifyIssue(
 
   const { object } = await generateObject({
     model,
-    mode: 'json',
     schema: VerifySchema,
     system: `You are a senior FRC software mentor verifying whether a reported code issue is real.
 Be skeptical — only confirm issues that are genuinely present and problematic.`,

@@ -48,7 +48,6 @@ export async function reviewPR(
 
   const { object } = await generateObject({
     model,
-    mode: 'json',
     schema: CandidateSchema,
     system: `You are a senior FRC (FIRST Robotics Competition) software mentor performing a detailed code review.
 You review robot code written in Java/Kotlin using WPILib, command-based architecture, and FRC-specific frameworks.
