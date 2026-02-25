@@ -7,6 +7,7 @@ export default defineConfig({
   platform: 'node',
   target: 'node24',
   sourcemap: true,
+  noExternal: [/.*/],
   // inline skills/ markdown files as strings
   loader: { '.md': 'text' },
 })
